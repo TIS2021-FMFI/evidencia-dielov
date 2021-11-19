@@ -13,7 +13,10 @@ CREATE TABLE IF NOT EXISTS práva
 CREATE TABLE IF NOT EXISTS typy_chýb
 (
     id serial,
-    popis VARCHAR(256)
+    popis VARCHAR(256),
+    id_kym_sposobene integer NOT NULL,
+    it_druh_chyby integer NOT NULL,
+    id_miesto_na_linke integer NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -82,6 +85,26 @@ CREATE TABLE IF NOT EXISTS miesto_na_linke
     miesto VARCHAR(256) NOT NULL,
     PRIMARY KEY (id)
 );
+
+ALTER TABLE IF EXISTS typy_chýb
+    ADD FOREIGN KEY (id_kym_sposobene)
+    REFERENCES sposobena_kym(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE ;
+
+
+ALTER TABLE IF EXISTS typy_chýb
+    ADD FOREIGN KEY (it_druh_chyby)
+    REFERENCES druh_chyby(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE ;
+
+
+ALTER TABLE IF EXISTS typy_chýb
+    ADD FOREIGN KEY (id_miesto_na_linke)
+    REFERENCES miesto_na_linke(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE ;
 
 ALTER TABLE IF EXISTS má_použivateľ_právo
     ADD FOREIGN KEY id_používateľa
