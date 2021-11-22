@@ -1,0 +1,15 @@
+{% load static %}
+
+<header>
+
+    <div class="row list-group list-group-horizontal-lg" >
+        <ul class="list-group list-group-horizontal-lg" style="background-color: #00538B">
+            <li class="list-group-item step " style="background-color: #00538B"><img alt="" width="50" height="50" src="{% static '/img/logo.png' %}" ></li>
+            <li class="list-group-item step " style="background-color: #00538B"> <a class="list-group-item step colo" href={% url "typy" %}>Typy chýb</a></li>
+            <li class="list-group-item step " style="background-color: #00538B"><a class="list-group-item step colo" href={% url "grafy" %}>Grafy </a></li>
+            <li class="list-group-item step " style="background-color: #00538B"><a class="list-group-item step colo" href={% url "zaznamy" %}>Záznamy o chybách</a></li>
+            <li class="list-group-item step " style="background-color: #00538B"><a class="list-group-item step colo" href={% url "revizia" %}>Revízia</a></li>
+        </ul>
+    </div>
+
+</header>

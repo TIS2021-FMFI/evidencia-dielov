@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block maincontent %}
+<table style="width: 100%">
+    {% for item in list %}
+        <tr class="">
+            {% for i in item %}
+            <td>
+                {{i}}
+            </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+{% endblock maincontent %}
+
+{% block footer%}
+<button> Pridaj nový typ</button>
+{% endblock footer%}
