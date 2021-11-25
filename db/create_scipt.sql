@@ -3,24 +3,24 @@
 BEGIN;
 
 
-CREATE TABLE IF NOT EXISTS práva
+CREATE TABLE IF NOT EXISTS prava
 (
     id serial,
-    názov VARCHAR(256) NOT NULL,
+    nazov VARCHAR(256) NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS typy_chýb
+CREATE TABLE IF NOT EXISTS typy_chyb
 (
     id serial,
     popis VARCHAR(256),
     id_kym_sposobene integer NOT NULL,
-    it_druh_chyby integer NOT NULL,
+    id_druh_chyby integer NOT NULL,
     id_miesto_na_linke integer NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS použivatelia
+CREATE TABLE IF NOT EXISTS pouzivatelia
 (
     id serial,
     meno VARCHAR(256) NOT NULL,
@@ -30,37 +30,37 @@ CREATE TABLE IF NOT EXISTS použivatelia
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS zariadenia
+CREATE TABLE IF NOT EXISTS typy_revizii
 (
     id serial,
     nazov_revizie VARCHAR(256) NOT NULL,
-    dátum_poslednej_revízie date NOT NULL,
-    exspirácia interval NOT NULL,
-    dátum_nadchádzajúcej_revízie date NOT NULL,
+    datum_poslednej_revizie date NOT NULL,
+    exspiracia interval NOT NULL,
+    datum_nadchadzajúcej_revizie date NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS má_použivateľ_právo
+CREATE TABLE IF NOT EXISTS ma_pouzivatel_pravo
 (
     id serial,
-    id_používateľa integer NOT NULL,
-    id_práva integer NOT NULL,
+    id_pouzivatela integer NOT NULL,
+    id_prava integer NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS záznamy
+CREATE TABLE IF NOT EXISTS chyby
 (
     id serial,
     id_miesto_na_linke integer NOT NULL,
     id_druh_chyby integer NOT NULL,
-    čas_vzniku time without time zone NOT NULL,
-    dátum_vzniku date NOT NULL,
-    id_použivateľa integer NOT NULL,
-    schválená boolean NOT NULL,
-    vyriešená boolean NOT NULL,
-    čas_vyriešenia time without time zone NOT NULL,
-    dátum_vyriešenia date NOT NULL,
-    id_spôsobená_kým integer NOT NULL,
+    cas_vzniku time without time zone NOT NULL,
+    datum_vzniku date NOT NULL,
+    id_pouzivatela integer NOT NULL,
+    schvalena boolean NOT NULL,
+    vyriesena boolean NOT NULL,
+    cas_vyriesenia time without time zone NOT NULL,
+    datum_vyriesenia date NOT NULL,
+    id_sposobena_kym integer NOT NULL,
     id_typ_chyby integer,
     PRIMARY KEY (id)
 );
@@ -86,69 +86,69 @@ CREATE TABLE IF NOT EXISTS miesto_na_linke
     PRIMARY KEY (id)
 );
 
-ALTER TABLE IF EXISTS typy_chýb
+ALTER TABLE IF EXISTS typy_chyb
     ADD FOREIGN KEY (id_kym_sposobene)
     REFERENCES sposobena_kym(id)
     ON UPDATE CASCADE
     ON DELETE CASCADE ;
 
 
-ALTER TABLE IF EXISTS typy_chýb
+ALTER TABLE IF EXISTS typy_chyb
     ADD FOREIGN KEY (it_druh_chyby)
     REFERENCES druh_chyby(id)
     ON UPDATE CASCADE
     ON DELETE CASCADE ;
 
 
-ALTER TABLE IF EXISTS typy_chýb
+ALTER TABLE IF EXISTS typy_chyb
     ADD FOREIGN KEY (id_miesto_na_linke)
     REFERENCES miesto_na_linke(id)
     ON UPDATE CASCADE
     ON DELETE CASCADE ;
 
-ALTER TABLE IF EXISTS má_použivateľ_právo
-    ADD FOREIGN KEY id_používateľa
-    REFERENCES použivatelia(id)
+ALTER TABLE IF EXISTS ma_pouzivatel_právo
+    ADD FOREIGN KEY id_pouzivatela
+    REFERENCES pouzivatelia(id)
     ON UPDATE CASCADE
     ON DELETE CASCADE ;
 
 
-ALTER TABLE IF EXISTS má_použivateľ_právo
-    ADD FOREIGN KEY id_práva
-    REFERENCES práva(id)
+ALTER TABLE IF EXISTS ma_pouzivatel_pravo
+    ADD FOREIGN KEY id_prava
+    REFERENCES prava(id)
     ON UPDATE CASCADE
     ON DELETE CASCADE ;
 
 
-ALTER TABLE IF EXISTS záznamy
-    ADD FOREIGN KEY id_použivateľa
-    REFERENCES použivatelia(id)
+ALTER TABLE IF EXISTS chyby
+    ADD FOREIGN KEY id_pouzivatela
+    REFERENCES pouzivatelia(id)
     ON UPDATE CASCADE
     ON DELETE CASCADE ;
 
 
-ALTER TABLE IF EXISTS záznamy
+ALTER TABLE IF EXISTS chyby
     ADD FOREIGN KEY (id_typ_chyby)
     REFERENCES typy_chýb (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE ;
 
 
-ALTER TABLE IF EXISTS záznamy
+ALTER TABLE IF EXISTS chyby
     ADD FOREIGN KEY (id_druh_chyby)
     REFERENCES druh_chyby (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE ;
 
 
-ALTER TABLE IF EXISTS záznamy
-    ADD FOREIGN KEY id_spôsobená_kým
-    REFERENCES sposobena_kym (id) M
+ALTER TABLE IF EXISTS chyby
+    ADD FOREIGN KEY id_sposobena_kym
+    REFERENCES sposobena_kym (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
 
 
-ALTER TABLE IF EXISTS záznamy
+ALTER TABLE IF EXISTS chyby
     ADD FOREIGN KEY (id_miesto_na_linke)
     REFERENCES miesto_na_linke (id)
     ON UPDATE CASCADE

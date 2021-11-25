@@ -17,7 +17,7 @@ class Sposobena_kym(models.Model):
     kym = models.CharField(max_length=256)
 
 
-class Zariadenie(models.Model):
+class TypRevizie(models.Model):
     nazov_revizie = models.CharField(max_length=256)
     datum_poslednej_revizie = models.DateField()
     exspiracia = models.CharField(max_length=256)
@@ -40,7 +40,7 @@ class Ma_pouzivatel_pravo(models.Model):
     id_prava = models.ForeignKey(Pravo, on_delete=models.CASCADE)
 
 
-class Zaznam(models.Model):
+class Chyba(models.Model):
     id_miesto_na_linke = models.ForeignKey(Miesto_na_linke, on_delete=models.CASCADE)
     id_druh_chyby = models.ForeignKey(Druh_chyby, on_delete=models.CASCADE)
     cas_vzniku = models.TimeField()
