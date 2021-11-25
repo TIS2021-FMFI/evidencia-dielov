@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block maincontent %}
+<table style="width: 100%">
+    <tr class="nadpis">
+            <td>
+                Pozícia
+            </td>
+            <td>
+                Chybu spôsobil
+            </td>
+            <td>
+                Popis chyby
+            </td>
+            <td>
+                Dôvod
+            </td>
+            <td>
+                Pozícia
+            </td>
+            <td>
+                Priemerne trvanie
+            </td>
+            <td>
+                Priemerna frekvencia za
+                <select name="freq" id="freq">
+                  <option value="week">týždeň</option>
+                  <option value="month">mesiac</option>
+                  <option value="6months">pol rok</option>
+                  <option value="year">rok</option>
+                </select>
+            </td>
+            <td>
+                Vyskyt v poslednom
+
+                <select name="freq" id="freq2">
+                  <option value="week">týždeň</option>
+                  <option value="month">mesiac</option>
+                  <option value="6months">pol rok</option>
+                  <option value="year">rok</option>
+                </select>
+            </td>
+            <td>
+                Uprava
+            </td>
+    </tr>
+    {% for item in list %}
+        <tr class="items">
+            {% for i in item %}
+            <td>
+                {{i}}
+            </td>
+            {% endfor %}
+            <td>
+            <button>UPRAVIŤ</button>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock maincontent %}
+
+{% block footer%}
+<button class="pridaj"> Pridaj nový typ</button>
+{% endblock footer%}

@@ -1,0 +1,40 @@
+table{
+    width: 100%;
+    border: 1px solid black;
+     border-collapse: collapse;
+}
+tr, td{
+    border: 1px solid black;
+    padding: 10px;
+}
+tr{
+    width: 100%;
+}
+.items{
+    background-color: #e35f5f;
+}
+li{
+    width: 20%;
+    background-color: #00538B;
+    color: #fff;
+    border-color: #00538B;
+}
+.colo:hover{
+    color: white;
+}
+.colo{
+
+    background-color: #00538B;
+    color: #fff;
+    border-color: #00538B;
+}
+.pridaj{
+    background-color: #00538B;
+    position: absolute;
+    color: #fff;
+    border-radius: 8px;
+    left: 45%;
+}
+.nadpis{
+    background-color: #eeeeee;
+}

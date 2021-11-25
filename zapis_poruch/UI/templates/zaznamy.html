@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block maincontent %}
+<table style="width: 100%">
+    <tr class="nadpis">
+            <td>
+                Stav
+            </td>
+            <td>
+                Čas
+            </td>
+            <td>
+                Trvanie
+            </td>
+            <td>
+                Pozícia
+            </td>
+            <td>
+                Chybu spôsobil
+            </td>
+            <td>
+                Popis chyby
+            </td>
+            <td>
+                Uživateľ
+            </td>
+            <td>
+                Dôvod
+            </td>
+            <td>
+                Opatrenie/Oprava
+            </td>
+            <td>
+                Náhradný diel
+            </td>
+
+            <td>
+                Uprava
+            </td>
+            <td>
+                Potvrdenie
+            </td>
+            <td>
+                Odstránenie
+            </td>
+
+    </tr>
+    {% for item in list %}
+        <tr class="items">
+            {% for i in item %}
+            <td>
+                {{i}}
+            </td>
+            {% endfor %}
+            <td>
+                <button>UPRAVIŤ</button>
+            </td>
+            <td>
+                <button>POTVRDIŤ</button>
+            </td>
+            <td>
+                <button>ODSTRÁNIŤ</button>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock maincontent %}
+
+{% block footer%}
+<button class="pridaj"> Pridaj nový zaznam</button>
+{% endblock footer%}
