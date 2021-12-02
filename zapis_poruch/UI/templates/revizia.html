@@ -1,10 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+{% block maincontent %}
+<table style="width: 100%">
+    <tr class="nadpis">
+        <td>
+            Typ revízie
+        </td>
+        <td>
+            Dátum poslednej revízie
+        </td>
+        <td>
+            Dátum nadchádzajúcej revízie
+        </td>
+        <td>
+            Vykonať revíziu
+        </td>
+        <td>
+            Úprava
+        </td>
+        <td>
+            Odstránenie
+        </td>
+    </tr>
+    {% for item in list %}
+    <tr class="items">
+        {% for i in item %}
+        <td>
+            {{i}}
+        </td>
+        {% endfor %}
+        <td>
+            <button>VYKONAŤ REVÍZIU</button>
+        </td>
+        <td>
+            <button>UPRAVIŤ</button>
+        </td>
+        <td>
+            <button>ODSTRÁNIŤ</button>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock maincontent %}
 
-</body>
-</html>
+{% block footer%}
+<button class="pridaj"> Pridaj nový typ</button>
+{% endblock footer%}

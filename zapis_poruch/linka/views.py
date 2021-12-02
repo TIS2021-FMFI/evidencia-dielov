@@ -8,7 +8,7 @@ class TypyChyb(View):
     template = "chyby_typy.html"
 
     def get(self, request):
-        data = {'list': [[1, 2, 3, 4, 5, 6],[1, 2, 3, 4, 5, 6]],}
+        data = {'list': [[1, 2, 3, 4, 5, 6,7,8],[1, 2, 3, 4, 5, 6,7,8]],}
         return render(request, self.template, data)
 
     def post(self, request):
@@ -18,7 +18,7 @@ class Zaznamy(View):
     template = "zaznamy.html"
 
     def get(self, request):
-        data = {'list': [[1, 2, 3, 4, 5, 6],[1, 2, 3, 4, 5, 6]],}
+        data = {'list': [[1, 2, 3, 4, 5, 6,3, 4, 5, 6],[1, 2, 3, 4, 5, 6,3, 4, 5, 6]],}
         return render(request, self.template, data)
 
     def post(self, request):
@@ -48,7 +48,7 @@ class Revizia(View):
     template = "revizia.html"
 
     def get(self, request):
-        data = {'list': [[1, 2, 3, 4, 5, 6],[1, 2, 3, 4, 5, 6]],}
+        data = {'list': [[1, 2, 3],[1, 2, 3]],}
         return render(request, self.template, data)
 
     def post(self, request):
