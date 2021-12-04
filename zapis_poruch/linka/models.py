@@ -1,27 +1,48 @@
 from django.db import models
 
 # Create your models here.
-class Druh_chyby(models.Model):
+class DruhChyby(models.Model):
     nazov = models.CharField(max_length=256)
 
+    def __str__(self):
+        return self.nazov
 
-class Miesto_na_linke(models.Model):
+
+class MiestoNaLinke(models.Model):
     miesto = models.CharField(max_length=256)
 
+    def __str__(self):
+        return self.miesto
 
-class Typ_chyby(models.Model):
-    popis = models.CharField(max_length=256)
 
 
-class Sposobena_kym(models.Model):
+class SposobenaKym(models.Model):
     kym = models.CharField(max_length=256)
+
+    def __str__(self):
+        return self.kym
+
+
+
+class TypChyby(models.Model):
+    popis = models.CharField(verbose_name="Popis typu chyby", max_length=256)
+    miesto_na_linke = models.ForeignKey(MiestoNaLinke, verbose_name="Pozícia", on_delete=models.CASCADE,  default=None)
+    druh_chyby = models.ForeignKey(DruhChyby, verbose_name="Druh chyby", on_delete=models.CASCADE, default=None)
+    sposobena_kym = models.ForeignKey(SposobenaKym, verbose_name="Chybu spôsobuje", on_delete=models.CASCADE, default=None)
+
+    def __str__(self):
+        return self.popis
 
 
 class TypRevizie(models.Model):
-    nazov_revizie = models.CharField(max_length=256)
-    datum_poslednej_revizie = models.DateField()
-    exspiracia = models.CharField(max_length=256)
-    datum_nadchadzajucej_revizie = models.DateField()
+    nazov_revizie = models.CharField('Názov revízie', max_length=256,  default=None)
+    typ_revizie = models.CharField('Typ revízie', max_length=256,  default=None)
+    datum_poslednej_revizie = models.DateField('Dátum poslednej revízie')
+    exspiracia = models.CharField(max_length=256,  default=None)
+    datum_nadchadzajucej_revizie = models.DateField('Dátum nadchádzajúcej revízie')
+
+    def __str__(self):
+        return self.nazov_revizie
 
 
 class Pravo(models.Model):
@@ -29,26 +50,30 @@ class Pravo(models.Model):
 
 
 class Pouzivatel(models.Model):
-    meno = models.CharField(max_length=256)
-    priezvisko = models.CharField(max_length=256)
-    email = models.CharField(max_length=256)
-    heslo = models.CharField(max_length=256)
+    meno = models.CharField(verbose_name="Meno", max_length=256)
+    priezvisko = models.CharField(verbose_name="Priezvisko", max_length=256)
+    email = models.CharField(verbose_name="E-mail", max_length=256)
+    heslo = models.CharField(verbose_name="Heslo", max_length=256)
+
+    def __str__(self):
+        return str(self.meno) + " " + str(self.priezvisko)
 
 
-class Ma_pouzivatel_pravo(models.Model):
-    id_pouzivatela = models.ForeignKey(Pouzivatel, on_delete=models.CASCADE)
-    id_prava = models.ForeignKey(Pravo, on_delete=models.CASCADE)
+class MaPouzivatelPravo(models.Model):
+    pouzivatel = models.ForeignKey(Pouzivatel, on_delete=models.CASCADE,  default=None)
+    pravo = models.ForeignKey(Pravo, on_delete=models.CASCADE)
 
 
 class Chyba(models.Model):
-    id_miesto_na_linke = models.ForeignKey(Miesto_na_linke, on_delete=models.CASCADE)
-    id_druh_chyby = models.ForeignKey(Druh_chyby, on_delete=models.CASCADE)
-    cas_vzniku = models.TimeField()
-    datum_vzniku = models.DateField()
-    id_pouzivatela = models.ForeignKey(Pouzivatel, on_delete=models.CASCADE)
-    schvalena = models.BooleanField()
-    vyriesena = models.BooleanField()
-    cas_vyriesenia = models.TimeField()
-    datum_vyriesenia = models.DateField()
-    id_sposobena_kym = models.ForeignKey(Sposobena_kym, on_delete=models.CASCADE)
-    id_typ_chyby = models.ForeignKey(Typ_chyby, on_delete=models.CASCADE)
+    vznik = models.DateTimeField(verbose_name="Čas", default=None)
+    pouzivatel = models.ForeignKey(Pouzivatel, verbose_name="Uživateľ", on_delete=models.CASCADE,  default=None)
+    schvalena = models.BooleanField(verbose_name="Schválená")
+    vyriesena = models.BooleanField(verbose_name="Vyriešená")
+    vyriesenie = models.DateTimeField(verbose_name="Dátum vyriešenia", default=None)
+    miesto_na_linke = models.ForeignKey(MiestoNaLinke, verbose_name="Pozícia",  on_delete=models.CASCADE,  default=None)
+    druh_chyby = models.ForeignKey(DruhChyby, verbose_name="Druh chyby",  on_delete=models.CASCADE,   default=None)
+    sposobena_kym = models.ForeignKey(SposobenaKym, verbose_name="Chybu spôsobil",  on_delete=models.CASCADE, default=None)
+    typ_chyby = models.ForeignKey(TypChyby, verbose_name="Dôvod",  on_delete=models.CASCADE,  default=None)
+    opatrenia = models.CharField(verbose_name="Opatrenia/ Oprava", max_length=256,  default=None)
+    nahradny_diel = models.CharField(verbose_name="Náhradný diel", max_length=128,  default=None)
+    popis = models.CharField(verbose_name="Popis", max_length=128,  default=None)
