@@ -7,8 +7,8 @@ urlpatterns = [
     path('typy/', TypyChyb.as_view(), name='typy'),
     path('zaznamy/', Zaznamy.as_view(), name='zaznamy'),
     path('grafy/', Grafy.as_view(), name='grafy'),
-    path('typy/', PridajTyp.as_view(), name='pridaj_typ'),
-    path('zaznamy/', PridajZaznam.as_view(), name='pridaj_zaznam'),
+    path('typy/pridaj', PridajTyp.as_view(), name='pridaj_typ'),
+    path('zaznamy/pridaj', PridajZaznam.as_view(), name='pridaj_zaznam'),
     path('revizia/', Revizia.as_view(), name='revizia'),
 
 
