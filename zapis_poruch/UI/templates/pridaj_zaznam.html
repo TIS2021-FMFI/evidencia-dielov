@@ -1,19 +1,74 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block maincontent %}
-<table style="width: 100%">
-    {% for item in list %}
-        <tr class="">
-            {% for i in item %}
-            <td>
-                {{i}}
-            </td>
-            {% endfor %}
-        </tr>
+
+<form method="post">
+    {% csrf_token %}
+    {% for column in form %}
+        <div>
+            {{ column }}<br>
+            {{ column.label }}
+        </div>
+
     {% endfor %}
-</table>
+    <input id="beginDate" type="date"   height="1000">
+    <input id="beginTime" type="time"   height="1000">
+    <label for="beginDate">Čas vzniku</label>
+    <button type="submit"> Pridaj nový typ</button>
+</form>
+<!--<div>-->
+<!--    <label> Užívateľ: </label><br>-->
+<!--    <input id="user" type="text" disabled required  placeholder="{{user_name}}"><br>-->
+
+<!--    <label> Dôvod: </label><br>-->
+<!--    <input id="reason" type="text"  required height="1000"><br>-->
+
+<!--    <label> Opatrenia/Oprava: </label><br>-->
+<!--    <input id="oprava" type="text"  required height="1000"><br>-->
+
+<!--    <label> Náhradné diely: </label><br>-->
+<!--    <input id="diely" type="text"   height="1000"><br>-->
+
+<!--    <input id="solved" type="checkbox"   height="1000">-->
+<!--    <label for="solved">Odstránená chyba</label>-->
+
+<!--    <input id="beginDate" type="date"   height="1000">-->
+<!--    <input id="beginTime" type="time"   height="1000">-->
+<!--    <label for="beginDate">Čas vzniku</label>-->
+
+
+<!--    <input id="endDate" type="date"   height="1000">-->
+<!--    <input id="endTime" type="time"   height="1000">-->
+<!--    <label for="endDate">Čas vyriesenia</label>-->
+
+<!--</div>-->
+<!--<div>-->
+<!--    <label> Pozícia: </label><br>-->
+<!--    <select name="position" id="position" required>-->
+<!--        {% for item in position_list %}-->
+<!--            <option value="{{item}}">{{item}}</option>-->
+<!--        {% endfor %}-->
+<!--    </select>-->
+<!--</div>-->
+<!--<div>-->
+<!--    <label> Chybu spôsobil: </label><br>-->
+<!--    <select name="madeBy" id="madeBY" required>-->
+<!--        {% for item in made_list %}-->
+<!--            <option value="{{item}}">{{item}}</option>-->
+<!--        {% endfor %}-->
+<!--    </select>-->
+<!--</div>-->
+<!--<div>-->
+<!--    <label> Popis chyby: </label><br>-->
+<!--    <select name="description" id="description" required>-->
+<!--        {% for item in description_list %}-->
+<!--            <option value="{{item}}">{{item}}</option>-->
+<!--        {% endfor %}-->
+<!--    </select>-->
+<!--</div>-->
 {% endblock maincontent %}
 
 {% block footer%}
-<button> Pridaj nový typ</button>
-{% endblock footer%}
+<button class="pridaj"> Uložiť </button>
+{% endblock footer%}</title>
+
