@@ -4,6 +4,9 @@
 <table style="width: 100%">
     <tr class="nadpis">
         <td>
+            Názov revízie
+        </td>
+        <td>
             Typ revízie
         </td>
         <td>
@@ -22,13 +25,20 @@
             Odstránenie
         </td>
     </tr>
-    {% for item in list %}
+    {% for item in revizie %}
     <tr class="items">
-        {% for i in item %}
         <td>
-            {{i}}
+            {{item.nazov_revizie}}
         </td>
-        {% endfor %}
+        <td>
+            {{item.typ_revizie}}
+        </td>
+        <td>
+            {{item.datum_poslednej_revizie}}
+        </td>
+        <td>
+            {{item.datum_nadchadzajucej_revizie}}
+        </td>
         <td>
             <button>VYKONAŤ REVÍZIU</button>
         </td>
