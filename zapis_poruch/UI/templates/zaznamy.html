@@ -46,20 +46,22 @@
 
     </tr>
     {% for item in zaznamy %}
-        {{item.vyriesena}}
-        <tr class="items">
+
             {% if item.schvalena == True %}
-                <td>
-                    schvalena
-                </td>
+                 <tr class="approach">
+                    <td>
+                        schvalena
+                    </td>
             {% elif item.vyriesena == True %}
-                <td>
-                    vyriesena
-                </td>
+                <tr class="done">
+                    <td>
+                        vyriesena
+                    </td>
             {% else %}
-                <td>
-                    nevyriesena
-                </td>
+                <tr class="items">
+                    <td>
+                        nevyriesena
+                    </td>
             {% endif %}
             <td>
                 {{ item.vznik }}
@@ -80,7 +82,7 @@
                     {{ item.sposobena_kym.kym}}
             </td>
             <td>
-<!--                   {{ item.popis}}-->
+                   {{ item.popis}}
             </td>
             <td>
                     {{ item.pouzivatel}}
