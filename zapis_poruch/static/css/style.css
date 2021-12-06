@@ -13,6 +13,15 @@ tr{
 .items{
     background-color: #e35f5f;
 }
+
+.approach{
+    background-color: #f5dd5d;
+}
+.done{
+    background-color: #19865C;
+}
+
+
 li{
     width: 20%;
     background-color: #00538B;
