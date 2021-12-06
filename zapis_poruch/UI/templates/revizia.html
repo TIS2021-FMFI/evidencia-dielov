@@ -26,7 +26,13 @@
         </td>
     </tr>
     {% for item in revizie %}
-    <tr class="items">
+        {% if item.datum_nadchadzajucej_revizie < today %}
+            <tr class="items">
+         {% elif today < item.datum_nadchadzajucej_revizie and item.datum_nadchadzajucej_revizie <= weeks  %}
+                <tr class="approach">
+          {% else %}
+                <tr class="done">
+          {% endif %}
         <td>
             {{item.nazov_revizie}}
         </td>
@@ -43,10 +49,10 @@
             <button>VYKONAŤ REVÍZIU</button>
         </td>
         <td>
-            <button>UPRAVIŤ</button>
+            <button onclick="presmerovanie('{{ item.id }}', '/revizia/pridaj', 'GET')">UPRAVIŤ</button>
         </td>
         <td>
-            <button>ODSTRÁNIŤ</button>
+            <button onclick="presmerovanie('{{ item.id }}', '/revizia', 'DELETE')">ODSTRÁNIŤ</button>
         </td>
     </tr>
     {% endfor %}
@@ -54,5 +60,7 @@
 {% endblock maincontent %}
 
 {% block footer%}
-<button class="pridaj"> Pridaj nový typ</button>
+<div class="pridaj">
+    <button onclick="presmerovanie(null, '/revizia/pridaj', 'GET')" > Pridaj nový typ</button>
+</div>
 {% endblock footer%}
