@@ -109,13 +109,14 @@ def create_zaznam(miesto_na_linke, druh_chyby, pouzivatel, sposobena_kym, typ_ch
         sposobena_kym=sposobena_kym,
         typ_chyby=typ_chyby,
         opatrenia='nic',
-        nahradny_diel='ahaha'
+        nahradny_diel='ahaha',
+        popis='babksb'
     )
     zaznam.save()
     return zaznam
 
 def run_seed(mode):
-    #clear_data()
+    clear_data()
     if mode == MODE_CLEAR:
         return
 
