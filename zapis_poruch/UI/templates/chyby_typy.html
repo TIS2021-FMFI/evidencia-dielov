@@ -10,13 +10,10 @@
                 Chybu spôsobil
             </td>
             <td>
+                Druh chyby
+            </td>
+            <td>
                 Popis chyby
-            </td>
-            <td>
-                Dôvod
-            </td>
-            <td>
-                Pozícia
             </td>
             <td>
                 Priemerne trvanie
@@ -44,15 +41,31 @@
                 Uprava
             </td>
     </tr>
-    {% for item in list %}
-        <tr class="items">
-            {% for i in item %}
+    {% for item in errors %}
+        <tr>
             <td>
-                {{i}}
+                {{ item.miesto_na_linke.miesto }}
             </td>
-            {% endfor %}
             <td>
-            <button>UPRAVIŤ</button>
+                {{ item.sposobena_kym.kym }}
+            </td>
+            <td>
+                {{ item.druh_chyby.nazov }}
+            </td>
+            <td>
+                {{ item.popis }}
+            </td>
+            <td>
+                vypocitat v pythone
+            </td>
+            <td>
+                vypocitat v pythone
+            </td>
+            <td>
+                vypocitat v pythone
+            </td>
+            <td>
+            <button onclick="presmerovanie('{{ item.id }}', '/typy/pridaj', 'GET')">UPRAVIŤ</button>
             </td>
         </tr>
     {% endfor %}
@@ -60,5 +73,7 @@
 {% endblock maincontent %}
 
 {% block footer%}
-<button class="pridaj"> Pridaj nový typ</button>
+<div class="pridaj">
+    <button onclick="presmerovanie(null, '/typy/pridaj', 'GET')"> Pridaj nový typ</button>
+</div>
 {% endblock footer%}

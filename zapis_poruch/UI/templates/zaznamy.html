@@ -45,27 +45,74 @@
             </td>
 
     </tr>
-    {% for item in list %}
-        <tr class="items">
-            {% for i in item %}
+    {% for item in zaznamy %}
+
+            {% if item.schvalena == True %}
+                 <tr class="approach">
+                    <td>
+                        schvalena
+                    </td>
+            {% elif item.vyriesena == True %}
+                <tr class="done">
+                    <td>
+                        vyriesena
+                    </td>
+            {% else %}
+                <tr class="items">
+                    <td>
+                        nevyriesena
+                    </td>
+            {% endif %}
             <td>
-                {{i}}
+                {{ item.vznik }}
             </td>
-            {% endfor %}
+            {% if item.vyriesenie is not None %}
+                <td>
+                    {{ item.vyriesenie}}
+                </td>
+                {% else %}
+                <td>
+
+                </td>
+            {% endif %}
             <td>
-                <button>UPRAVIŤ</button>
+                    {{ item.miesto_na_linke.miesto}}
+            </td>
+            <td>
+                    {{ item.sposobena_kym.kym}}
+            </td>
+            <td>
+                   {{ item.popis}}
+            </td>
+            <td>
+                    {{ item.pouzivatel}}
+            </td>
+            <td>
+                    {{ item.typ_chyby.popis}}
+            </td>
+            <td>
+                   {{ item.opatrenie}}
+            </td>
+            <td>
+                    {{ item.nahradny_diel}}
+            </td>
+            <td>
+                <button onclick="presmerovanie('{{ item.id }}', '/zaznamy/pridaj', 'GET')">UPRAVIŤ</button>
             </td>
             <td>
                 <button>POTVRDIŤ</button>
             </td>
             <td>
-                <button>ODSTRÁNIŤ</button>
+                <button onclick="presmerovanie('{{ item.id }}', '/zaznamy', 'DELETE')">ODSTRÁNIŤ</button>
             </td>
         </tr>
     {% endfor %}
 </table>
 {% endblock maincontent %}
 
+
 {% block footer%}
-<button class="pridaj"> Pridaj nový zaznam</button>
+<div class="pridaj">
+    <button onclick="presmerovanie(null, '/zaznamy/pridaj', 'GET')"> Pridaj nový zaznam</button>
+</div>
 {% endblock footer%}

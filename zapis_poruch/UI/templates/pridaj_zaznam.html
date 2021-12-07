@@ -1,19 +1,33 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block maincontent %}
-<table style="width: 100%">
-    {% for item in list %}
-        <tr class="">
-            {% for i in item %}
-            <td>
-                {{i}}
-            </td>
-            {% endfor %}
-        </tr>
+
+<form method="post">
+    {% csrf_token %}
+    {% for column in form %}
+        <div disabled="{{ column.label }} == 'Uživateľ'" >
+            {% if column.label == 'Uživateľ' or column.label == 'Druh chyby' or column.label == 'Chybu spôsobil' or column.label == 'Pozícia' %}
+                <div class="col-1">
+                    {{ column.label }}
+                    {{ column }}<br>
+                </div>
+            {% else%}
+                <div class="col-2">
+                    {{ column.label }}
+                    {{ column }}<br>
+                </div>
+            {% endif %}
+        </div>
+
     {% endfor %}
-</table>
+    <input id="beginDate" type="date"   height="1000">
+    <input id="beginTime" type="time"   height="1000">
+    <label for="beginDate">Čas vzniku</label>
+    <button type="submit"> Uložiť</button>
+</form>
+
 {% endblock maincontent %}
 
 {% block footer%}
-<button> Pridaj nový typ</button>
 {% endblock footer%}
+
