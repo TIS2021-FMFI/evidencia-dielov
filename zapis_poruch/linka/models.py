@@ -38,7 +38,7 @@ class TypRevizie(models.Model):
     nazov_revizie = models.CharField('Názov revízie', max_length=256,  default=None)
     typ_revizie = models.CharField('Typ revízie', max_length=256,  default=None)
     datum_poslednej_revizie = models.DateField('Dátum poslednej revízie')
-    exspiracia = models.CharField(max_length=256,  default=None)
+    exspiracia = models.IntegerField()
     datum_nadchadzajucej_revizie = models.DateField('Dátum nadchádzajúcej revízie')
 
     def __str__(self):
