@@ -9,5 +9,8 @@ function presmerovanie(id, url, method){
         if(method === "DELETE"){
             window.location.replace(url + "?delete=True&id=" + id);
         }
+        if(method === "PUT"){
+            window.location.replace(url + "?put=True&id=" + id);
+        }
     }
 }
