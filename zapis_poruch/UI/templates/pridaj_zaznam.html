@@ -2,28 +2,106 @@
 {% load static %}
 {% block maincontent %}
 
-<form method="post">
+<form method="post" xmlns="http://www.w3.org/1999/html">
     {% csrf_token %}
-    {% for column in form %}
-        <div disabled="{{ column.label }} == 'Uživateľ'" >
-            {% if column.label == 'Uživateľ' or column.label == 'Druh chyby' or column.label == 'Chybu spôsobil' or column.label == 'Pozícia' %}
-                <div class="col-1">
-                    {{ column.label }}
-                    {{ column }}<br>
-                </div>
-            {% else%}
-                <div class="col-2">
-                    {{ column.label }}
-                    {{ column }}<br>
-                </div>
-            {% endif %}
-        </div>
+        {% for item in form%}
+        {% if item.label == "Uživateľ" %}
+        <div class="row">
+            <div class="first justify-content-center">
+                {{item.label}}<span class="textHviezda">*</span><br>
+                {{item}}
+            </div>
 
-    {% endfor %}
-    <input id="beginDate" type="date"   height="1000">
-    <input id="beginTime" type="time"   height="1000">
-    <label for="beginDate">Čas vzniku</label>
-    <button type="submit"> Uložiť</button>
+        {% endif %}
+
+        {% if item.label == "Vyriešená" %}
+            <div class="second justify-content-center" disabled="">
+                 <label for="beginDate">Čas vzniku</label><br>
+                <input id="beginDate" type="date"   height="1000" value="{{current_date}} ">
+                <input id="beginTime" type="time"   height="1000" value="{{current_time}}">
+
+
+            </div>
+            <div class="thirt ">
+                {{item.label}}<span class="textHviezda">*</span><br>
+                {{item}}
+
+            </div>
+        </div>
+        {% endif %}
+
+
+        {% if item.label == "Pozícia" %}
+            <div class="row">
+                <div class="first">
+                {{item.label}}<span class="textHviezda">*</span><br>
+                {{item}}
+
+                </div>
+
+        {% endif %}
+        {% if item.label == "Popis" %}
+            <div class="second">
+                {{item.label}}<span class="textHviezda">*</span><br>
+                {{item}}
+            </div>
+            <div class="thirt">
+                 <label for="beginDate">Dátum vyriešenia</label><br>
+                <input id="endDate" type="date"   height="1000" value="{{current_date}} ">
+                <input id="endTime" type="time"   height="1000" value="{{current_time}}">
+
+
+            </div>
+        </div>
+        {% endif %}
+        {% if item.label == "Chybu spôsobil" %}
+            <div class="row">
+                <div class="first">
+                {{item.label}}<span class="textHviezda">*</span><br>
+                {{item}}
+            </div>
+        {% endif %}
+        {% if item.label == "Dôvod" %}
+            <div class="second">
+                {{item.label}}<br>
+                {{item}}
+            </div>
+
+        {% endif %}
+        {% if item.label == "Opatrenia/ Oprava" %}
+            <div class="thirt">
+                {{item.label}}<br>
+                {{item}}
+            </div>
+        </div>
+        {% endif %}
+        {% if item.label == "Druh chyby" %}
+            <div class="row">
+                <div class="first">
+                {{item.label}}<span class="textHviezda">*</span><br>
+                {{item}}
+
+                </div>
+                <div class="second">
+                    <br>
+                </div>
+
+
+        {% endif %}
+
+        {% if item.label == "Náhradný diel" %}
+            <div class="thirt">
+                {{item.label}}<br>
+                {{item}}
+            </div>
+        </div>
+        {% endif %}
+
+     {% endfor %}
+    <div class="pridaj">
+        <button type="submit"> Uložiť</button>
+    </div>
+
 </form>
 
 {% endblock maincontent %}
