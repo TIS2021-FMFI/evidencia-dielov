@@ -1,7 +1,6 @@
 table{
     width: 100%;
     border: 1px solid black;
-     border-collapse: collapse;
 }
 tr, td{
     border: 1px solid black;
@@ -9,6 +8,9 @@ tr, td{
 }
 tr{
     width: 100%;
+}
+.textHviezda{
+    color: #e35f5f;
 }
 .items{
     background-color: #e35f5f;
@@ -20,7 +22,27 @@ tr{
 .done{
     background-color: #19865C;
 }
-
+.first{
+    width: 30%;
+    right: 10%;
+    text-align: center;
+}
+.second{
+    width: 30%;
+    text-align: center;
+}
+.thirt{
+    width: 30%;
+    text-align: center;
+}
+.madeBy{
+    right: 66%;
+    width: 33%;
+}
+.potvrd {
+    right: 25%;
+    width: 50%;
+}
 
 li{
     width: 20%;
