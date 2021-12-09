@@ -46,7 +46,7 @@
             {{item.datum_nadchadzajucej_revizie}}
         </td>
         <td>
-            <button>VYKONAŤ REVÍZIU</button>
+            <button onclick="presmerovanie('{{ item.id }}', '/revizia', 'PUT')">VYKONAŤ REVÍZIU</button>
         </td>
         <td>
             <button onclick="presmerovanie('{{ item.id }}', '/revizia/pridaj', 'GET')">UPRAVIŤ</button>
