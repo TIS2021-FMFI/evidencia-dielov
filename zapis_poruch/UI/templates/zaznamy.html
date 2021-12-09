@@ -47,20 +47,21 @@
     </tr>
     {% for item in zaznamy %}
 
-            {% if item.schvalena == True %}
-                 <tr class="approach">
+            {% if item.vyriesena == True %}
+                 <tr class="done">
                     <td>
-                        schvalena
+                        vyriešená
                     </td>
-            {% elif item.vyriesena == True %}
-                <tr class="done">
+            {% elif item.schvalena == True  %}
+                <tr class="approach">
                     <td>
-                        vyriesena
+                        schválená
                     </td>
+
             {% else %}
                 <tr class="items">
                     <td>
-                        nevyriesena
+                        nevyriešená
                     </td>
             {% endif %}
             <td>
@@ -100,7 +101,7 @@
                 <button onclick="presmerovanie('{{ item.id }}', '/zaznamy/pridaj', 'GET')">UPRAVIŤ</button>
             </td>
             <td>
-                <button>POTVRDIŤ</button>
+                <button onclick="presmerovanie('{{ item.id }}', '/zaznamy/potvrd', 'GET')">POTVRDIŤ</button>
             </td>
             <td>
                 <button onclick="presmerovanie('{{ item.id }}', '/zaznamy', 'DELETE')">ODSTRÁNIŤ</button>
