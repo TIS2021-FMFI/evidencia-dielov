@@ -141,7 +141,9 @@ def run_seed(mode):
         pouzivatelia.append(create_pouzivatel())
 
     for pouz in pouzivatelia:
-        ma_prava.append(create_ma_prava(pouz, random.choice(prava)))
+        # kazdy pouzivatel ma nahodne mnozstvo prav
+        for _ in range(random.randrange(5)):
+            ma_prava.append(create_ma_prava(pouz, random.choice(prava)))
 
     for i in range(1, 50):
         zaznamy.append(create_zaznam(

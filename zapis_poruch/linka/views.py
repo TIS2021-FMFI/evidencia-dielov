@@ -156,6 +156,9 @@ class Pouzivatelia_view(View):
             pouzivatel = Pouzivatel.objects.all().filter(id=i)
             pouzivatel.delete()
         data = {"pouzivatelia": Pouzivatel.objects.all()}
+        for key, value in data.items():
+            print(value.values_list('meno', 'priezvisko', 'prava'))
+
         return render(request, self.template, data)
 
     def post(self, request):
