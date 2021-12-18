@@ -1,10 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+{% block maincontent %}
+<form method="post">
+    {% csrf_token %}
+<div class="w-100">
+    <div class="m-1">
+        <label for="casoveObdobie">Casove obdobie <span class="input_required">*</span></label>
+        <select name="casoveObdobie" id="casoveObdobie">
+            <option value="1">Den</option>
+            <option value="7">Tyzden</option>
+            <option value="30">Mesiac</option>
+            <option value="365">Rok</option>
+        </select>
+    </div>
 
-</body>
-</html>
+    <div class="m-1">
+        <label for="beginDate">Od <span class="input_required">*</span></label>
+        <input id="beginDate" type="date" height="1000" required>
+        <br>
+        <label for="endDate">Do <span class="input_required">*</span></label>
+        <input id="endDate" type="date" height="1000" required>
+    </div>
+
+    <div class="m-1">
+        <label for="cisloZariadenia">Cislo zariadenia</label>
+        <select name="cisloZariadenia" id="cisloZariadenia" onchange="skontrolujPravoNaPopisTypuChyby()">
+            <option value=""></option>
+            {% for zariadenie in zariadenia %}
+                <option value="{{ zariadenie.id }}">{{ zariadenie.miesto }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="w-100">
+    <div>
+        <label for="druhChyby">Druh chyby</label>
+        <select name="druhChyby" id="druhChyby" onchange="skontrolujPravoNaPopisTypuChyby()">
+            <option value=""></option>
+            {% for chyba in druhyChyb %}
+                <option value="{{ chyba.id }}">{{ chyba.nazov }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="m-1">
+        <label for="chybuSposobil">Chybu sposobil</label>
+        <select name="chybuSposobil" id="chybuSposobil" onchange="skontrolujPravoNaPopisTypuChyby()">
+            <option value=""></option>
+            {% for spo in sposobeneKym %}
+                <option value="{{ spo.id }}">{{ spo.kym }}</option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <div class="m-1" id="popisTypuChybyDiv" hidden>
+        <label for="popisTypuChyby">Popis typu chyby</label>
+        <select name="popisTypuChyby" id="popisTypuChyby" disabled>
+            <option value=""></option>
+            {% for popis in popisyTypovChyby %}
+                <option value="{{ popis.popis }}" data-chyba="{{ popis.druh_chyby_id }}" data-kym="{{ popis.sposobena_kym_id }}" data-zariadenie="{{ popis.miesto_na_linke_id }}">{{ popis.popis }}</option>
+            {% endfor %}    
+        </select>
+    </div>
+
+    <button type="submit">Vygenerovat</button>
+
+</div>
+</form>
+
+    <script>
+        function skontrolujPravoNaPopisTypuChyby(){
+            var cisloZariadenia = document.getElementById("cisloZariadenia");
+            var druhChyby = document.getElementById("druhChyby");
+            var chybuSposobil = document.getElementById("chybuSposobil");
+            var popisTypuChybyDiv = document.getElementById("popisTypuChybyDiv");
+            var popisTypuChyby = document.getElementById("popisTypuChyby");
+            if (cisloZariadenia.value !== ''
+                && druhChyby.value !== ''
+                && chybuSposobil.value !== '') {
+                popisTypuChybyDiv.hidden = false;
+                popisTypuChyby.disabled = false;
+                for (const elem in popisTypuChyby.options){
+                    if (popisTypuChyby.options[elem].value === ''){
+                        continue;
+                    }
+                    if (popisTypuChyby.options[elem].getAttribute("data-chyba") === druhChyby.value
+                        && popisTypuChyby.options[elem].getAttribute("data-kym") === chybuSposobil.value
+                        && popisTypuChyby.options[elem].getAttribute("data-zariadenie") === cisloZariadenia.value){
+                        popisTypuChyby.options[elem].hidden = false;
+                        popisTypuChyby.options[elem].style = false;
+                    }else {
+                        popisTypuChyby.options[elem].hidden = true;
+                    }
+                    console.log(popisTypuChyby.options[elem]);
+                }
+            } else {
+                popisTypuChybyDiv.hidden = true;
+                popisTypuChyby.disabled = true;
+            }
+        }
+    </script>
+{% endblock maincontent %}
+{% block footer%}
+{% endblock footer%}

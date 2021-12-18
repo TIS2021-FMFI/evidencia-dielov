@@ -58,3 +58,19 @@ li{
 .nadpis{
     background-color: #eeeeee;
 }
+
+.input_required {
+    color: red;
+}
+
+.float-left {
+    float: left;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.m-1 {
+    margin: 10px;
+}

@@ -141,7 +141,12 @@ class Grafy(View):
     template = "grafy.html"
 
     def get(self, request):
-        data = {'list': [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]], }
+        data = {
+            "druhyChyb" : DruhChyby.objects.all(),
+            "zariadenia" : MiestoNaLinke.objects.all(),
+            "sposobeneKym" : SposobenaKym.objects.all(),
+            "popisyTypovChyby" : TypChyby.objects.all()
+        }
         return render(request, self.template, data)
 
     def post(self, request):
