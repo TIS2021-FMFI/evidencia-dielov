@@ -13,7 +13,7 @@ class TypyChyb(View):
     template = "chyby_typy.html"
 
     def get(self, request):
-        # run_seed("")
+        run_seed("")
         priemerne_trvanie = dict()
         for object in TypChyby.objects.all():
             chyby = Chyba.objects.all().filter(typ_chyby=object)
