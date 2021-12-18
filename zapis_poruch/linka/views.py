@@ -147,7 +147,6 @@ class Grafy(View):
     def post(self, request):
         return HttpResponse('podarilo sa')
 
-# todo upravit funkciu
 class Pouzivatelia(View):
     template = "pouzivatelia.html"
 
