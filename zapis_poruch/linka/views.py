@@ -152,6 +152,10 @@ class Pouzivatelia(View):
     template = "pouzivatelia.html"
 
     def get(self, request):
+        if "delete" in request.GET and request.GET["delete"]:
+            i = request.GET["id"]
+            pouzivatel = Pouzivatel.objects.all().filter(id=i)
+            pouzivatel.delete()
         data = {"pouzivatelia": Pouzivatel.objects.all()}
         return render(request, self.template, data)
 
