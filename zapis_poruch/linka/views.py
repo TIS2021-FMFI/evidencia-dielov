@@ -4,12 +4,12 @@ from django.http import HttpResponse
 
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .managment.commands.seed import run_seed
-from .models import *
+from .models import TypChyby, Chyba, Pouzivatel, Revizia
 from datetime import date, timedelta
 
 
 # Create your views here.
-class TypyChyb(View):
+class TypyChyb_view(View):
     template = "chyby_typy.html"
 
     def get(self, request):
@@ -26,7 +26,7 @@ class TypyChyb(View):
         return HttpResponse('podarilo sa')
 
 
-class Zaznamy(View):
+class Zaznamy_view(View):
     template = "zaznamy.html"
 
     def get(self, request):
@@ -41,7 +41,7 @@ class Zaznamy(View):
         return HttpResponse('podarilo sa')
 
 
-class PridajTyp(View):
+class PridajTyp_view(View):
     template = "pridaj_typ.html"
 
     def get(self, request):
@@ -68,7 +68,7 @@ class PridajTyp(View):
         return redirect("typy")
 
 
-class PridajZaznam(View):
+class PridajZaznam_view(View):
     template = "pridaj_zaznam.html"
 
     def get(self, request):
@@ -95,7 +95,7 @@ class PridajZaznam(View):
         return redirect("zaznamy")
 
 
-class PridajRevizia(View):
+class PridajReviziu_view(View):
     template = "pridaj_revizia.html"
 
     def get(self, request):
@@ -106,12 +106,12 @@ class PridajRevizia(View):
             return render(request, self.template, data)
 
         i = request.GET["id"]
-        data["form"] = RevizieForm(instance=TypRevizie.objects.all().filter(id=i)[0])
+        data["form"] = RevizieForm(instance=Revizia.objects.all().filter(id=i)[0])
         return render(request, self.template, data)
 
     def post(self, request):
         if "id" in request.GET:
-            typ = TypRevizie.objects.all().filter(id=request.GET["id"])[0]
+            typ = Revizia.objects.all().filter(id=request.GET["id"])[0]
             form = RevizieForm(request.POST, instance=typ)
         else:
             form = RevizieForm(request.POST)
@@ -122,22 +122,22 @@ class PridajRevizia(View):
         return redirect("revizia")
 
 
-class Revizia(View):
+class Revizia_view(View):
     template = "revizia.html"
 
     def get(self, request):
         if "delete" in request.GET:
             i = request.GET["id"]
-            revizia = TypRevizie.objects.all().filter(id=i)
+            revizia = Revizia.objects.all().filter(id=i)
             revizia.delete()
-        data = {'revizie': TypRevizie.objects.all(), 'today': date.today(), 'weeks': date.today() + timedelta(days=28)}
+        data = {'revizie': Revizia.objects.all(), 'today': date.today(), 'weeks': date.today() + timedelta(days=28)}
         return render(request, self.template, data)
 
     def post(self, request):
         return HttpResponse('podarilo sa')
 
 
-class Grafy(View):
+class Grafy_view(View):
     template = "grafy.html"
 
     def get(self, request):
@@ -147,7 +147,7 @@ class Grafy(View):
     def post(self, request):
         return HttpResponse('podarilo sa')
 
-class Pouzivatelia(View):
+class Pouzivatelia_view(View):
     template = "pouzivatelia.html"
 
     def get(self, request):

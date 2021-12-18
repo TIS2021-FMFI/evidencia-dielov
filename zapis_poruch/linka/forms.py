@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import TypChyby, Chyba, TypRevizie
+from .models import TypChyby, Chyba, Revizia
 
 
 class TypForm(forms.ModelForm):
@@ -19,7 +19,7 @@ class ZaznamForm(forms.ModelForm):
 
 class RevizieForm(forms.ModelForm):
     class Meta:
-        model = TypRevizie
+        model = Revizia
         fields = ['nazov_revizie', 'datum_poslednej_revizie', 'exspiracia',
                   'datum_nadchadzajucej_revizie']
 

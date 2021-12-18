@@ -3,7 +3,7 @@ from datetime import datetime
 import random
 
 from linka.models import Chyba, DruhChyby, MiestoNaLinke, TypChyby, Pravo, Pouzivatel, MaPouzivatelPravo, \
-    TypRevizie, SposobenaKym
+    Revizia, SposobenaKym
 
 MODE_REFRESH = 'refresh'
 
@@ -82,7 +82,7 @@ def create_ma_prava(pouzivatel, pravo):
     return ma_pravo
 
 def create_zariadenie(id):
-    zariadenie = TypRevizie(nazov_revizie=str(id)+'. revizia',typ_revizie='mechanicka' ,datum_poslednej_revizie=random_date(), datum_nadchadzajucej_revizie=random_date(), exspiracia='interval 1 day')
+    zariadenie = Revizia(nazov_revizie=str(id)+'. revizia',typ_revizie='mechanicka' ,datum_poslednej_revizie=random_date(), datum_nadchadzajucej_revizie=random_date(), exspiracia='interval 1 day')
     zariadenie.save()
     return zariadenie
 
@@ -93,7 +93,7 @@ def clear_data():
     Pravo.objects.all().delete()
     Pouzivatel.objects.all().delete()
     MaPouzivatelPravo.objects.all().delete()
-    TypRevizie.objects.all().delete()
+    Revizia.objects.all().delete()
     SposobenaKym.objects.all().delete()
 
 
