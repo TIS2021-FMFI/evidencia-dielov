@@ -13,7 +13,7 @@ class TypyChyb(View):
     template = "chyby_typy.html"
 
     def get(self, request):
-        # run_seed("")
+        run_seed("")
         priemerne_trvanie = dict()
         for object in TypChyby.objects.all():
             chyby = Chyba.objects.all().filter(typ_chyby=object)
@@ -142,6 +142,20 @@ class Grafy(View):
 
     def get(self, request):
         data = {'list': [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]], }
+        return render(request, self.template, data)
+
+    def post(self, request):
+        return HttpResponse('podarilo sa')
+
+class Pouzivatelia(View):
+    template = "pouzivatelia.html"
+
+    def get(self, request):
+        if "delete" in request.GET and request.GET["delete"]:
+            i = request.GET["id"]
+            pouzivatel = Pouzivatel.objects.all().filter(id=i)
+            pouzivatel.delete()
+        data = {"pouzivatelia": Pouzivatel.objects.all()}
         return render(request, self.template, data)
 
     def post(self, request):
