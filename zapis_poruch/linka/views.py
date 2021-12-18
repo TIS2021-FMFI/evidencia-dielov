@@ -146,3 +146,14 @@ class Grafy(View):
 
     def post(self, request):
         return HttpResponse('podarilo sa')
+
+# todo upravit funkciu
+class Pouzivatelia(View):
+    template = "pouzivatelia.html"
+
+    def get(self, request):
+        data = {"pouzivatelia": Pouzivatel.objects.all()}
+        return render(request, self.template, data)
+
+    def post(self, request):
+        return HttpResponse('podarilo sa')
