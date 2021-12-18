@@ -150,4 +150,25 @@ class Grafy(View):
         return render(request, self.template, data)
 
     def post(self, request):
-        return HttpResponse('podarilo sa')
+
+        def getInt(val):
+            try:
+                return int(val)
+            except:
+                return 0
+
+
+        data = {
+            "casoveObdobieOld": getInt(request.POST.get("casoveObdobie", 0)),
+            "druhChybyOld": getInt(request.POST.get("druhChyby", 0)),
+            "cisloZariadeniaOld": getInt(request.POST.get("cisloZariadenia", 0)),
+            "beginDateOld": request.POST["beginDate"],
+            "endDateOld": request.POST["endDate"],
+            "chybuSposobilOld": getInt(request.POST.get("chybuSposobil", 0)),
+            "popisTypuChyby": getInt(request.POST.get("popisTypuChyby", 0)),
+            "druhyChyb": DruhChyby.objects.all(),
+            "zariadenia": MiestoNaLinke.objects.all(),
+            "sposobeneKym": SposobenaKym.objects.all(),
+            "popisyTypovChyby": TypChyby.objects.all()
+        }
+        return render(request, self.template, data)

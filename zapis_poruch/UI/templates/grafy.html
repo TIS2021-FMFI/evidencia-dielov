@@ -7,19 +7,19 @@
     <div class="m-1">
         <label for="casoveObdobie">Casove obdobie <span class="input_required">*</span></label>
         <select name="casoveObdobie" id="casoveObdobie">
-            <option value="1">Den</option>
-            <option value="7">Tyzden</option>
-            <option value="30">Mesiac</option>
-            <option value="365">Rok</option>
+            <option {% if 1 == casoveObdobieOld %} selected {% endif %} value="1">Den</option>
+            <option {% if 7 == casoveObdobieOld %} selected {% endif %} value="7">Tyzden</option>
+            <option {% if 30 == casoveObdobieOld %} selected {% endif %} value="30">Mesiac</option>
+            <option {% if 365 == casoveObdobieOld %} selected {% endif %} value="365">Rok</option>
         </select>
     </div>
 
     <div class="m-1">
         <label for="beginDate">Od <span class="input_required">*</span></label>
-        <input id="beginDate" type="date" height="1000" required>
+        <input id="beginDate" name="beginDate" type="date" height="1000" required value="{{ beginDateOld }}">
         <br>
         <label for="endDate">Do <span class="input_required">*</span></label>
-        <input id="endDate" type="date" height="1000" required>
+        <input id="endDate" name="endDate" type="date" height="1000" required value="{{ endDateOld }}">
     </div>
 
     <div class="m-1">
@@ -27,7 +27,7 @@
         <select name="cisloZariadenia" id="cisloZariadenia" onchange="skontrolujPravoNaPopisTypuChyby()">
             <option value=""></option>
             {% for zariadenie in zariadenia %}
-                <option value="{{ zariadenie.id }}">{{ zariadenie.miesto }}</option>
+                <option {% if zariadenie.id == cisloZariadeniaOld %} selected {% endif %} value="{{ zariadenie.id }}">{{ zariadenie.miesto }}</option>
             {% endfor %}
         </select>
     </div>
@@ -38,7 +38,7 @@
         <select name="druhChyby" id="druhChyby" onchange="skontrolujPravoNaPopisTypuChyby()">
             <option value=""></option>
             {% for chyba in druhyChyb %}
-                <option value="{{ chyba.id }}">{{ chyba.nazov }}</option>
+                <option {% if chyba.id == druhChybyOld %} selected {% endif %} value="{{ chyba.id }}">{{ chyba.nazov }}</option>
             {% endfor %}
         </select>
     </div>
@@ -48,7 +48,7 @@
         <select name="chybuSposobil" id="chybuSposobil" onchange="skontrolujPravoNaPopisTypuChyby()">
             <option value=""></option>
             {% for spo in sposobeneKym %}
-                <option value="{{ spo.id }}">{{ spo.kym }}</option>
+                <option {% if spo.id == chybuSposobilOld %} selected {% endif %} value="{{ spo.id }}">{{ spo.kym }}</option>
             {% endfor %}
 
         </select>
@@ -56,10 +56,10 @@
 
     <div class="m-1" id="popisTypuChybyDiv" hidden>
         <label for="popisTypuChyby">Popis typu chyby</label>
-        <select name="popisTypuChyby" id="popisTypuChyby" disabled>
+        <select name="popisTypuChyby" id="popisTypuChyby" {% if popisTypuChybyOld <= 0 %} disabled{% endif %}>
             <option value=""></option>
             {% for popis in popisyTypovChyby %}
-                <option value="{{ popis.popis }}" data-chyba="{{ popis.druh_chyby_id }}" data-kym="{{ popis.sposobena_kym_id }}" data-zariadenie="{{ popis.miesto_na_linke_id }}">{{ popis.popis }}</option>
+                <option {% if popis.id == popisTypuChybyOld %} selected {% endif %} value="{{ popis.popis }}" data-chyba="{{ popis.druh_chyby_id }}" data-kym="{{ popis.sposobena_kym_id }}" data-zariadenie="{{ popis.miesto_na_linke_id }}">{{ popis.popis }}</option>
             {% endfor %}    
         </select>
     </div>
@@ -100,6 +100,8 @@
                 popisTypuChyby.disabled = true;
             }
         }
+
+        skontrolujPravoNaPopisTypuChyby();
     </script>
 {% endblock maincontent %}
 {% block footer%}
