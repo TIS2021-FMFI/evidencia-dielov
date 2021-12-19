@@ -1,3 +1,6 @@
+import datetime
+
+from django.db.models import Q
 from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -157,7 +160,37 @@ class Grafy(View):
             except:
                 return 0
 
+        grafLabels = []
+        start_date = datetime.datetime.strptime(request.POST['beginDate'], "%Y-%m-%d")
+        end_date = datetime.datetime.strptime(request.POST['endDate'], "%Y-%m-%d") + datetime.timedelta(days=1)
+        diff = abs((end_date - start_date).days)
+        count = 0
+        for i in range(0, diff, int(request.POST['casoveObdobie'])):
+            grafLabels.append((start_date + datetime.timedelta(days=i)).strftime("%d.%m.%Y"))
+            count += 1
+        grafColors = ['#C7980A', '#F4651F', '#82D8A7', '#CC3A05', '#575E76', '#156943', '#0BD055', '#ACD338'][:count]
 
+        grafData = [0]*count
+        chyby = Chyba.objects.filter(
+            vznik__gte=start_date,
+            vznik__lte=end_date
+        )
+        print("druh chyby", type(request.POST.get('druhChyby', 0)))
+        for chyba in chyby:
+            if request.POST.get("druhChyby", '') != '':
+                if str(chyba.druh_chyby_id) != request.POST.get('druhChyby'):
+                    continue
+            if request.POST.get("chybuSposobil", '') != '':
+                if str(chyba.sposobena_kym_id) != request.POST.get('chybuSposobil'):
+                    continue
+            if request.POST.get("cisloZariadenia", '') != '':
+                if str(chyba.miesto_na_linke_id) != request.POST.get('cisloZariadenia'):
+                    continue
+            if request.POST.get("popisTypuChyby", '') != '':
+                if str(chyba.typ_chyby_id) != request.POST.get('popisTypuChyby'):
+                    continue
+            index = (chyba.vznik.replace(tzinfo=None) - start_date).days // int(request.POST['casoveObdobie'])
+            grafData[index] += 1
         data = {
             "casoveObdobieOld": getInt(request.POST.get("casoveObdobie", 0)),
             "druhChybyOld": getInt(request.POST.get("druhChyby", 0)),
@@ -169,6 +202,9 @@ class Grafy(View):
             "druhyChyb": DruhChyby.objects.all(),
             "zariadenia": MiestoNaLinke.objects.all(),
             "sposobeneKym": SposobenaKym.objects.all(),
-            "popisyTypovChyby": TypChyby.objects.all()
+            "popisyTypovChyby": TypChyby.objects.all(),
+            "grafLabels" : grafLabels,
+            "grafColors" : grafColors,
+            "grafData" : grafData
         }
         return render(request, self.template, data)

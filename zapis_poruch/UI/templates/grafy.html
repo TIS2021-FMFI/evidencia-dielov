@@ -103,6 +103,35 @@
 
         skontrolujPravoNaPopisTypuChyby();
     </script>
+
+    <div class="container" style="width: 75%;">
+        <canvas id="graf"></canvas>
+    </div>
+
+    <script>
+        function createChart(){
+            var graf = document.getElementById("graf").getContext("2d");
+            new Chart(graf, {
+                type: "bar",
+                data: {
+                    labels: {{ grafLabels|safe }},
+                    datasets: [{
+                        label: "Graf chyb",
+                        backgroundColor: {{ grafColors|safe }},
+                        data: {{ grafData|safe }}
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        createChart();
+    </script>
 {% endblock maincontent %}
 {% block footer%}
 {% endblock footer%}
