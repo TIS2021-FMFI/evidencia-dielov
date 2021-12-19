@@ -59,7 +59,7 @@
         <select name="popisTypuChyby" id="popisTypuChyby" {% if popisTypuChybyOld <= 0 %} disabled{% endif %}>
             <option value=""></option>
             {% for popis in popisyTypovChyby %}
-                <option {% if popis.id == popisTypuChybyOld %} selected {% endif %} value="{{ popis.popis }}" data-chyba="{{ popis.druh_chyby_id }}" data-kym="{{ popis.sposobena_kym_id }}" data-zariadenie="{{ popis.miesto_na_linke_id }}">{{ popis.popis }}</option>
+                <option {% if popis.id == popisTypuChybyOld %} selected {% endif %} value="{{ popis.id }}" data-chyba="{{ popis.druh_chyby_id }}" data-kym="{{ popis.sposobena_kym_id }}" data-zariadenie="{{ popis.miesto_na_linke_id }}">{{ popis.popis }}</option>
             {% endfor %}    
         </select>
     </div>
@@ -123,9 +123,12 @@
                 },
                 options: {
                     scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 1
+                            }
+                        }]
                     }
                 }
             });
