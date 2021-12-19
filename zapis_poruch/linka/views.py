@@ -10,6 +10,8 @@ from .managment.commands.seed import run_seed
 from .models import *
 from datetime import date, timedelta
 
+from django.core.mail import send_mail
+
 
 # Create your views here.
 class TypyChyb(View):
@@ -168,7 +170,7 @@ class Grafy(View):
         for i in range(0, diff, int(request.POST['casoveObdobie'])):
             grafLabels.append((start_date + datetime.timedelta(days=i)).strftime("%d.%m.%Y"))
             count += 1
-        grafColors = ['#C7980A', '#F4651F', '#82D8A7', '#CC3A05', '#575E76', '#156943', '#0BD055', '#ACD338'][:count]
+        grafColors = ['#E28C05', '#4A501A', '#8F5BCA', '#B7E30B', '#BAB1EB', '#979EF9', '#6B2F11', '#622590', '#D03C3F', '#96A321', '#A6994E', '#93B8B9', '#8EFD82', '#EE239D', '#3834A7', '#BE561D', '#29FEB9', '#0AC84D', '#0BDC93', '#BACFBA', '#46227D', '#504FD5', '#00DC0E', '#CF1A54', '#955DC2', '#705678', '#DAED28', '#B694C3', '#413707', '#A59E7E', '#523087', '#B365DF', '#F2DE74', '#F00C9A', '#22459D', '#E61080', '#AAA3D1', '#CCE9E1', '#2FE622', '#3281D6'][:count]
 
         grafData = [0]*count
         chyby = Chyba.objects.filter(
@@ -208,3 +210,47 @@ class Grafy(View):
             "grafData" : grafData
         }
         return render(request, self.template, data)
+
+
+class Email(View):
+    template = "email.html"
+
+    def get(self, request):
+
+        return render(request, self.template, {})
+
+    def post(self, request):
+        now = datetime.datetime.now()
+        start = now - datetime.timedelta(days=28)
+        end = now - datetime.timedelta(days=27)
+        revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=start, datum_nadchadzajucej_revizie__lte=end)
+        revizia = None
+        print("pocet", revizie.count())
+        if revizie.count() > 0:
+            revizia = revizie[0]
+        if revizia is None:
+            return redirect('email')
+        send_mail(
+            'Blizi sa revizia',
+            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime("%d.%m.%Y"),
+            'noReplyRevizie@gmail.com',
+            ['freyer.viktor@gmail.com'],
+            fail_silently=False,
+        )
+        revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=datetime.date.today(),
+                                                  datum_nadchadzajucej_revizie__lte=now)
+        revizia = None
+        print("pocet", revizie.count())
+        if revizie.count() > 0:
+            revizia = revizie[0]
+        if revizia is None:
+            return redirect('email')
+        send_mail(
+            'Je cas na reviziu',
+            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime(
+                "%d.%m.%Y"),
+            'noReplyRevizie@gmail.com',
+            ['freyer.viktor@gmail.com'],
+            fail_silently=False,
+        )
+        return redirect('email')
