@@ -1,19 +1,23 @@
+import django.contrib.auth.models
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .managment.commands.seed import run_seed
 from .models import TypChyby, Chyba, TypRevizie, Pouzivatel
 from datetime import date, timedelta
 from django.contrib.auth.views import LoginView
-from django.contrib.auth import logout
 
 
-# Create your views here.
-class TypyChyb(View):
+
+class TypyChyb(LoginRequiredMixin, View):
     template = "chyby_typy.html"
+    login_url = "/login/"
+    redirect_field_name = "/login/"
 
     def get(self, request):
         run_seed("")
@@ -30,8 +34,10 @@ class TypyChyb(View):
         return HttpResponse('podarilo sa')
 
 
-class Zaznamy(View):
+class Zaznamy(LoginRequiredMixin, View):
     template = "zaznamy.html"
+    login_url = "/login/"
+    redirect_field_name = "/login/"
 
     def get(self, request):
         if "delete" in request.GET:
@@ -45,8 +51,10 @@ class Zaznamy(View):
         return HttpResponse('podarilo sa')
 
 
-class PridajTyp(View):
+class PridajTyp(LoginRequiredMixin, View):
     template = "pridaj_typ.html"
+    login_url = "/login/"
+    redirect_field_name = "/login/"
 
     def get(self, request):
         data = dict()
@@ -72,8 +80,10 @@ class PridajTyp(View):
         return redirect("typy")
 
 
-class PridajZaznam(View):
+class PridajZaznam(LoginRequiredMixin, View):
     template = "pridaj_zaznam.html"
+    login_url = "/login/"
+    redirect_field_name = "/login/"
 
     def get(self, request):
         data = dict()
@@ -99,8 +109,10 @@ class PridajZaznam(View):
         return redirect("zaznamy")
 
 
-class PridajRevizia(View):
+class PridajRevizia(LoginRequiredMixin, View):
     template = "pridaj_revizia.html"
+    login_url = "/login/"
+    redirect_field_name = "/login/"
 
     def get(self, request):
         data = dict()
@@ -126,8 +138,10 @@ class PridajRevizia(View):
         return redirect("revizia")
 
 
-class Revizia(View):
+class Revizia(LoginRequiredMixin, View):
     template = "revizia.html"
+    login_url = "/login/"
+    redirect_field_name = "/login/"
 
     def get(self, request):
         if "delete" in request.GET:
@@ -141,8 +155,10 @@ class Revizia(View):
         return HttpResponse('podarilo sa')
 
 
-class Grafy(View):
+class Grafy(LoginRequiredMixin, View):
     template = "grafy.html"
+    login_url = "/login/"
+    redirect_field_name = "/login/"
 
     def get(self, request):
         data = {'list': [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]], }
@@ -151,8 +167,10 @@ class Grafy(View):
     def post(self, request):
         return HttpResponse('podarilo sa')
 
-class Pouzivatelia(View):
+class Pouzivatelia(LoginRequiredMixin, View):
     template = "pouzivatelia.html"
+    login_url = "/login/"
+    redirect_field_name = "/login/"
 
     def get(self, request):
         if "delete" in request.GET and request.GET["delete"]:
