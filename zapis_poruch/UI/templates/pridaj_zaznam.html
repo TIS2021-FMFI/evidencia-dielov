@@ -2,7 +2,7 @@
 {% load static %}
 {% block maincontent %}
 
-<form method="post" xmlns="http://www.w3.org/1999/html">
+<form method="post" xmlns="http://www.w3.org/1999/html" >
     {% csrf_token %}
         {% for item in form%}
         {% if item.label == "Uživateľ" %}
@@ -14,12 +14,16 @@
 
         {% endif %}
 
-        {% if item.label == "Vyriešená" %}
-            <div class="second justify-content-center" disabled="">
+        {% if item.label == "Čas" %}
+            <div class="second justify-content-center">
                  <label for="beginDate">Čas vzniku</label><br>
-                <input id="beginDate" type="date"   height="1000" value="{{current_date}} ">
-                <input id="beginTime" type="time"   height="1000" value="{{current_time}}">
-
+                {% if not cas %}
+                <input id="beginDate" type="date"   height="1000" value="new Date().toDateInputValue(); ">
+                <input id="beginTime" type="time"   height="1000" value="new Time().toTimeInputValue()">
+                {% else %}
+                <input id="beginDate" type="date"   height="1000" value="new Date({{datum}})">
+                <input id="beginTime" type="time"   height="1000" value="new Time({{cas}})">
+                {% endif %}
 
             </div>
             <div class="thirt ">
@@ -42,13 +46,13 @@
         {% endif %}
         {% if item.label == "Popis" %}
             <div class="second">
-                {{item.label}}<span class="textHviezda">*</span><br>
+                {{item.label}}
                 {{item}}
             </div>
-            <div class="thirt">
-                 <label for="beginDate">Dátum vyriešenia</label><br>
-                <input id="endDate" type="date"   height="1000" value="{{current_date}} ">
-                <input id="endTime" type="time"   height="1000" value="{{current_time}}">
+            <div class="thirt" >
+                 <label for="endDate">Dátum vyriešenia</label><br>
+                <input id="endDate" type="date"   height="1000" value="new Date().toDateInputValue(); "  >
+                <input id="endTime" type="time"   height="1000" value="new Date().toISOString().slice(11, 17)"  >
 
 
             </div>
@@ -69,7 +73,7 @@
 
         {% endif %}
         {% if item.label == "Opatrenia/ Oprava" %}
-            <div class="thirt">
+            <div class="thirt" >
                 {{item.label}}<br>
                 {{item}}
             </div>
@@ -90,7 +94,7 @@
         {% endif %}
 
         {% if item.label == "Náhradný diel" %}
-            <div class="thirt">
+            <div class="thirt"  disabled="!{{item.vyriesena}}">
                 {{item.label}}<br>
                 {{item}}
             </div>
