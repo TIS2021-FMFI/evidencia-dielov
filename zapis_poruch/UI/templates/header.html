@@ -9,6 +9,7 @@
             <li class="list-group-item step " style="background-color: #00538B"><a class="list-group-item step colo" href={% url "grafy" %}>Grafy </a></li>
             <li class="list-group-item step " style="background-color: #00538B"><a class="list-group-item step colo" href={% url "zaznamy" %}>Záznamy o chybách</a></li>
             <li class="list-group-item step " style="background-color: #00538B"><a class="list-group-item step colo" href={% url "revizia" %}>Revízia</a></li>
+            <li>{{ request.user.username }}</li>
         </ul>
     </div>
 

@@ -6,6 +6,7 @@ from .forms import TypForm, ZaznamForm, RevizieForm
 from .managment.commands.seed import run_seed
 from .models import TypChyby, Chyba, TypRevizie, Pouzivatel
 from datetime import date, timedelta
+from django.contrib.auth.views import LoginView
 
 
 # Create your views here.
@@ -161,3 +162,6 @@ class Pouzivatelia(View):
 
     def post(self, request):
         return HttpResponse('podarilo sa')
+
+class Login(LoginView):
+    template_name = "login.html"
