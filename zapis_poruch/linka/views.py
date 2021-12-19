@@ -2,11 +2,13 @@ from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
+
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .managment.commands.seed import run_seed
 from .models import TypChyby, Chyba, TypRevizie, Pouzivatel
 from datetime import date, timedelta
 from django.contrib.auth.views import LoginView
+from django.contrib.auth import logout
 
 
 # Create your views here.
@@ -165,3 +167,8 @@ class Pouzivatelia(View):
 
 class Login(LoginView):
     template_name = "login.html"
+
+class Logout(View):
+    def get(self, request):
+        logout(request)
+        return redirect("login")
