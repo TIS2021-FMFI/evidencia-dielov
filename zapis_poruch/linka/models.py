@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 # Create your models here.
@@ -32,6 +34,71 @@ class TypChyby(models.Model):
 
     def __str__(self):
         return self.popis
+
+
+class TypChybyWrapper:
+    def __init__(self, object):
+        self.id = object.id
+        self._object = object
+        self.popis = object.popis
+        self.miesto_na_linke = object.miesto_na_linke
+        self.druh_chyby = object.druh_chyby
+        self.sposobena_kym = object.sposobena_kym
+        self.frekvencie = dict()
+        self.vyskyt = dict()
+        self.trvanie = 0
+
+    def json(self):
+        return {
+            "id": str(self.id),
+            "popis": str(self.popis),
+            "miesto_na_linke": str(self.miesto_na_linke),
+            "druh_chyby": str(self.druh_chyby),
+            "sposobena_kym": str(self.sposobena_kym),
+            "frekvencie": self.frekvencie,
+            "vyskyt": self.vyskyt,
+            "trvanie": str(self.trvanie)
+        }
+
+    def _increase_dict(self, dictionary, rozdiel):
+        if rozdiel.days <= 7:
+            dictionary["week"] += 1
+        if rozdiel.days <= 28:
+            dictionary["month"] += 1
+        if rozdiel.days <= 182:
+            dictionary["6months"] += 1
+        if rozdiel.days <= 365:
+            dictionary["year"] += 1
+
+    def fill(self, objects):
+        count = 0
+        pocet_vsetkych = {"week": 0, "month": 0, "6months": 0, "year": 0}
+        pocet_nasich = {"week": 0, "month": 0, "6months": 0, "year": 0}
+
+        today = datetime.datetime.now()
+        today = today.replace(tzinfo=None)
+        for object in objects:
+            vznik = object.vznik.replace(tzinfo=None)
+            rozdiel = today - vznik
+            self._increase_dict(pocet_vsetkych, rozdiel)
+
+            if object.typ_chyby != self._object:
+                continue
+            count += 1
+
+            self.trvanie += object.trvanie.days
+            self._increase_dict(pocet_nasich, rozdiel)
+
+        self.trvanie = round(self.trvanie / count)
+        self.vyskyt = pocet_nasich
+        for key in pocet_nasich:
+            self.frekvencie[key] = 0 if pocet_vsetkych[key] == 0 else pocet_nasich[key] / pocet_vsetkych[key]
+
+    @staticmethod
+    def all():
+        objects = TypChyby.objects.all()
+        return [TypChybyWrapper(x) for x in objects]
+
 
 
 class TypRevizie(models.Model):
@@ -77,3 +144,26 @@ class Chyba(models.Model):
     opatrenia = models.CharField(verbose_name="Opatrenia/ Oprava", max_length=256,  default=None)
     nahradny_diel = models.CharField(verbose_name="Náhradný diel", max_length=128,  default=None)
     popis = models.CharField(verbose_name="Popis", max_length=128,  default=None)
+
+
+class ChybaWrapper:
+    def __init__(self, object):
+        self.id = object.id
+        self.vznik = object.vznik
+        self.pouzivatel = object.pouzivatel
+        self.schvalena = object.schvalena
+        self.vyriesena = object.vyriesena
+        self.vyriesenie = object.vyriesenie
+        self.miesto_na_linke = object.miesto_na_linke
+        self.druh_chyby = object.druh_chyby
+        self.sposobena_kym = object.sposobena_kym
+        self.typ_chyby = object.typ_chyby
+        self.opatrenia = object.opatrenia
+        self.nahradny_diel = object.nahradny_diel
+        self.popis = object.popis
+        self.trvanie = self.vyriesenie - self.vznik
+
+    @staticmethod
+    def all():
+        objects = Chyba.objects.all()
+        return [ChybaWrapper(x) for x in objects]
