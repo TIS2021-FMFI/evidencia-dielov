@@ -17,7 +17,8 @@ class TypyChyb(View):
         priemerne_trvanie = dict()
         for object in TypChyby.objects.all():
             chyby = Chyba.objects.all().filter(typ_chyby=object)
-            oct = sum([(x.vyriesenie - x.vznik).days for x in chyby]) / len(chyby)
+            # oct = sum([(x.vyriesenie - x.vznik).days for x in chyby]) / len(chyby)
+            # todo solve ZeroDivisionError
 
         data = {'errors': TypChyby.objects.all(), 'zaznamy': Chyba.objects.all()}
         return render(request, self.template, data)

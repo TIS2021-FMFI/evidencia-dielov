@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class DruhChyby(models.Model):
@@ -45,23 +46,8 @@ class TypRevizie(models.Model):
         return self.nazov_revizie
 
 
-class Pravo(models.Model):
-    nazov = models.CharField(max_length=256)
-
-
-class Pouzivatel(models.Model):
-    meno = models.CharField(verbose_name="Meno", max_length=256)
-    priezvisko = models.CharField(verbose_name="Priezvisko", max_length=256)
-    email = models.CharField(verbose_name="E-mail", max_length=256)
-    heslo = models.CharField(verbose_name="Heslo", max_length=256)
-
-    def __str__(self):
-        return str(self.meno) + " " + str(self.priezvisko)
-
-
-class MaPouzivatelPravo(models.Model):
-    pouzivatel = models.ForeignKey(Pouzivatel, on_delete=models.CASCADE,  default=None)
-    pravo = models.ForeignKey(Pravo, on_delete=models.CASCADE)
+class Pouzivatel(User):
+    pass
 
 
 class Chyba(models.Model):
