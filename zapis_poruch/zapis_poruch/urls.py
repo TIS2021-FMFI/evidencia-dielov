@@ -6,9 +6,6 @@ from linka.views import PridajRevizia
 
 from linka.views import PotvrdZaznam
 
-from linka.views import Pouzivatelia
-
-from linka.views import PridajPouzivatela
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -20,8 +17,6 @@ urlpatterns = [
     path('zaznamy/potvrd', PotvrdZaznam.as_view(), name='potvrd_zaznam'),
     path('revizia/pridaj', PridajRevizia.as_view(), name='pridaj_zaznam'),
     path('revizia/', Revizia.as_view(), name='revizia'),
-    path('pouzivatelia/', Pouzivatelia.as_view(), name='pouzivatelia'),
-    path('pouzivatelia/pridaj', PridajPouzivatela.as_view(), name='pridaj_pouzivatela'),
 
 
 ]
