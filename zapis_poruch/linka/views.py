@@ -4,7 +4,7 @@ from django.http import HttpResponse
 
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .managment.commands.seed import run_seed
-from .models import *
+from .models import TypChyby, Chyba, TypRevizie, Pouzivatel
 from datetime import date, timedelta
 
 
