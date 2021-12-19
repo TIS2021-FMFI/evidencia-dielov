@@ -17,12 +17,14 @@ class TypyChyb(View):
 
     def get(self, request):
         #run_seed("")
-        priemerne_trvanie = dict()
-        for object in TypChyby.objects.all():
-            chyby = Chyba.objects.all().filter(typ_chyby=object)
-            #oct = sum([(x.vyriesenie - x.vznik).days for x in chyby]) / len(chyby)
+        all_errors = ChybaWrapper.all()
+        all_types = TypChybyWrapper.all()
+        print(all_errors[0].trvanie)
+        print(dir(all_errors[0].trvanie))
+        for object in all_types:
+            object.fill(all_errors)
 
-        data = {'errors': TypChyby.objects.all(), 'zaznamy': Chyba.objects.all()}
+        data = {'errors': [x.json() for x in all_types]}
         return render(request, self.template, data)
 
     def post(self, request):
@@ -37,21 +39,11 @@ class Zaznamy(View):
             i = request.GET["id"]
             chyba = Chyba.objects.all().filter(id=i)
             chyba.delete()
-        data = {'zaznamy': Chyba.objects.all()}
+        data = {'zaznamy': ChybaWrapper.all()}
         return render(request, self.template, data)
 
     def post(self, request):
-        return HttpResponse('podarilo sa')
-
-
-class Pouzivatelia(View):
-    template = "pouzivatelia.html"
-
-    def get(self, request):
-        return render(request, self.template)
-
-    def post(self, request):
-        return HttpResponse('podarilo sa')
+        return redirect("zaznamy")
 
 
 class PridajTyp(View):
@@ -80,24 +72,6 @@ class PridajTyp(View):
 
         return redirect("typy")
 
-class PridajPouzivatela(View):
-    template = "pridaj_pouzivatela.html"
-
-    def get(self, request):
-        return render(request, self.template)
-
-    def post(self, request):
-        if "id" in request.GET:
-            typ = TypChyby.objects.all().filter(id=request.GET["id"])[0]
-            form = TypForm(request.POST, instance=typ)
-        else:
-           form = TypForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-
-        return redirect("pouzivatelia")
-
 
 class PridajZaznam(View):
     template = "pridaj_zaznam.html"
@@ -106,14 +80,14 @@ class PridajZaznam(View):
         data = dict()
 
         if "id" not in request.GET:
-            data["current_date"] = date.today().isoformat().replace("-", "/")
-            data["current_time"] = datetime.datetime.now().time()
             data["form"] = ZaznamForm()
+            data["cas"] = False
             return render(request, self.template, data)
 
         i = request.GET["id"]
         data["form"] = ZaznamForm(instance=Chyba.objects.all().filter(id=i)[0])
-
+        data["datum"] = data["form"]["vznik"]
+        data["cas"] = data["form"]["vznik"]
         return render(request, self.template, data)
 
     def post(self, request):
@@ -162,12 +136,12 @@ class Revizia(View):
     def get(self, request):
         if "delete" in request.GET:
             i = request.GET["id"]
-            revizia = TypRevizie.objects.all().filter(id=i)
+            revizia = TypRevizie.objects.all().filter(id=i)[0]
             revizia.delete()
 
         elif "put" in request.GET:
             i = request.GET["id"]
-            revizia = TypRevizie.objects.all().filter(id=i)
+            revizia = TypRevizie.objects.all().filter(id=i)[0]
             revizia.datum_poslednej_revizie = date.today()
             revizia.datum_nadchadzajucej_revizie = date.today() + timedelta(days=revizia.exspiracia)
             revizia.save()
@@ -209,4 +183,9 @@ class PotvrdZaznam(View):
             return render(request, self.template, data)
 
     def post(self, request):
-        return HttpResponse('podarilo sa')
+        i = request.GET["id"]
+        zaznam = Chyba.objects.all().filter(id=i)[0]
+        typ = request.GET["list"]
+        zaznam.typ_chyby = TypChyby.objects.all().filter(id=typ)[0]
+        zaznam.save()
+        return redirect("zaznamy")
