@@ -16,14 +16,14 @@
 
         {% if item.label == "Vyriešená" %}
             <div class="second justify-content-center" disabled="">
-                 <label for="beginDate">Čas vzniku</label><br>
+                 <label for="beginDate">Čas vzniku</label><span class="textHviezda">*</span><br>
                 <input id="beginDate" type="date"   height="1000" value="{{current_date}} ">
                 <input id="beginTime" type="time"   height="1000" value="{{current_time}}">
 
 
             </div>
             <div class="thirt ">
-                {{item.label}}<span class="textHviezda">*</span><br>
+                {{item.label}}
                 {{item}}
 
             </div>
@@ -99,7 +99,10 @@
 
      {% endfor %}
 
-<table class="potvrd" >
+
+
+<table class="potvrd potvrd_body" >
+    <thead>
     <tr class="nadpis">
             <td>
                 Pozícia
@@ -117,8 +120,11 @@
                 Priradenie<span class="textHviezda">*</span>
             </td>
     </tr>
+
+    </thead>
+    <tbody >
     {% for item in typy %}
-        <tr>
+        <tr >
             <td>
                 {{ item.miesto_na_linke.miesto }}
             </td>
@@ -132,16 +138,21 @@
                 {{ item.popis }}
             </td>
             <td>
-                <input type="checkbox" id="priradenie">
+                <input type="checkbox" onchange="zmen('{{item.id}}')" id="{{item.id}}">
             </td>
         </tr>
     {% endfor %}
+    </tbody>
 </table>
-    <div class="pridaj">
-        <button type="submit"  onclick="presmerovanie('{{ id }}', '/zaznamy/potvrd', 'PUT')">POTVRĎ</button>
-    </div>
+
+
 
 </form>
+
+<div class="pridaj">
+        <button type="submit" id="potvrd" disabled="true" onclick="presmerovanie('/zaznamy/potvrd', 'PUT', '{{ item.id }}')">POTVRĎ</button>
+</div>
+
 
 {% endblock maincontent %}
 
