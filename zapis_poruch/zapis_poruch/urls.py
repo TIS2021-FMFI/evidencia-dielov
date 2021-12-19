@@ -6,7 +6,7 @@ from linka.views import PridajRevizia
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', Login.as_view(), name='login'),
+    path('', TypyChyb.as_view(), name='typy'),
     path('typy/', TypyChyb.as_view(), name='typy'),
     path('login/', Login.as_view(), name='login'),
     path('zaznamy/', Zaznamy.as_view(), name='zaznamy'),

@@ -16,8 +16,6 @@ from django.contrib.auth.views import LoginView
 
 class TypyChyb(LoginRequiredMixin, View):
     template = "chyby_typy.html"
-    login_url = "/login/"
-    redirect_field_name = "/login/"
 
     def get(self, request):
         run_seed("")
@@ -36,8 +34,6 @@ class TypyChyb(LoginRequiredMixin, View):
 
 class Zaznamy(LoginRequiredMixin, View):
     template = "zaznamy.html"
-    login_url = "/login/"
-    redirect_field_name = "/login/"
 
     def get(self, request):
         if "delete" in request.GET:
@@ -53,8 +49,6 @@ class Zaznamy(LoginRequiredMixin, View):
 
 class PridajTyp(LoginRequiredMixin, View):
     template = "pridaj_typ.html"
-    login_url = "/login/"
-    redirect_field_name = "/login/"
 
     def get(self, request):
         data = dict()
@@ -82,8 +76,6 @@ class PridajTyp(LoginRequiredMixin, View):
 
 class PridajZaznam(LoginRequiredMixin, View):
     template = "pridaj_zaznam.html"
-    login_url = "/login/"
-    redirect_field_name = "/login/"
 
     def get(self, request):
         data = dict()
@@ -111,8 +103,6 @@ class PridajZaznam(LoginRequiredMixin, View):
 
 class PridajRevizia(LoginRequiredMixin, View):
     template = "pridaj_revizia.html"
-    login_url = "/login/"
-    redirect_field_name = "/login/"
 
     def get(self, request):
         data = dict()
@@ -140,8 +130,6 @@ class PridajRevizia(LoginRequiredMixin, View):
 
 class Revizia(LoginRequiredMixin, View):
     template = "revizia.html"
-    login_url = "/login/"
-    redirect_field_name = "/login/"
 
     def get(self, request):
         if "delete" in request.GET:
@@ -157,8 +145,6 @@ class Revizia(LoginRequiredMixin, View):
 
 class Grafy(LoginRequiredMixin, View):
     template = "grafy.html"
-    login_url = "/login/"
-    redirect_field_name = "/login/"
 
     def get(self, request):
         data = {'list': [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]], }
@@ -169,8 +155,6 @@ class Grafy(LoginRequiredMixin, View):
 
 class Pouzivatelia(LoginRequiredMixin, View):
     template = "pouzivatelia.html"
-    login_url = "/login/"
-    redirect_field_name = "/login/"
 
     def get(self, request):
         if "delete" in request.GET and request.GET["delete"]:
