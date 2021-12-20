@@ -14,17 +14,22 @@ from django.contrib.auth import logout
 
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .managment.commands.seed import run_seed
-from .models import *
+from .models import TypChyby, Chyba, TypRevizie, Pouzivatel, ChybaWrapper, TypChybyWrapper
 from datetime import date, timedelta
 from django.contrib.auth.views import LoginView
 
+
+class Seed(View):
+    def get(self, request):
+        run_seed("")
+        next = request.POST.get('next', '/')
+        return redirect(next)
 
 
 class TypyChyb(LoginRequiredMixin, View):
     template = "chyby_typy.html"
 
     def get(self, request):
-        #run_seed("")
         all_errors = ChybaWrapper.all()
         all_types = TypChybyWrapper.all()
         for object in all_types:
