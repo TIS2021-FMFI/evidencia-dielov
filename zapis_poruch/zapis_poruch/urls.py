@@ -1,10 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
-from linka.views import TypyChyb, Zaznamy, Grafy, Revizia, PridajTyp, PridajZaznam, Pouzivatelia, Login, Logout, Seed
-
-from linka.views import PridajRevizia
-
-from linka.views import PotvrdZaznam
+from linka.views import TypyChyb, Zaznamy, Grafy, Revizia, PridajTyp, PridajZaznam, \
+    Pouzivatelia, Login, Logout, Seed, PridajRevizia, PotvrdZaznam
 
 
 urlpatterns = [
