@@ -154,7 +154,7 @@ class Revizia(LoginRequiredMixin, View):
             i = request.GET["id"]
             revizia = TypRevizie.objects.all().filter(id=i)[0]
             revizia.datum_poslednej_revizie = date.today()
-            revizia.datum_nadchadzajucej_revizie = date.today() + timedelta(days=revizia.exspiracia)
+            revizia.datum_nadchadzajucej_revizie = date.today() + timedelta(days=int(revizia.exspiracia))
             revizia.save()
 
         data = {'revizie': TypRevizie.objects.all(), 'today': date.today(), 'weeks': date.today() + timedelta(days=28)}
