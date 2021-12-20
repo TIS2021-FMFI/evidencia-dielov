@@ -125,7 +125,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'static')
+    os.path.join(BASE_DIR, 'static')
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
@@ -134,5 +134,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/typy/' # URL redirecting after a successful authentication
-LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = '/typy/'  # URL redirecting after a successful authentication
+LOGIN_URL = "/login/"  # URL to redirect to on unsuccessful authentication
