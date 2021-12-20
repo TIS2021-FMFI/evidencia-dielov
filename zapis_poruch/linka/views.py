@@ -12,7 +12,7 @@ from django.contrib.auth import logout
 
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .managment.commands.seed import run_seed
-from .models import TypChyby, Chyba, TypRevizie, Pouzivatel, ChybaWrapper, TypChybyWrapper
+from .models import TypChyby, Chyba, TypRevizie, Pouzivatel, ChybaWrapper, TypChybyWrapper, DruhChyby, MiestoNaLinke, SposobenaKym
 from datetime import date, timedelta
 from django.contrib.auth.views import LoginView
 
