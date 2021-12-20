@@ -1,22 +1,35 @@
+
 import datetime
 import time
+
+
+import django.contrib.auth.models
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .managment.commands.seed import run_seed
-from .models import *
+from .models import TypChyby, Chyba, TypRevizie, Pouzivatel, ChybaWrapper, TypChybyWrapper
 from datetime import date, timedelta
+from django.contrib.auth.views import LoginView
 
 
-# Create your views here.
-class TypyChyb(View):
+class Seed(View):
+    def get(self, request):
+        run_seed("")
+        next = request.POST.get('next', '/')
+        return redirect(next)
+
+
+class TypyChyb(LoginRequiredMixin, View):
     template = "chyby_typy.html"
 
     def get(self, request):
-        #run_seed("")
         all_errors = ChybaWrapper.all()
         all_types = TypChybyWrapper.all()
         for object in all_types:
@@ -29,7 +42,7 @@ class TypyChyb(View):
         return HttpResponse('podarilo sa')
 
 
-class Zaznamy(View):
+class Zaznamy(LoginRequiredMixin, View):
     template = "zaznamy.html"
 
     def get(self, request):
@@ -44,7 +57,7 @@ class Zaznamy(View):
         return redirect("zaznamy")
 
 
-class PridajTyp(View):
+class PridajTyp(LoginRequiredMixin, View):
     template = "pridaj_typ.html"
 
     def get(self, request):
@@ -71,7 +84,7 @@ class PridajTyp(View):
         return redirect("typy")
 
 
-class PridajZaznam(View):
+class PridajZaznam(LoginRequiredMixin, View):
     template = "pridaj_zaznam.html"
 
     def get(self, request):
@@ -101,7 +114,7 @@ class PridajZaznam(View):
         return redirect("zaznamy")
 
 
-class PridajRevizia(View):
+class PridajRevizia(LoginRequiredMixin, View):
     template = "pridaj_revizia.html"
 
     def get(self, request):
@@ -128,7 +141,7 @@ class PridajRevizia(View):
         return redirect("revizia")
 
 
-class Revizia(View):
+class Revizia(LoginRequiredMixin, View):
     template = "revizia.html"
 
     def get(self, request):
@@ -151,7 +164,7 @@ class Revizia(View):
         return HttpResponse('podarilo sa')
 
 
-class Grafy(View):
+class Grafy(LoginRequiredMixin, View):
     template = "grafy.html"
 
     def get(self, request):
@@ -160,6 +173,7 @@ class Grafy(View):
 
     def post(self, request):
         return HttpResponse('podarilo sa')
+
 
 
 class PotvrdZaznam(View):
@@ -188,7 +202,7 @@ class PotvrdZaznam(View):
         zaznam.save()
         return redirect("zaznamy")
 
-class Pouzivatelia(View):
+class Pouzivatelia(LoginRequiredMixin, View):
     template = "pouzivatelia.html"
 
     def get(self, request):
@@ -201,3 +215,11 @@ class Pouzivatelia(View):
 
     def post(self, request):
         return HttpResponse('podarilo sa')
+
+class Login(LoginView):
+    template_name = "login.html"
+
+class Logout(View):
+    def get(self, request):
+        logout(request)
+        return redirect("login")
