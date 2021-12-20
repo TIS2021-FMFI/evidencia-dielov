@@ -1,3 +1,9 @@
+
+
+import datetime
+from django.db.models import Q
+import time
+import django.contrib.auth.models
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
 from django.shortcuts import render, redirect
@@ -7,11 +13,12 @@ from django.contrib.auth import logout
 from django.db.models import Q
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .managment.commands.seed import run_seed
-from .models import TypChyby, Chyba, TypRevizie, Pouzivatel, ChybaWrapper, TypChybyWrapper
+from .models import TypChyby, Chyba, TypRevizie, Pouzivatel, ChybaWrapper, TypChybyWrapper, DruhChyby, MiestoNaLinke, SposobenaKym
 from datetime import date, timedelta
 from django.contrib.auth.views import LoginView
 
 from django.core.mail import send_mail
+
 
 class Seed(View):
     def get(self, request):
@@ -149,7 +156,7 @@ class Revizia(LoginRequiredMixin, View):
             i = request.GET["id"]
             revizia = TypRevizie.objects.all().filter(id=i)[0]
             revizia.datum_poslednej_revizie = date.today()
-            revizia.datum_nadchadzajucej_revizie = date.today() + timedelta(days=revizia.exspiracia)
+            revizia.datum_nadchadzajucej_revizie = date.today() + timedelta(days=int(revizia.exspiracia))
             revizia.save()
 
         data = {'revizie': TypRevizie.objects.all(), 'today': date.today(), 'weeks': date.today() + timedelta(days=28)}
@@ -172,7 +179,7 @@ class Grafy(LoginRequiredMixin, View):
         return render(request, self.template, data)
 
     def post(self, request):
-
+      
         def getInt(val):
             try:
                 return int(val)
@@ -230,6 +237,52 @@ class Grafy(LoginRequiredMixin, View):
 
 
 
+
+class Email(View):
+    template = "email.html"
+
+    def get(self, request):
+
+        return render(request, self.template, {})
+
+    def post(self, request):
+        now = datetime.datetime.now()
+        start = now - datetime.timedelta(days=28)
+        end = now - datetime.timedelta(days=27)
+        revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=start, datum_nadchadzajucej_revizie__lte=end)
+        revizia = None
+        print("pocet", revizie.count())
+        if revizie.count() > 0:
+            revizia = revizie[0]
+        if revizia is None:
+            return redirect('email')
+        send_mail(
+            'Blizi sa revizia',
+            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime("%d.%m.%Y"),
+            'noReplyRevizie@gmail.com',
+            ['freyer.viktor@gmail.com'],
+            fail_silently=False,
+        )
+        revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=datetime.date.today(),
+                                                  datum_nadchadzajucej_revizie__lte=now)
+        revizia = None
+        print("pocet", revizie.count())
+        if revizie.count() > 0:
+            revizia = revizie[0]
+        if revizia is None:
+            return redirect('email')
+        send_mail(
+            'Je cas na reviziu',
+            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime(
+                "%d.%m.%Y"),
+            'noReplyRevizie@gmail.com',
+            ['freyer.viktor@gmail.com'],
+            fail_silently=False,
+        )
+        return redirect('email')
+
+
+
 class PotvrdZaznam(View):
     template = "potvrd_zaznam.html"
 
@@ -278,45 +331,3 @@ class Logout(View):
         logout(request)
         return redirect("login")
 
-class Email(View):
-    template = "email.html"
-
-    def get(self, request):
-
-        return render(request, self.template, {})
-
-    def post(self, request):
-        now = datetime.datetime.now()
-        start = now - datetime.timedelta(days=28)
-        end = now - datetime.timedelta(days=27)
-        revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=start, datum_nadchadzajucej_revizie__lte=end)
-        revizia = None
-        print("pocet", revizie.count())
-        if revizie.count() > 0:
-            revizia = revizie[0]
-        if revizia is None:
-            return redirect('email')
-        send_mail(
-            'Blizi sa revizia',
-            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime("%d.%m.%Y"),
-            'noReplyRevizie@gmail.com',
-            ['freyer.viktor@gmail.com'],
-            fail_silently=False,
-        )
-        revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=datetime.date.today(),
-                                                  datum_nadchadzajucej_revizie__lte=now)
-        revizia = None
-        print("pocet", revizie.count())
-        if revizie.count() > 0:
-            revizia = revizie[0]
-        if revizia is None:
-            return redirect('email')
-        send_mail(
-            'Je cas na reviziu',
-            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime(
-                "%d.%m.%Y"),
-            'noReplyRevizie@gmail.com',
-            ['freyer.viktor@gmail.com'],
-            fail_silently=False,
-        )
-        return redirect('email')
