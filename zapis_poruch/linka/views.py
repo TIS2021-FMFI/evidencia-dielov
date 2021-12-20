@@ -19,8 +19,6 @@ class TypyChyb(View):
         #run_seed("")
         all_errors = ChybaWrapper.all()
         all_types = TypChybyWrapper.all()
-        print(all_errors[0].trvanie)
-        print(dir(all_errors[0].trvanie))
         for object in all_types:
             object.fill(all_errors)
 
@@ -189,3 +187,17 @@ class PotvrdZaznam(View):
         zaznam.typ_chyby = TypChyby.objects.all().filter(id=typ)[0]
         zaznam.save()
         return redirect("zaznamy")
+
+class Pouzivatelia(View):
+    template = "pouzivatelia.html"
+
+    def get(self, request):
+        if "delete" in request.GET and request.GET["delete"]:
+            i = request.GET["id"]
+            pouzivatel = Pouzivatel.objects.all().filter(id=i)
+            pouzivatel.delete()
+        data = {"pouzivatelia": Pouzivatel.objects.all()}
+        return render(request, self.template, data)
+
+    def post(self, request):
+        return HttpResponse('podarilo sa')
