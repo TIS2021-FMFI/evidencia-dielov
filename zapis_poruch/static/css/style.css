@@ -57,7 +57,7 @@ li{
     display: block;
     height: 250px;
     overflow: auto;
-    width: 42%;
+    width: 40%;
 }
 .colo:hover{
     color: white;
