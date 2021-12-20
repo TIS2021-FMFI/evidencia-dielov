@@ -1,7 +1,6 @@
 table{
     width: 100%;
     border: 1px solid black;
-     border-collapse: collapse;
 }
 tr, td{
     border: 1px solid black;
@@ -9,6 +8,9 @@ tr, td{
 }
 tr{
     width: 100%;
+}
+.textHviezda{
+    color: #e35f5f;
 }
 .items{
     background-color: #e35f5f;
@@ -20,13 +22,41 @@ tr{
 .done{
     background-color: #19865C;
 }
-
+.first{
+    width: 30%;
+    right: 10%;
+    text-align: center;
+}
+.second{
+    width: 30%;
+    text-align: center;
+}
+.thirt{
+    width: 30%;
+    text-align: center;
+}
+.madeBy{
+    right: 66%;
+    width: 33%;
+}
+.potvrd {
+    margin-left: 300px;
+    margin-top: 20px;
+    width: 50%;
+}
 
 li{
     width: 20%;
     background-color: #00538B;
     color: #fff;
     border-color: #00538B;
+}
+
+.potvrd_body{
+    display: block;
+    height: 250px;
+    overflow: auto;
+    width: 42%;
 }
 .colo:hover{
     color: white;
@@ -73,4 +103,44 @@ li{
 
 .m-1 {
     margin: 10px;
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 30%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+
 }
