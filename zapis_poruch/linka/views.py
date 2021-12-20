@@ -65,6 +65,8 @@ class Zaznamy(LoginRequiredMixin, View):
             if order_by == "uzivatel":
                 data = {'zaznamy': Chyba.objects.all().order_by("pouzivatel")}
             if order_by == "dovod":
+                data = {'zaznamy': Chyba.objects.all().order_by("dovod")}
+            if order_by == "opatrenie":
                 data = {'zaznamy': Chyba.objects.all().order_by("opatrenia")}
 
         return render(request, self.template, data)
