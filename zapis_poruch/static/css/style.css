@@ -1,6 +1,7 @@
 table{
     width: 100%;
     border: 1px solid black;
+     border-collapse: collapse;
 }
 tr, td{
     border: 1px solid black;
@@ -126,4 +127,20 @@ li{
   color: #000;
   text-decoration: none;
   cursor: pointer;
+}
+
+.input_required {
+    color: red;
+}
+
+.float-left {
+    float: left;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.m-1 {
+    margin: 10px;
 }

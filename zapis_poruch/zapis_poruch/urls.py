@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from linka.views import TypyChyb, Zaznamy, Grafy, Revizia, PridajTyp, PridajZaznam, \
     Pouzivatelia, Login, Logout, Seed, PridajRevizia, PotvrdZaznam
+from linka.views import TypyChyb, Zaznamy, Grafy, Revizia, PridajTyp, PridajZaznam, Email
 
 
 urlpatterns = [
@@ -19,6 +20,7 @@ urlpatterns = [
     path('pouzivatelia/', Pouzivatelia.as_view(), name='pouzivatelia'),
     path('logout/', Logout.as_view(), name='logout'),
     path('seed/', Seed.as_view(), name='logout'),
+    path('email/', Email.as_view(), name='email'),
 
 
 ]
