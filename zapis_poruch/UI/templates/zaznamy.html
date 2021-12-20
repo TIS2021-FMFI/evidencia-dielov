@@ -4,7 +4,7 @@
 <table style="width: 100%">
     <tr class="nadpis">
             <td>
-                Stav
+                <a href="?order_by=stav">Stav</a>
             </td>
             <td>
                 Čas
@@ -45,6 +45,8 @@
             </td>
 
     </tr>
+
+
     {% for item in zaznamy %}
 
             {% if item.vyriesena == True %}

@@ -46,7 +46,15 @@ class Zaznamy(LoginRequiredMixin, View):
             i = request.GET["id"]
             chyba = Chyba.objects.all().filter(id=i)
             chyba.delete()
+
         data = {'zaznamy': ChybaWrapper.all()}
+
+        if "order_by" in request.GET:
+            order_by = request.GET.get('order_by', 'defaultOrderField')
+            print(order_by)
+            if order_by == "stav":
+                data = {'zaznamy': Chyba.objects.all().order_by("vyriesena","schvalena")}
+
         return render(request, self.template, data)
 
     def post(self, request):
