@@ -54,6 +54,18 @@ class Zaznamy(LoginRequiredMixin, View):
             print(order_by)
             if order_by == "stav":
                 data = {'zaznamy': Chyba.objects.all().order_by("vyriesena","schvalena")}
+            if order_by == "cas":
+                data = {'zaznamy': Chyba.objects.all().order_by("vznik")}
+            if order_by == "pozicia":
+                data = {'zaznamy': Chyba.objects.all().order_by("miesto_na_linke")}
+            if order_by == "sposobena_kym":
+                data = {'zaznamy': Chyba.objects.all().order_by("sposobena_kym")}
+            if order_by == "popis":
+                data = {'zaznamy': Chyba.objects.all().order_by("popis")}
+            if order_by == "uzivatel":
+                data = {'zaznamy': Chyba.objects.all().order_by("pouzivatel")}
+            if order_by == "dovod":
+                data = {'zaznamy': Chyba.objects.all().order_by("opatrenia")}
 
         return render(request, self.template, data)
 
