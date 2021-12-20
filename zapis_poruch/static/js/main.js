@@ -13,6 +13,10 @@ function presmerovanie( url, method,id=-1,){
             window.location.replace(url + "?delete=True&id=" + this.id);
         }
         if(method === "PUT"){
+            if(url === '/revizia'){
+                 window.location.replace(url + "?put=True&id=" + id);
+                 return;
+            }
              var id = window.location.toString();
              var sub = id.substr(0, id.indexOf("?") );
             id = id.replace(sub, "");
