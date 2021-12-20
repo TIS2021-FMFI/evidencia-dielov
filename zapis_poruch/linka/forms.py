@@ -12,9 +12,9 @@ class TypForm(forms.ModelForm):
 class ZaznamForm(forms.ModelForm):
     class Meta:
         model = Chyba
-        fields = ['pouzivatel','vznik',  'schvalena', 'vyriesena','miesto_na_linke','popis',
-                  'vyriesenie','sposobena_kym','typ_chyby', 'opatrenia',
-                   'druh_chyby','nahradny_diel']
+        fields = ['pouzivatel', 'vznik', 'schvalena', 'vyriesena', 'miesto_na_linke', 'popis',
+                  'vyriesenie', 'sposobena_kym', 'typ_chyby', 'opatrenia',
+                  'druh_chyby', 'nahradny_diel']
 
 
 class RevizieForm(forms.ModelForm):
@@ -22,4 +22,3 @@ class RevizieForm(forms.ModelForm):
         model = TypRevizie
         fields = ['nazov_revizie', 'datum_poslednej_revizie', 'exspiracia',
                   'datum_nadchadzajucej_revizie']
-
