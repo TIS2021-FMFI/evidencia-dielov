@@ -1,5 +1,11 @@
+
+import datetime
+import time
+
+
 import django.contrib.auth.models
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -8,24 +14,28 @@ from django.contrib.auth import logout
 
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .managment.commands.seed import run_seed
-from .models import TypChyby, Chyba, TypRevizie, Pouzivatel
+from .models import TypChyby, Chyba, TypRevizie, Pouzivatel, ChybaWrapper, TypChybyWrapper
 from datetime import date, timedelta
 from django.contrib.auth.views import LoginView
 
+
+class Seed(View):
+    def get(self, request):
+        run_seed("")
+        next = request.POST.get('next', '/')
+        return redirect(next)
 
 
 class TypyChyb(LoginRequiredMixin, View):
     template = "chyby_typy.html"
 
     def get(self, request):
-        run_seed("")
-        priemerne_trvanie = dict()
-        for object in TypChyby.objects.all():
-            chyby = Chyba.objects.all().filter(typ_chyby=object)
-            # oct = sum([(x.vyriesenie - x.vznik).days for x in chyby]) / len(chyby)
-            # todo solve ZeroDivisionError
+        all_errors = ChybaWrapper.all()
+        all_types = TypChybyWrapper.all()
+        for object in all_types:
+            object.fill(all_errors)
 
-        data = {'errors': TypChyby.objects.all(), 'zaznamy': Chyba.objects.all()}
+        data = {'errors': [x.json() for x in all_types]}
         return render(request, self.template, data)
 
     def post(self, request):
@@ -40,11 +50,11 @@ class Zaznamy(LoginRequiredMixin, View):
             i = request.GET["id"]
             chyba = Chyba.objects.all().filter(id=i)
             chyba.delete()
-        data = {'zaznamy': Chyba.objects.all()}
+        data = {'zaznamy': ChybaWrapper.all()}
         return render(request, self.template, data)
 
     def post(self, request):
-        return HttpResponse('podarilo sa')
+        return redirect("zaznamy")
 
 
 class PridajTyp(LoginRequiredMixin, View):
@@ -66,7 +76,7 @@ class PridajTyp(LoginRequiredMixin, View):
             typ = TypChyby.objects.all().filter(id=request.GET["id"])[0]
             form = TypForm(request.POST, instance=typ)
         else:
-            form = TypForm(request.POST)
+           form = TypForm(request.POST)
 
         if form.is_valid():
             form.save()
@@ -82,10 +92,13 @@ class PridajZaznam(LoginRequiredMixin, View):
 
         if "id" not in request.GET:
             data["form"] = ZaznamForm()
+            data["cas"] = False
             return render(request, self.template, data)
 
         i = request.GET["id"]
         data["form"] = ZaznamForm(instance=Chyba.objects.all().filter(id=i)[0])
+        data["datum"] = data["form"]["vznik"]
+        data["cas"] = data["form"]["vznik"]
         return render(request, self.template, data)
 
     def post(self, request):
@@ -134,8 +147,16 @@ class Revizia(LoginRequiredMixin, View):
     def get(self, request):
         if "delete" in request.GET:
             i = request.GET["id"]
-            revizia = TypRevizie.objects.all().filter(id=i)
+            revizia = TypRevizie.objects.all().filter(id=i)[0]
             revizia.delete()
+
+        elif "put" in request.GET:
+            i = request.GET["id"]
+            revizia = TypRevizie.objects.all().filter(id=i)[0]
+            revizia.datum_poslednej_revizie = date.today()
+            revizia.datum_nadchadzajucej_revizie = date.today() + timedelta(days=int(revizia.exspiracia))
+            revizia.save()
+
         data = {'revizie': TypRevizie.objects.all(), 'today': date.today(), 'weeks': date.today() + timedelta(days=28)}
         return render(request, self.template, data)
 
@@ -152,6 +173,34 @@ class Grafy(LoginRequiredMixin, View):
 
     def post(self, request):
         return HttpResponse('podarilo sa')
+
+
+
+class PotvrdZaznam(View):
+    template = "potvrd_zaznam.html"
+
+    def get(self, request):
+        if "put" in request.GET:
+            i = request.GET["id"]
+            zaznam = Chyba.objects.all().filter(id=i)[0]
+            zaznam.schvalena = True
+            zaznam.save()
+            return redirect('zaznamy')
+        else:
+            i = request.GET["id"]
+            data = dict()
+            data["form"] = ZaznamForm(instance=Chyba.objects.all().filter(id=i)[0])
+            data['typy'] = TypChyby.objects.all()
+            data['id'] = i
+            return render(request, self.template, data)
+
+    def post(self, request):
+        i = request.GET["id"]
+        zaznam = Chyba.objects.all().filter(id=i)[0]
+        typ = request.GET["list"]
+        zaznam.typ_chyby = TypChyby.objects.all().filter(id=typ)[0]
+        zaznam.save()
+        return redirect("zaznamy")
 
 class Pouzivatelia(LoginRequiredMixin, View):
     template = "pouzivatelia.html"

@@ -82,7 +82,12 @@ def create_pouzivatel(i):
 #     return ma_pravo
 
 def create_zariadenie(id):
-    zariadenie = TypRevizie(nazov_revizie=str(id)+'. revizia',typ_revizie='mechanicka' ,datum_poslednej_revizie=random_date(), datum_nadchadzajucej_revizie=random_date(), exspiracia='interval 1 day')
+    zariadenie = TypRevizie(
+        nazov_revizie=str(id)+'. revizia',
+        typ_revizie='mechanicka' ,
+        datum_poslednej_revizie=random_date(),
+        datum_nadchadzajucej_revizie=random_date(),
+        exspiracia=30)
     zariadenie.save()
     return zariadenie
 

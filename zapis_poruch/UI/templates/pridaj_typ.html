@@ -4,69 +4,47 @@
 {% block maincontent %}
 <form method="post">
     {% csrf_token %}
-    {{ form }}
-    <button type="submit"> Uložiť </button>
+    <div class="row">
+
+    </div>
+    {% for item in form%}
+        {% if item.label == "Popis typu chyby" %}
+        <div class="row">
+            <div class="first">
+                {{item.label}}<span class="textHviezda">*</span><br>
+                {{item}}
+            </div>
+        {% endif %}
+        {% if item.label == "Pozícia" %}
+            <div class="second">
+                {{item.label}}<span class="textHviezda">*</span><br>
+                {{item}}
+            </div>
+        {% endif %}
+        {% if item.label == "Druh chyby" %}
+            <div class="thirt">
+                {{item.label}}<span class="textHviezda">*</span><br>
+                {{item}}
+            </div>
+        </div>
+        {% endif %}
+        {% if item.label == "Chybu spôsobuje" %}
+            <div class="row">
+                <div class="first"></div>
+                <div class="second"></div>
+                <div class="thirt">
+                    {{item.label}}<span class="textHviezda">*</span><br>
+                    {{item}}
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+    <div  class="pridaj">
+        <button type="submit"> Uložiť </button>
+    </div>
+
 </form>
 
-<!--<div class="row">-->
-<!--        <div class="col-1" >-->
-<!--            <label> Popis: </label><br>-->
-<!--            {% if object is not None %}-->
-<!--            <input id="reason" type="text"  required height="1000" value="{{ object.popis }}"><br>-->
-<!--            {% else %}-->
-<!--            <input id="reason" type="text"  required height="1000"><br>-->
-<!--            {% endif %}-->
-<!--        </div>-->
-<!--        <div class="col-2">-->
-<!--            <label> Pozícia: </label><br>-->
-<!--            <select name="position" id="position"  required>-->
-<!--                {% for item in position_list %}-->
-<!--                    {% if object is not None %}-->
-<!--                        {% if object.id_miesto_na_linke.miesto == item %}-->
-<!--                            <option value="{{item}}" selected>{{item}}</option>-->
-<!--                        {% else %}-->
-<!--                            <option value="{{item}}">{{item}}</option>-->
-<!--                        {% endif %}-->
-<!--                    {% else %}-->
-<!--                        <option value="{{item}}">{{item}}</option>-->
-<!--                    {% endif %}-->
-<!--                {% endfor %}-->
-<!--            </select>-->
-<!--        </div>-->
-<!--        <div class="col-3">-->
-<!--            <label> Chybu spôsobil: </label><br>-->
-<!--            <select name="madeBy" id="madeBY" required>-->
-<!--                {% for item in made_list %}-->
-<!--                    {% if object is not None %}-->
-<!--                        {% if object.id_sposobena_kym.kym == item %}-->
-<!--                            <option value="{{item}}" selected>{{item}}</option>-->
-<!--                        {% else %}-->
-<!--                            <option value="{{item}}">{{item}}</option>-->
-<!--                        {% endif %}-->
-<!--                    {% else %}-->
-<!--                        <option value="{{item}}">{{item}}</option>-->
-<!--                    {% endif %}-->
-<!--                {% endfor %}-->
-<!--            </select>-->
-<!--        </div>-->
-<!--        <div>-->
-<!--            <label> Druh chyby: </label><br>-->
-<!--            <select name="description" id="description" required>-->
-<!--                {% for item in type_list %}-->
-<!--                    {% if object is not None %}-->
-<!--                        {% if object.id_druh_chyby.nazov == item %}-->
-<!--                            <option value="{{item}}" selected>{{item}}</option>-->
-<!--                        {% else %}-->
-<!--                            <option value="{{item}}">{{item}}</option>-->
-<!--                        {% endif %}-->
-<!--                    {% else %}-->
-<!--                        <option value="{{item}}">{{item}}</option>-->
-<!--                    {% endif %}-->
-<!--                {% endfor %}-->
-<!--            </select>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    <button type="submit"> Pridaj nový typ</button>-->
 
 {% endblock maincontent %}
 {% block footer%}
