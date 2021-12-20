@@ -88,6 +88,22 @@ li{
 .nadpis{
     background-color: #eeeeee;
 }
+
+.input_required {
+    color: red;
+}
+
+.float-left {
+    float: left;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.m-1 {
+    margin: 10px;
+
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */
@@ -126,4 +142,5 @@ li{
   color: #000;
   text-decoration: none;
   cursor: pointer;
+
 }
