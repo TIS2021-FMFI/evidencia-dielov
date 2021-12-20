@@ -7,18 +7,15 @@ from django.contrib.auth import logout
 from django.db.models import Q
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .managment.commands.seed import run_seed
-from .models import TypChyby, Chyba, TypRevizie, Pouzivatel, ChybaWrapper, TypChybyWrapper
-from datetime import date, timedelta
-from django.contrib.auth.views import LoginView
+from .models import TypChyby, Chyba, TypRevizie, Pouzivatel, ChybaWrapper, TypChybyWrapper, DruhChyby, \
+    MiestoNaLinke, SposobenaKym
 
-from django.core.mail import send_mail
 
 class Seed(View):
     def get(self, request):
         run_seed("")
         next = request.POST.get('next', '/')
         return redirect(next)
-
 
 
 class TypyChyb(LoginRequiredMixin, View):
@@ -45,7 +42,29 @@ class Zaznamy(LoginRequiredMixin, View):
             i = request.GET["id"]
             chyba = Chyba.objects.all().filter(id=i)
             chyba.delete()
+
         data = {'zaznamy': ChybaWrapper.all()}
+
+        if "order_by" in request.GET:
+            order_by = request.GET.get('order_by', 'defaultOrderField')
+            print(order_by)
+            if order_by == "stav":
+                data = {'zaznamy': Chyba.objects.all().order_by("vyriesena","schvalena")}
+            if order_by == "cas":
+                data = {'zaznamy': Chyba.objects.all().order_by("vznik")}
+            if order_by == "pozicia":
+                data = {'zaznamy': Chyba.objects.all().order_by("miesto_na_linke")}
+            if order_by == "sposobena_kym":
+                data = {'zaznamy': Chyba.objects.all().order_by("sposobena_kym")}
+            if order_by == "popis":
+                data = {'zaznamy': Chyba.objects.all().order_by("popis")}
+            if order_by == "uzivatel":
+                data = {'zaznamy': Chyba.objects.all().order_by("pouzivatel")}
+            if order_by == "dovod":
+                data = {'zaznamy': Chyba.objects.all().order_by("dovod")}
+            if order_by == "opatrenie":
+                data = {'zaznamy': Chyba.objects.all().order_by("opatrenia")}
+
         return render(request, self.template, data)
 
     def post(self, request):
@@ -71,7 +90,7 @@ class PridajTyp(LoginRequiredMixin, View):
             typ = TypChyby.objects.all().filter(id=request.GET["id"])[0]
             form = TypForm(request.POST, instance=typ)
         else:
-           form = TypForm(request.POST)
+            form = TypForm(request.POST)
 
         if form.is_valid():
             form.save()
@@ -149,7 +168,7 @@ class Revizia(LoginRequiredMixin, View):
             i = request.GET["id"]
             revizia = TypRevizie.objects.all().filter(id=i)[0]
             revizia.datum_poslednej_revizie = date.today()
-            revizia.datum_nadchadzajucej_revizie = date.today() + timedelta(days=revizia.exspiracia)
+            revizia.datum_nadchadzajucej_revizie = date.today() + timedelta(days=int(revizia.exspiracia))
             revizia.save()
 
         data = {'revizie': TypRevizie.objects.all(), 'today': date.today(), 'weeks': date.today() + timedelta(days=28)}
@@ -164,10 +183,10 @@ class Grafy(LoginRequiredMixin, View):
 
     def get(self, request):
         data = {
-            "druhyChyb" : DruhChyby.objects.all(),
-            "zariadenia" : MiestoNaLinke.objects.all(),
-            "sposobeneKym" : SposobenaKym.objects.all(),
-            "popisyTypovChyby" : TypChyby.objects.all()
+            "druhyChyb": DruhChyby.objects.all(),
+            "zariadenia": MiestoNaLinke.objects.all(),
+            "sposobeneKym": SposobenaKym.objects.all(),
+            "popisyTypovChyby": TypChyby.objects.all()
         }
         return render(request, self.template, data)
 
@@ -187,9 +206,13 @@ class Grafy(LoginRequiredMixin, View):
         for i in range(0, diff, int(request.POST['casoveObdobie'])):
             grafLabels.append((start_date + datetime.timedelta(days=i)).strftime("%d.%m.%Y"))
             count += 1
-        grafColors = ['#E28C05', '#4A501A', '#8F5BCA', '#B7E30B', '#BAB1EB', '#979EF9', '#6B2F11', '#622590', '#D03C3F', '#96A321', '#A6994E', '#93B8B9', '#8EFD82', '#EE239D', '#3834A7', '#BE561D', '#29FEB9', '#0AC84D', '#0BDC93', '#BACFBA', '#46227D', '#504FD5', '#00DC0E', '#CF1A54', '#955DC2', '#705678', '#DAED28', '#B694C3', '#413707', '#A59E7E', '#523087', '#B365DF', '#F2DE74', '#F00C9A', '#22459D', '#E61080', '#AAA3D1', '#CCE9E1', '#2FE622', '#3281D6'][:count]
+        grafColors = ['#E28C05', '#4A501A', '#8F5BCA', '#B7E30B', '#BAB1EB', '#979EF9', '#6B2F11', '#622590', '#D03C3F',
+                      '#96A321', '#A6994E', '#93B8B9', '#8EFD82', '#EE239D', '#3834A7', '#BE561D', '#29FEB9', '#0AC84D',
+                      '#0BDC93', '#BACFBA', '#46227D', '#504FD5', '#00DC0E', '#CF1A54', '#955DC2', '#705678', '#DAED28',
+                      '#B694C3', '#413707', '#A59E7E', '#523087', '#B365DF', '#F2DE74', '#F00C9A', '#22459D', '#E61080',
+                      '#AAA3D1', '#CCE9E1', '#2FE622', '#3281D6'][:count]
 
-        grafData = [0]*count
+        grafData = [0] * count
         chyby = Chyba.objects.filter(
             vznik__gte=start_date,
             vznik__lte=end_date
@@ -222,12 +245,57 @@ class Grafy(LoginRequiredMixin, View):
             "zariadenia": MiestoNaLinke.objects.all(),
             "sposobeneKym": SposobenaKym.objects.all(),
             "popisyTypovChyby": TypChyby.objects.all(),
-            "grafLabels" : grafLabels,
-            "grafColors" : grafColors,
-            "grafData" : grafData
+            "grafLabels": grafLabels,
+            "grafColors": grafColors,
+            "grafData": grafData
         }
         return render(request, self.template, data)
 
+
+class Email(View):
+    template = "email.html"
+
+    def get(self, request):
+
+        return render(request, self.template, {})
+
+    def post(self, request):
+        now = datetime.datetime.now()
+        start = now - datetime.timedelta(days=28)
+        end = now - datetime.timedelta(days=27)
+        revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=start,
+                                                  datum_nadchadzajucej_revizie__lte=end)
+        revizia = None
+        print("pocet", revizie.count())
+        if revizie.count() > 0:
+            revizia = revizie[0]
+        if revizia is None:
+            return redirect('email')
+        send_mail(
+            'Blizi sa revizia',
+            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime(
+                "%d.%m.%Y"),
+            'noReplyRevizie@gmail.com',
+            ['freyer.viktor@gmail.com'],
+            fail_silently=False,
+        )
+        revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=datetime.date.today(),
+                                                  datum_nadchadzajucej_revizie__lte=now)
+        revizia = None
+        print("pocet", revizie.count())
+        if revizie.count() > 0:
+            revizia = revizie[0]
+        if revizia is None:
+            return redirect('email')
+        send_mail(
+            'Je cas na reviziu',
+            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime(
+                "%d.%m.%Y"),
+            'noReplyRevizie@gmail.com',
+            ['freyer.viktor@gmail.com'],
+            fail_silently=False,
+        )
+        return redirect('email')
 
 
 class PotvrdZaznam(View):
@@ -256,6 +324,7 @@ class PotvrdZaznam(View):
         zaznam.save()
         return redirect("zaznamy")
 
+
 class Pouzivatelia(LoginRequiredMixin, View):
     template = "pouzivatelia.html"
 
@@ -270,53 +339,12 @@ class Pouzivatelia(LoginRequiredMixin, View):
     def post(self, request):
         return HttpResponse('podarilo sa')
 
+
 class Login(LoginView):
     template_name = "login.html"
+
 
 class Logout(View):
     def get(self, request):
         logout(request)
         return redirect("login")
-
-class Email(View):
-    template = "email.html"
-
-    def get(self, request):
-
-        return render(request, self.template, {})
-
-    def post(self, request):
-        now = datetime.datetime.now()
-        start = now - datetime.timedelta(days=28)
-        end = now - datetime.timedelta(days=27)
-        revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=start, datum_nadchadzajucej_revizie__lte=end)
-        revizia = None
-        print("pocet", revizie.count())
-        if revizie.count() > 0:
-            revizia = revizie[0]
-        if revizia is None:
-            return redirect('email')
-        send_mail(
-            'Blizi sa revizia',
-            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime("%d.%m.%Y"),
-            'noReplyRevizie@gmail.com',
-            ['freyer.viktor@gmail.com'],
-            fail_silently=False,
-        )
-        revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=datetime.date.today(),
-                                                  datum_nadchadzajucej_revizie__lte=now)
-        revizia = None
-        print("pocet", revizie.count())
-        if revizie.count() > 0:
-            revizia = revizie[0]
-        if revizia is None:
-            return redirect('email')
-        send_mail(
-            'Je cas na reviziu',
-            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime(
-                "%d.%m.%Y"),
-            'noReplyRevizie@gmail.com',
-            ['freyer.viktor@gmail.com'],
-            fail_silently=False,
-        )
-        return redirect('email')

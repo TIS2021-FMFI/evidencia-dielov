@@ -4,31 +4,31 @@
 <table style="width: 100%">
     <tr class="nadpis">
             <td>
-                Stav
+                <a href="?order_by=stav">Stav</a>
             </td>
             <td>
-                Čas
+                <a href="?order_by=cas">Čas</a>
             </td>
             <td>
                 Trvanie
             </td>
             <td>
-                Pozícia
+                <a href="?order_by=pozicia">Pozícia</a>
             </td>
             <td>
-                Chybu spôsobil
+                <a href="?order_by=sposobena_kym">Chybu spôsobil</a>
             </td>
             <td>
-                Popis chyby
+                <a href="?order_by=popis">Popis chyby</a>
             </td>
             <td>
-                Uživateľ
+                <a href="?order_by=uzivatel">Uživateľ</a>
             </td>
             <td>
-                Dôvod
+                <a href="?order_by=dovod">Dôvod</a>
             </td>
             <td>
-                Opatrenie/Oprava
+                <a href="?order_by=opatrenie">Opatrenie/Oprava</a>
             </td>
             <td>
                 Náhradný diel
@@ -45,6 +45,8 @@
             </td>
 
     </tr>
+
+
     {% for item in zaznamy %}
 
             {% if item.schvalena == True %}
@@ -89,10 +91,10 @@
                     {{ item.pouzivatel}}
             </td>
             <td>
-                    {{ item.typ_chyby.popis}}
+                    {{ item.dovod}}
             </td>
             <td>
-                   {{ item.opatrenie}}
+                   {{ item.opatrenia}}
             </td>
             <td>
                     {{ item.nahradny_diel}}
@@ -128,6 +130,11 @@
             </td>
         </tr>
     {% endfor %}
+
+    <tr class="nadpis">
+        <td>da</td>
+    </tr>
+
 </table>
 
 

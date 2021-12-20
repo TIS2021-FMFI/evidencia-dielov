@@ -76,6 +76,19 @@ WSGI_APPLICATION = 'zapis_poruch.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+<<<<<<<<< Temporary merge branch 1
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydatabase',
+        'USER': 'mydatabaseuser',
+        'PASSWORD': 'mypassword',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
+}
+
+
 
 DATABASES = {
    'default': {
@@ -136,3 +149,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/typy/'  # URL redirecting after a successful authentication
 LOGIN_URL = "/login/"  # URL to redirect to on unsuccessful authentication
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'noReplyRevizie@gmail.com'
+EMAIL_HOST_PASSWORD = 'ahoj1234'
