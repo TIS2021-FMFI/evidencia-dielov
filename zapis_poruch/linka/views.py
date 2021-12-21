@@ -55,19 +55,21 @@ class Zaznamy(LoginRequiredMixin, View):
             if order_by == "stav":
                 data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena))
             if order_by == "cas":
-                data = {'zaznamy': Chyba.objects.all().order_by("vznik")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.vznik)
+            if order_by == "trvanie":
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.trvanie)
             if order_by == "pozicia":
-                data = {'zaznamy': Chyba.objects.all().order_by("miesto_na_linke")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.miesto_na_linke.id)
             if order_by == "sposobena_kym":
-                data = {'zaznamy': Chyba.objects.all().order_by("sposobena_kym")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.sposobena_kym.id)
             if order_by == "popis":
-                data = {'zaznamy': Chyba.objects.all().order_by("popis")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.popis)
             if order_by == "uzivatel":
-                data = {'zaznamy': Chyba.objects.all().order_by("pouzivatel")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.pouzivatel.id)
             if order_by == "dovod":
-                data = {'zaznamy': Chyba.objects.all().order_by("dovod")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.dovod)
             if order_by == "opatrenie":
-                data = {'zaznamy': Chyba.objects.all().order_by("opatrenia")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.opatrenia)
 
         return render(request, self.template, data)
 
