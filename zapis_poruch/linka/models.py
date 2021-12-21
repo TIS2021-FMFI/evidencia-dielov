@@ -181,6 +181,7 @@ class ChybaWrapper:
         self.opatrenia = object.opatrenia
         self.nahradny_diel = object.nahradny_diel
         self.popis = object.popis
+        self.dovod = object.dovod
         self.trvanie = self.vyriesenie - self.vznik
 
     @staticmethod
