@@ -102,7 +102,7 @@ class TypChybyWrapper:
             self.trvanie += object.trvanie.days
             self._increase_dict(pocet_nasich, rozdiel)
 
-        self.trvanie = round(self.trvanie / count)
+        self.trvanie = round(self.trvanie / count)  # todo solve ZeroDivisionError on empty DB
         self.vyskyt = pocet_nasich
         for key in pocet_nasich:
             self.frekvencie[key] = 0 if pocet_vsetkych[key] == 0 else pocet_nasich[key] / pocet_vsetkych[key]

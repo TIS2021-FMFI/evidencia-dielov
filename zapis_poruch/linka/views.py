@@ -1,4 +1,5 @@
 
+
 import datetime
 from django.db.models import Q
 import time
@@ -9,7 +10,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-
+from django.db.models import Q
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .managment.commands.seed import run_seed
 from .models import TypChyby, Chyba, TypRevizie, Pouzivatel, ChybaWrapper, TypChybyWrapper, DruhChyby, MiestoNaLinke, SposobenaKym
@@ -24,6 +25,7 @@ class Seed(View):
         run_seed("")
         next = request.POST.get('next', '/')
         return redirect(next)
+
 
 
 class TypyChyb(LoginRequiredMixin, View):
@@ -177,6 +179,7 @@ class Grafy(LoginRequiredMixin, View):
         return render(request, self.template, data)
 
     def post(self, request):
+      
         def getInt(val):
             try:
                 return int(val)
@@ -231,6 +234,8 @@ class Grafy(LoginRequiredMixin, View):
             "grafData" : grafData
         }
         return render(request, self.template, data)
+
+
 
 
 class Email(View):
@@ -325,3 +330,4 @@ class Logout(View):
     def get(self, request):
         logout(request)
         return redirect("login")
+
