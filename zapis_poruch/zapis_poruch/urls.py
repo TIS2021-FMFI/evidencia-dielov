@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from linka.views import TypyChyb, Zaznamy, Grafy, Revizia, PridajTyp, PridajZaznam, Email, Pouzivatelia, Login, Logout, Seed, PridajRevizia, PotvrdZaznam, Email
+from linka.views import TypyChyb, Zaznamy, Grafy, Revizia, PridajTyp, PridajZaznam,\
+    Email, Pouzivatelia, Login, Logout, Seed, PridajRevizia, PotvrdZaznam
 
 
 
