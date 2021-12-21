@@ -49,15 +49,15 @@
 
     {% for item in zaznamy %}
 
-            {% if item.vyriesena == True %}
+            {% if item.schvalena == True %}
                  <tr class="done">
                     <td>
                         vyriešená
                     </td>
-            {% elif item.schvalena == True  %}
+            {% elif item.vyriesena == True  %}
                 <tr class="approach">
                     <td>
-                        schválená
+                        vyriešená(čaká na potvrdenie)
                     </td>
 
             {% else %}
@@ -103,7 +103,9 @@
                 <button onclick="presmerovanie('/zaznamy/pridaj', 'GET', '{{ item.id }}')">UPRAVIŤ</button>
             </td>
             <td>
-                <button onclick="presmerovanie( '/zaznamy/potvrd', 'GET', '{{ item.id }}')">POTVRDIŤ</button>
+                {% if not item.schvalena and  item.vyriesena == True  %}
+                    <button onclick="presmerovanie( '/zaznamy/potvrd', 'GET', '{{ item.id }}')">POTVRDIŤ</button>
+                {% endif %}
             </td>
             <td>
                 <button  id="myBtn" onclick=" myFunction('{{ item.id }}')">
@@ -140,8 +142,9 @@
 
 
 {% block footer%}
-
-<div class="pridaj">
+<br>
+<br>
+<div class="pridaj" >
     <button onclick="presmerovanie('/zaznamy/pridaj', 'GET', 0)"> Pridaj nový zaznam</button>
 </div>
 

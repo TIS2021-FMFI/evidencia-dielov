@@ -8,7 +8,7 @@ from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
-
+from django.db.models import Q
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .managment.commands.seed import run_seed
 from .models import TypChyby, Chyba, TypRevizie, Pouzivatel, ChybaWrapper, TypChybyWrapper, DruhChyby, \
@@ -276,8 +276,7 @@ class Email(View):
             return redirect('email')
         send_mail(
             'Blizi sa revizia',
-            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime(
-                "%d.%m.%Y"),
+            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime("%d.%m.%Y"),
             'noReplyRevizie@gmail.com',
             ['freyer.viktor@gmail.com'],
             fail_silently=False,
@@ -351,3 +350,4 @@ class Logout(View):
     def get(self, request):
         logout(request)
         return redirect("login")
+
