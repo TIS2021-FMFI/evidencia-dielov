@@ -53,7 +53,7 @@ class Zaznamy(LoginRequiredMixin, View):
             order_by = request.GET.get('order_by', 'defaultOrderField')
             print(order_by)
             if order_by == "stav":
-                data = {'zaznamy': Chyba.objects.all().order_by("vyriesena","schvalena")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena))
             if order_by == "cas":
                 data = {'zaznamy': Chyba.objects.all().order_by("vznik")}
             if order_by == "pozicia":
