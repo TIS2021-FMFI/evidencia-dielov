@@ -165,6 +165,7 @@ class Revizia(LoginRequiredMixin, View):
     template = "revizia.html"
 
     def get(self, request):
+
         if "delete" in request.GET:
             i = request.GET["id"]
             revizia = TypRevizie.objects.all().filter(id=i)[0]
@@ -178,6 +179,20 @@ class Revizia(LoginRequiredMixin, View):
             revizia.save()
 
         data = {'revizie': TypRevizie.objects.all(), 'today': date.today(), 'weeks': date.today() + timedelta(days=28)}
+
+        if "order_by" in request.GET:
+            order_by = request.GET.get('order_by', 'defaultOrderField')
+            print(order_by)
+            if order_by == "nazov":
+                data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.nazov_revizie)
+            if order_by == "typ":
+                data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.typ_revizie)
+            if order_by == "datum_poslednej":
+                data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.datum_poslednej_revizie)
+            if order_by == "datum_dalsej":
+                data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.datum_nadchadzajucej_revizie)
+
+
         return render(request, self.template, data)
 
     def post(self, request):
