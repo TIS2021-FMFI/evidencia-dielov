@@ -32,6 +32,21 @@ class TypyChyb(LoginRequiredMixin, View):
             object.fill(all_errors)
 
         data = {'errors': [x.json() for x in all_types]}
+
+        if "order_by" in request.GET:
+            order_by = request.GET.get('order_by', 'defaultOrderField')
+            print(order_by)
+            if order_by == "pozicia":
+                data['errors'] = sorted(data['errors'], key=lambda obj: obj['miesto_na_linke'])
+            if order_by == "povod":
+                data['errors'] = sorted(data['errors'], key=lambda obj: obj['sposobena_kym'])
+            if order_by == "druh":
+                data['errors'] = sorted(data['errors'], key=lambda obj: obj['druh_chyby'])
+            if order_by == "popis":
+                data['errors'] = sorted(data['errors'], key=lambda obj: obj['popis'])
+            if order_by == "trvanie":
+                data['errors'] = sorted(data['errors'], key=lambda obj: obj['trvanie'])
+
         return render(request, self.template, data)
 
     def post(self, request):
