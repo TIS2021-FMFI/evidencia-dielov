@@ -14,6 +14,10 @@ function presmerovanie( url, method,id=-1,){
         }
         if(method === "PUT"){
             if(url === '/revizia'){
+                if( id === -1){
+                    window.location.replace(url + "?put=True&id=" + this.id);
+                    return;
+                }
                  window.location.replace(url + "?put=True&id=" + id);
                  return;
             }
@@ -28,6 +32,12 @@ function presmerovanie( url, method,id=-1,){
 }
 function myFunction(id) {
     var modal = document.getElementById("myModal");
+    modal.style.display = "block";
+    this.id = id;
+
+}
+function myFunction2(id) {
+    var modal = document.getElementById("schval");
     modal.style.display = "block";
     this.id = id;
 

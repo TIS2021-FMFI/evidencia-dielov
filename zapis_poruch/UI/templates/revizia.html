@@ -46,7 +46,7 @@
             {{item.datum_nadchadzajucej_revizie}}
         </td>
         <td>
-            <button onclick="presmerovanie( '/revizia', 'PUT', '{{ item.id }}')">VYKONAŤ REVÍZIU</button>
+            <button id="vykonajButton"  onclick=" myFunction2('{{ item.id }}')" >VYKONAŤ REVÍZIU</button>
         </td>
         <td>
             <button onclick="presmerovanie('/revizia/pridaj', 'GET', '{{ item.id }}')">UPRAVIŤ</button>
@@ -61,10 +61,9 @@
         </td>
     </tr>
     {% endfor %}
+    <br>
+    <br>
 
-    <tr class="nadpis" style="background: white; color: white; outline: white">
-        <td style="background: white; color: white; outline: white">da</td>
-    </tr>
 
 </table>
 <div id="myModal" class="modal">
@@ -78,7 +77,19 @@
                           ÁNO </button>
                   </div>
 
-                </div>
+</div>
+<div id="schval" class="modal">
+
+                  <!-- Modal content -->
+                  <div class="modal-content">
+                    <span class="close">&times;</span>
+
+                      Ste si istý, že chcete revíziu odstrániť?
+                      <button onclick="presmerovanie( '/revizia', 'PUT')" >
+                          ÁNO </button>
+                  </div>
+
+</div>
 {% endblock maincontent %}
 
 {% block footer%}
