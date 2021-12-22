@@ -1,6 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block maincontent %}
+<script>
+    const typy_chyb = {{ errors|safe }}
+
+    function change_table(){
+        let target_freq = document.getElementById("freq").value;
+        let target_freq2 = document.getElementById("freq2").value;
+        for(let index in typy_chyb){
+            let item = typy_chyb[index];
+            let e = document.getElementById("frekvencie_" + item.id);
+            e.innerHTML = item.frekvencie[target_freq];
+            let k = document.getElementById("vyskyt_" + item.id);
+            k.innerHTML = item.vyskyt[target_freq2];
+
+        }
+    }
+</script>
 <table style="width: 100%">
     <tr class="nadpis">
             <td>
@@ -20,7 +36,7 @@
             </td>
             <td>
                 Priemerna frekvencia za
-                <select name="freq" id="freq">
+                <select name="freq" id="freq" onchange="change_table()">
                   <option value="week">týždeň</option>
                   <option value="month">mesiac</option>
                   <option value="6months">pol rok</option>
@@ -30,7 +46,7 @@
             <td>
                 Vyskyt v poslednom
 
-                <select name="freq" id="freq2">
+                <select name="freq" id="freq2" onchange="change_table()">
                   <option value="week">týždeň</option>
                   <option value="month">mesiac</option>
                   <option value="6months">pol rok</option>
@@ -42,30 +58,30 @@
             </td>
     </tr>
     {% for item in errors %}
-        <tr>
+        <tr id="{{ item.id }}">
             <td>
-                {{ item.miesto_na_linke.miesto }}
+                {{ item.miesto_na_linke }}
             </td>
             <td>
-                {{ item.sposobena_kym.kym }}
+                {{ item.sposobena_kym }}
             </td>
             <td>
-                {{ item.druh_chyby.nazov }}
+                {{ item.druh_chyby }}
             </td>
             <td>
                 {{ item.popis }}
             </td>
             <td>
-                vypocitat v pythone
+                {{ item.trvanie }}
+            </td>
+            <td id="frekvencie_{{ item.id }}">
+                {{ item.frekvencie.week }}
+            </td>
+            <td id="vyskyt_{{ item.id }}">
+                {{ item.vyskyt.week }}
             </td>
             <td>
-                vypocitat v pythone
-            </td>
-            <td>
-                vypocitat v pythone
-            </td>
-            <td>
-            <button onclick="presmerovanie('{{ item.id }}', '/typy/pridaj', 'GET')">UPRAVIŤ</button>
+            <button onclick="presmerovanie('/typy/pridaj', 'GET', '{{ item.id }}')">UPRAVIŤ</button>
             </td>
         </tr>
     {% endfor %}
@@ -73,7 +89,9 @@
 {% endblock maincontent %}
 
 {% block footer%}
+<br>
+<br>
 <div class="pridaj">
-    <button onclick="presmerovanie(null, '/typy/pridaj', 'GET')"> Pridaj nový typ</button>
+    <button onclick="presmerovanie('/typy/pridaj', 'GET', 0)"> Pridaj nový typ</button>
 </div>
 {% endblock footer%}

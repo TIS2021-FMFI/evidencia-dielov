@@ -2,7 +2,7 @@
 {% load static %}
 {% block maincontent %}
 
-<form method="post" xmlns="http://www.w3.org/1999/html" >
+<form method="post" xmlns="http://www.w3.org/1999/html">
     {% csrf_token %}
         {% for item in form%}
         {% if item.label == "Uživateľ" %}
@@ -14,20 +14,16 @@
 
         {% endif %}
 
-        {% if item.label == "Čas" %}
-            <div class="second justify-content-center">
-                 <label for="beginDate">Čas vzniku</label><br>
-                {% if not cas %}
-                <input id="beginDate" type="date"   height="1000" value="new Date().toDateInputValue(); ">
-                <input id="beginTime" type="time"   height="1000" value="new Time().toTimeInputValue()">
-                {% else %}
-                <input id="beginDate" type="date"   height="1000" value="new Date({{datum}})">
-                <input id="beginTime" type="time"   height="1000" value="new Time({{cas}})">
-                {% endif %}
+        {% if item.label == "Vyriešená" %}
+            <div class="second justify-content-center" disabled="">
+                 <label for="beginDate">Čas vzniku</label><span class="textHviezda">*</span><br>
+                <input id="beginDate" type="date"   height="1000" value="{{current_date}} ">
+                <input id="beginTime" type="time"   height="1000" value="{{current_time}}">
+
 
             </div>
             <div class="thirt ">
-                {{item.label}}<span class="textHviezda">*</span><br>
+                {{item.label}}
                 {{item}}
 
             </div>
@@ -46,13 +42,13 @@
         {% endif %}
         {% if item.label == "Popis" %}
             <div class="second">
-                {{item.label}}
+                {{item.label}}<span class="textHviezda">*</span><br>
                 {{item}}
             </div>
-            <div class="thirt" >
-                 <label for="endDate">Dátum vyriešenia</label><br>
-                <input id="endDate" type="date"   height="1000" value="new Date().toDateInputValue(); "  >
-                <input id="endTime" type="time"   height="1000" value="new Date().toISOString().slice(11, 17)"  >
+            <div class="thirt">
+                 <label for="beginDate">Dátum vyriešenia</label><br>
+                <input id="endDate" type="date"   height="1000" value="{{current_date}} ">
+                <input id="endTime" type="time"   height="1000" value="{{current_time}}">
 
 
             </div>
@@ -73,7 +69,7 @@
 
         {% endif %}
         {% if item.label == "Opatrenia/ Oprava" %}
-            <div class="thirt" >
+            <div class="thirt">
                 {{item.label}}<br>
                 {{item}}
             </div>
@@ -94,7 +90,7 @@
         {% endif %}
 
         {% if item.label == "Náhradný diel" %}
-            <div class="thirt"  disabled="!{{item.vyriesena}}">
+            <div class="thirt">
                 {{item.label}}<br>
                 {{item}}
             </div>
@@ -102,14 +98,65 @@
         {% endif %}
 
      {% endfor %}
-    <div class="pridaj">
-        <button type="submit"> Uložiť</button>
-    </div>
+
+
+
+<table class="potvrd potvrd_body" >
+    <thead>
+    <tr class="nadpis">
+            <td>
+                Pozícia
+            </td>
+            <td>
+                Chybu spôsobil
+            </td>
+            <td>
+                Druh chyby
+            </td>
+            <td>
+                Popis chyby
+            </td>
+            <td>
+                Priradenie<span class="textHviezda">*</span>
+            </td>
+    </tr>
+
+    </thead>
+    <tbody >
+    {% for item in typy %}
+        <tr >
+            <td>
+                {{ item.miesto_na_linke.miesto }}
+            </td>
+            <td>
+                {{ item.sposobena_kym.kym }}
+            </td>
+            <td>
+                {{ item.druh_chyby.nazov }}
+            </td>
+            <td>
+                {{ item.popis }}
+            </td>
+            <td>
+                <input type="checkbox" onchange="zmen('{{item.id}}')" id="{{item.id}}">
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
 
 </form>
+
+<div class="pridaj">
+        <button type="submit" id="potvrd" disabled="true" onclick="presmerovanie('/zaznamy/potvrd', 'PUT', '{{ item.id }}')">POTVRĎ</button>
+</div>
+
 
 {% endblock maincontent %}
 
 {% block footer%}
 {% endblock footer%}
+
 

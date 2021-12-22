@@ -48,27 +48,28 @@
     {% for item in zaznamy %}
 
             {% if item.schvalena == True %}
-                 <tr class="approach">
+                 <tr class="done">
                     <td>
-                        schvalena
+                        vyriešená
                     </td>
-            {% elif item.vyriesena == True %}
-                <tr class="done">
+            {% elif item.vyriesena == True  %}
+                <tr class="approach">
                     <td>
-                        vyriesena
+                        vyriešená(čaká na potvrdenie)
                     </td>
+
             {% else %}
                 <tr class="items">
                     <td>
-                        nevyriesena
+                        nevyriešená
                     </td>
             {% endif %}
             <td>
                 {{ item.vznik }}
             </td>
-            {% if item.vyriesenie is not None %}
+            {% if item.vyriesena%}
                 <td>
-                    {{ item.vyriesenie}}
+                    {{ item.trvanie}}
                 </td>
                 {% else %}
                 <td>
@@ -97,22 +98,67 @@
                     {{ item.nahradny_diel}}
             </td>
             <td>
-                <button onclick="presmerovanie('{{ item.id }}', '/zaznamy/pridaj', 'GET')">UPRAVIŤ</button>
+                <button onclick="presmerovanie('/zaznamy/pridaj', 'GET', '{{ item.id }}')">UPRAVIŤ</button>
             </td>
             <td>
-                <button>POTVRDIŤ</button>
+                {% if not item.schvalena and  item.vyriesena == True  %}
+                    <button onclick="presmerovanie( '/zaznamy/potvrd', 'GET', '{{ item.id }}')">POTVRDIŤ</button>
+                {% endif %}
             </td>
             <td>
-                <button onclick="presmerovanie('{{ item.id }}', '/zaznamy', 'DELETE')">ODSTRÁNIŤ</button>
+                <button  id="myBtn" onclick=" myFunction('{{ item.id }}')">
+                   ODSTRÁNIŤ
+                </button>
+                  <div id="myModal" class="modal">
+
+                                  <!-- Modal content -->
+                                  <div class="modal-content">
+                                    <span class="close">&times;</span>
+
+                                      Ste si istý, že chcete záznam odstrániť?
+                                      <button onclick="presmerovanie( '/zaznamy', 'DELETE')" >
+                                          ÁNO
+                                      </button>
+                                  </div>
+
+                  </div>
+
+
+
             </td>
         </tr>
     {% endfor %}
 </table>
+
+
 {% endblock maincontent %}
 
 
 {% block footer%}
-<div class="pridaj">
-    <button onclick="presmerovanie(null, '/zaznamy/pridaj', 'GET')"> Pridaj nový zaznam</button>
+<br>
+<br>
+<div class="pridaj" >
+    <button onclick="presmerovanie('/zaznamy/pridaj', 'GET', 0)"> Pridaj nový zaznam</button>
 </div>
+
+
+<script>
+
+    var span = document.getElementsByClassName("close")[0];
+    var modal = document.getElementById("myModal");
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+</script>
 {% endblock footer%}
+
