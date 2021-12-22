@@ -246,39 +246,49 @@ class Email(View):
         return render(request, self.template, {})
 
     def post(self, request):
+        mail_list = ['namova9094@pyrelle.com']  # , 'freyer.viktor@gmail.com']
         now = datetime.datetime.now()
-        start = now - datetime.timedelta(days=28)
-        end = now - datetime.timedelta(days=27)
-        revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=start, datum_nadchadzajucej_revizie__lte=end)
-        revizia = None
+        start = now + datetime.timedelta(days=27)
+        end = now + datetime.timedelta(days=28)
+        revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=start,
+                                                  datum_nadchadzajucej_revizie__lte=end)
+
         print("pocet", revizie.count())
         if revizie.count() > 0:
-            revizia = revizie[0]
-        if revizia is None:
-            return redirect('email')
-        send_mail(
-            'Blizi sa revizia',
-            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime("%d.%m.%Y"),
-            'noReplyRevizie@gmail.com',
-            ['freyer.viktor@gmail.com'],
-            fail_silently=False,
-        )
+            message = ""
+            for revizia in revizie:
+                message += f"Názov revízie: \"{revizia.nazov_revizie}\"\n" \
+                           f"Typ revízie: \"{revizia.typ_revizie}\"\n" \
+                           f"Dátum blížiacej sa revízie: " + revizia.datum_nadchadzajucej_revizie.strftime(
+                                "%d.%m.%Y") + "\n-------------------------------\n"
+            print(message.strip())
+            send_mail(
+                'Blíži sa dátum revízie!',
+                message.strip(),
+                'noReplyRevizie@gmail.com',
+                mail_list,
+                fail_silently=False,
+            )
         revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=datetime.date.today(),
-                                                  datum_nadchadzajucej_revizie__lte=now)
-        revizia = None
+                                                  datum_nadchadzajucej_revizie__lte=datetime.date.today() + datetime.timedelta(days=1))
+
         print("pocet", revizie.count())
         if revizie.count() > 0:
-            revizia = revizie[0]
-        if revizia is None:
-            return redirect('email')
-        send_mail(
-            'Je cas na reviziu',
-            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime(
-                "%d.%m.%Y"),
-            'noReplyRevizie@gmail.com',
-            ['freyer.viktor@gmail.com'],
-            fail_silently=False,
-        )
+            message = ""
+            for revizia in revizie:
+                message += f"Názov revízie: \"{revizia.nazov_revizie}\"\n" \
+                           f"Typ revízie: \"{revizia.typ_revizie}\"\n" \
+                           f"Dátum blížiacej sa revízie: " + revizia.datum_nadchadzajucej_revizie.strftime(
+                                "%d.%m.%Y") + "\n-------------------------------\n"
+
+            print(message.strip())
+            send_mail(
+                'Prišiel stanovený dátum revízie!',
+                message,
+                'noReplyRevizie@gmail.com',
+                mail_list,
+                fail_silently=False,
+            )
         return redirect('email')
 
 
