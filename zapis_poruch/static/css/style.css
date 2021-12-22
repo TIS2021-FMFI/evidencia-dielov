@@ -89,6 +89,7 @@ li{
 .nadpis{
     background-color: #eeeeee;
 }
+
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */
@@ -143,4 +144,5 @@ li{
 
 .m-1 {
     margin: 10px;
+
 }

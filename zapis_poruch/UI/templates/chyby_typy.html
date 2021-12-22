@@ -20,19 +20,19 @@
 <table style="width: 100%">
     <tr class="nadpis">
             <td>
-                Pozícia
+                <a href="?order_by=pozicia">Pozícia</a>
             </td>
             <td>
-                Chybu spôsobil
+                <a href="?order_by=povod">Chybu spôsobil</a>
             </td>
             <td>
-                Druh chyby
+                <a href="?order_by=druh">Druh chyby</a>
             </td>
             <td>
-                Popis chyby
+                <a href="?order_by=popis">Popis chyby</a>
             </td>
             <td>
-                Priemerne trvanie
+                <a href="?order_by=trvanie">Priemerne trvanie</a>
             </td>
             <td>
                 Priemerna frekvencia za
@@ -85,11 +85,6 @@
             </td>
         </tr>
     {% endfor %}
-
-    <tr class="nadpis">
-        <td>da</td>
-    </tr>
-
 </table>
 {% endblock maincontent %}
 
