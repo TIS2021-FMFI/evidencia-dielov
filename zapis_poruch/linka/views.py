@@ -86,6 +86,9 @@ class Zaznamy(LoginRequiredMixin, View):
             if order_by == "opatrenie":
                 data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.opatrenia)
 
+        group_permissions = request.user.get_group_permissions()
+        data['permissions'] = group_permissions
+
         return render(request, self.template, data)
 
     def post(self, request):

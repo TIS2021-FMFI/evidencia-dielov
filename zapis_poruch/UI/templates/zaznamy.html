@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block maincontent %}
+
 <table style="width: 100%">
     <tr class="nadpis">
             <td>
@@ -100,7 +101,9 @@
                     {{ item.nahradny_diel}}
             </td>
             <td>
+            {% if 'linka.change_chyba' in permissions %}
                 <button onclick="presmerovanie('/zaznamy/pridaj', 'GET', '{{ item.id }}')">UPRAVIŤ</button>
+            {% endif %}
             </td>
             <td>
                 {% if not item.schvalena and  item.vyriesena == True  %}
@@ -108,6 +111,7 @@
                 {% endif %}
             </td>
             <td>
+            {% if 'linka.delete_chyba' in permissions %}
                 <button  id="myBtn" onclick=" myFunction('{{ item.id }}')">
                    ODSTRÁNIŤ
                 </button>
@@ -124,6 +128,7 @@
                                   </div>
 
                   </div>
+            {% endif %}
 
 
 
@@ -140,9 +145,11 @@
 {% block footer%}
 <br>
 <br>
-<div class="pridaj" >
-    <button onclick="presmerovanie('/zaznamy/pridaj', 'GET', 0)"> Pridaj nový zaznam</button>
-</div>
+    {% if 'linka.add_chyba' in permissions %}
+    <div class="pridaj" >
+        <button onclick="presmerovanie('/zaznamy/pridaj', 'GET', 0)"> Pridaj nový zaznam</button>
+    </div>
+    {% endif %}
 
 
 <script>
