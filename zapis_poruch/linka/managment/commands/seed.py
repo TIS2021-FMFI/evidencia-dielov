@@ -103,19 +103,21 @@ def clear_data():
 
 
 def create_zaznam(miesto_na_linke, druh_chyby, pouzivatel, sposobena_kym, typ_chyby):
+    vyriesena = random.choice([True, False])
     zaznam = Chyba(
         miesto_na_linke=miesto_na_linke,
         druh_chyby=druh_chyby,
         vznik=random_date_time(),
         pouzivatel=pouzivatel,
         schvalena=random.choice([True, False]),
-        vyriesena=random.choice([True, False]),
+        vyriesena=vyriesena,
         vyriesenie=random_date_time(),
         sposobena_kym=sposobena_kym,
         typ_chyby=typ_chyby,
-        opatrenia='nic',
+        opatrenia=f'opatrenie #{typ_chyby.id}',
         nahradny_diel='ahaha',
-        popis='babksb'
+        popis=f'popis #{typ_chyby.id}',
+        dovod='' if not vyriesena else f"dovod #{typ_chyby.id}",
     )
     zaznam.save()
     return zaznam

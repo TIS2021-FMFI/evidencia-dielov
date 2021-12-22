@@ -1,7 +1,6 @@
 table{
     width: 100%;
     border: 1px solid black;
-     border-collapse: collapse;
 }
 tr, td{
     border: 1px solid black;
@@ -89,7 +88,6 @@ li{
 .nadpis{
     background-color: #eeeeee;
 }
-
 
 /* The Modal (background) */
 .modal {
