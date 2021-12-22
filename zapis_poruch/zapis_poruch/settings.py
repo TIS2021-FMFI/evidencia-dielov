@@ -142,3 +142,8 @@ EMAIL_HOST_PASSWORD = 'ahoj1234'
 LOGIN_REDIRECT_URL = '/typy/'  # URL redirecting after a successful authentication
 LOGIN_URL = "/login/"  # URL to redirect to on unsuccessful authentication
 
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'noReplyRevizie@gmail.com'
+EMAIL_HOST_PASSWORD = 'ahoj1234'

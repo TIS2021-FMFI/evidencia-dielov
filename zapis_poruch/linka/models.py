@@ -135,22 +135,35 @@ class Pouzivatel(User):
     pass
 
 
+# zaznam o chybe
 class Chyba(models.Model):
     class Meta:
         verbose_name_plural = "Chyby"
 
-    vznik = models.DateTimeField(verbose_name="Čas", default=None)
-    pouzivatel = models.ForeignKey(Pouzivatel, verbose_name="Uživateľ", on_delete=models.CASCADE,  default=None)
+    typ_chyby = models.ForeignKey(TypChyby, verbose_name="Typ Chyby", on_delete=models.CASCADE, default=None)
+
+    #stav
     schvalena = models.BooleanField(verbose_name="Schválená")
     vyriesena = models.BooleanField(verbose_name="Vyriešená")
-    vyriesenie = models.DateTimeField(verbose_name="Dátum vyriešenia", default=None)
+
+    # cas vzniku a vyriesenia
+    vznik = models.DateTimeField(verbose_name="Čas", default=None)
+    vyriesenie = models.DateTimeField(verbose_name="Čas vyriešenia", default=None)
+
+    # clovek kto nahlasil chybu
+    pouzivatel = models.ForeignKey(Pouzivatel, verbose_name="Uživateľ", on_delete=models.CASCADE,  default=None)
+
+    # pozicia
     miesto_na_linke = models.ForeignKey(MiestoNaLinke, verbose_name="Pozícia",  on_delete=models.CASCADE,  default=None)
+    # mechanicka elektronicka
     druh_chyby = models.ForeignKey(DruhChyby, verbose_name="Druh chyby",  on_delete=models.CASCADE,   default=None)
+    # stroj/clovek
     sposobena_kym = models.ForeignKey(SposobenaKym, verbose_name="Chybu spôsobil",  on_delete=models.CASCADE, default=None)
-    typ_chyby = models.ForeignKey(TypChyby, verbose_name="Dôvod",  on_delete=models.CASCADE,  default=None)
+
+    popis = models.CharField(verbose_name="Popis", max_length=128, default=None)
+    dovod = models.CharField(verbose_name="Dôvod", max_length=128, default=None)
     opatrenia = models.CharField(verbose_name="Opatrenia/ Oprava", max_length=256,  default=None)
     nahradny_diel = models.CharField(verbose_name="Náhradný diel", max_length=128,  default=None)
-    popis = models.CharField(verbose_name="Popis", max_length=128,  default=None)
 
 
 class ChybaWrapper:
@@ -168,6 +181,7 @@ class ChybaWrapper:
         self.opatrenia = object.opatrenia
         self.nahradny_diel = object.nahradny_diel
         self.popis = object.popis
+        self.dovod = object.dovod
         self.trvanie = self.vyriesenie - self.vznik
 
     @staticmethod
