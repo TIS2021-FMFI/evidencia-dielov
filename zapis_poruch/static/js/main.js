@@ -30,14 +30,14 @@ function presmerovanie( url, method,id=-1,){
         }
     }
 }
-function myFunction(id) {
-    var modal = document.getElementById("myModal");
+function vymaz(id) {
+    var modal = document.getElementById("vymaz");
     modal.style.display = "block";
     this.id = id;
 
 }
-function myFunction2(id) {
-    var modal = document.getElementById("schval");
+function vykonajRevizuOkno(id) {
+    var modal = document.getElementById("vykonaj");
     modal.style.display = "block";
     this.id = id;
 
