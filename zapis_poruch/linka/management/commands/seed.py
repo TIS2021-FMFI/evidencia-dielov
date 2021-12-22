@@ -57,11 +57,6 @@ def create_typ_chyby(id, miesto, druh, sposobena_kym):
     return typ_chyby
 
 
-# def create_pravo(id):
-#     pravo = Pravo(nazov=str(id) + '. pravo')
-#     pravo.save()
-#     return pravo
-
 def create_sposobena_kym(id):
     sposobena_kym = SposobenaKym(kym=str(id) + '. kym')
     sposobena_kym.save()
@@ -72,8 +67,6 @@ def create_pouzivatel(i):
     mena = ['Liam', 'Olivia', 'Noah', 'Emma', 'Oliver', 'Ava']
     priezviska = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis']
 
-    meno = random.choice(mena)
-    priezvisko = random.choice(priezviska)
     username = f'user{i}'
     email = f'{username}@poruchy.com'
     pouzivatel = User.objects.create_user(username, email, HESLO)
@@ -82,11 +75,6 @@ def create_pouzivatel(i):
     pouzivatel.save()
     return pouzivatel
 
-
-# def create_ma_prava(pouzivatel, pravo):
-#     ma_pravo = MaPouzivatelPravo(pouzivatel=pouzivatel, pravo=pravo)
-#     ma_pravo.save()
-#     return ma_pravo
 
 def create_zariadenie(id):
     zariadenie = TypRevizie(
