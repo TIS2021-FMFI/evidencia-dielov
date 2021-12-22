@@ -221,36 +221,31 @@ class Email(View):
 
     def post(self, request):
         now = datetime.datetime.now()
-        start = now - datetime.timedelta(days=28)
-        end = now - datetime.timedelta(days=27)
+        start = now + datetime.timedelta(days=28)
+        end = now + datetime.timedelta(days=27)
         revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=start, datum_nadchadzajucej_revizie__lte=end)
-        revizia = None
         print("pocet", revizie.count())
         if revizie.count() > 0:
-            revizia = revizie[0]
-        if revizia is None:
-            return redirect('email')
-        send_mail(
-            'Blizi sa revizia',
-            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime("%d.%m.%Y"),
-            'noReplyRevizie@gmail.com',
-            ['freyer.viktor@gmail.com'],
-            fail_silently=False,
-        )
+            for revizia in revizie:
+                send_mail(
+                    'Blizi sa revizia',
+                    revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime("%d.%m.%Y"),
+                    'noReplyRevizie@gmail.com',
+                    ['freyer.viktor@gmail.com'],
+                    fail_silently=False,
+                )
         revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=datetime.date.today(),
                                                   datum_nadchadzajucej_revizie__lte=now)
-        revizia = None
+
         print("pocet", revizie.count())
         if revizie.count() > 0:
-            revizia = revizie[0]
-        if revizia is None:
-            return redirect('email')
-        send_mail(
-            'Je cas na reviziu',
-            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime(
-                "%d.%m.%Y"),
-            'noReplyRevizie@gmail.com',
-            ['freyer.viktor@gmail.com'],
-            fail_silently=False,
-        )
+           for revizia in revizie:
+               send_mail(
+                    'Je cas na reviziu',
+                    revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime(
+                    "%d.%m.%Y"),
+                    'noReplyRevizie@gmail.com',
+                    ['freyer.viktor@gmail.com'],
+                    fail_silently=False,
+               )
         return redirect('email')
