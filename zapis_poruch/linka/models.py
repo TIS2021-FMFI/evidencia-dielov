@@ -131,10 +131,6 @@ class TypRevizie(models.Model):
         return self.nazov_revizie
 
 
-class Pouzivatel(User):
-    pass
-
-
 # zaznam o chybe
 class Chyba(models.Model):
     class Meta:
@@ -151,7 +147,7 @@ class Chyba(models.Model):
     vyriesenie = models.DateTimeField(verbose_name="Čas vyriešenia", default=None)
 
     # clovek kto nahlasil chybu
-    pouzivatel = models.ForeignKey(Pouzivatel, verbose_name="Uživateľ", on_delete=models.CASCADE,  default=None)
+    pouzivatel = models.ForeignKey(User, verbose_name="Uživateľ", on_delete=models.CASCADE,  default=None)
 
     # pozicia
     miesto_na_linke = models.ForeignKey(MiestoNaLinke, verbose_name="Pozícia",  on_delete=models.CASCADE,  default=None)

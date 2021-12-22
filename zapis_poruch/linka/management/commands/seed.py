@@ -2,7 +2,8 @@ from django.core.management.base import BaseCommand
 from datetime import datetime
 import random
 
-from linka.models import Chyba, DruhChyby, MiestoNaLinke, TypChyby, Pouzivatel, \
+from django.contrib.auth.models import User
+from linka.models import Chyba, DruhChyby, MiestoNaLinke, TypChyby, \
     TypRevizie, SposobenaKym
 
 MODE_REFRESH = 'refresh'
@@ -11,17 +12,20 @@ MODE_CLEAR = 'clear'
 
 HESLO = 'secret'
 
+
 def random_date():
-    den = random.choice(list(range(1,29)))
-    mesiac = random.choice(list(range(1,13)))
-    rok = random.choice(list(range(2020,2024)))
-    return str(rok)+'-'+str(mesiac)+'-'+str(den)
+    den = random.choice(list(range(1, 29)))
+    mesiac = random.choice(list(range(1, 13)))
+    rok = random.choice(list(range(2020, 2024)))
+    return str(rok) + '-' + str(mesiac) + '-' + str(den)
+
 
 def random_time():
-    hodina = random.choice(list(range(0,24)))
-    minuta = random.choice(list(range(0,60)))
-    sekunda = random.choice(list(range(0,60)))
-    return str(hodina)+':'+str(minuta)+':'+str(sekunda)
+    hodina = random.choice(list(range(0, 24)))
+    minuta = random.choice(list(range(0, 60)))
+    sekunda = random.choice(list(range(0, 60)))
+    return str(hodina) + ':' + str(minuta) + ':' + str(sekunda)
+
 
 def random_date_time():
     return random_date() + "T" + random_time()
@@ -30,14 +34,8 @@ def random_date_time():
 class Command(BaseCommand):
     help = 'seed database for testing and development'
 
-    def add_arguments(self, parser):
-        parser.add_argument('--mode', type=str, help='Mode')
-
     def handle(self, *args, **options):
-        self.stdout.write('seeding data...')
-        run_seed(options['mode'])
-        self.stdout.write('done.')
-
+        run_seed("")
 
 
 def create_druh_chyby(id):
@@ -45,58 +43,56 @@ def create_druh_chyby(id):
     druh.save()
     return druh
 
+
 def create_miesto_na_linke(id):
     miesto = MiestoNaLinke(miesto=str(id) + '. miesto')
     miesto.save()
     return miesto
 
-def create_typ_chyby(id, miesto, druh, sposobena_kym ):
-    typ_chyby = TypChyby(popis=str(id) + '. popis typu chyby', miesto_na_linke=miesto, druh_chyby=druh, sposobena_kym=sposobena_kym)
+
+def create_typ_chyby(id, miesto, druh, sposobena_kym):
+    typ_chyby = TypChyby(popis=str(id) + '. popis typu chyby', miesto_na_linke=miesto, druh_chyby=druh,
+                         sposobena_kym=sposobena_kym)
     typ_chyby.save()
     return typ_chyby
 
-# def create_pravo(id):
-#     pravo = Pravo(nazov=str(id) + '. pravo')
-#     pravo.save()
-#     return pravo
 
 def create_sposobena_kym(id):
-    sposobena_kym = SposobenaKym(kym=str(id)+'. kym')
+    sposobena_kym = SposobenaKym(kym=str(id) + '. kym')
     sposobena_kym.save()
     return sposobena_kym
 
-def create_pouzivatel(i):
-    mena = ['Liam', 'Olivia','Noah','Emma','Oliver','Ava']
-    priezviska = ['Smith', 'Johnson','Williams','Brown', 'Jones','Garcia','Miller','Davis']
 
-    meno = random.choice(mena)
-    priezvisko = random.choice(priezviska)
-    email = meno.lower()+'.'+priezvisko.lower()+'@poruchy.sk'
-    pouzivatel = Pouzivatel(first_name=meno,last_name=priezvisko,email=email,password=HESLO, username=f"username{i}")
+def create_pouzivatel(i):
+    mena = ['Liam', 'Olivia', 'Noah', 'Emma', 'Oliver', 'Ava']
+    priezviska = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis']
+
+    username = f'user{i}'
+    email = f'{username}@poruchy.com'
+    pouzivatel = User.objects.create_user(username, email, HESLO)
+    pouzivatel.first_name = random.choice(mena)
+    pouzivatel.last_name = random.choice(priezviska)
     pouzivatel.save()
     return pouzivatel
 
-# def create_ma_prava(pouzivatel, pravo):
-#     ma_pravo = MaPouzivatelPravo(pouzivatel=pouzivatel, pravo=pravo)
-#     ma_pravo.save()
-#     return ma_pravo
 
 def create_zariadenie(id):
     zariadenie = TypRevizie(
-        nazov_revizie=str(id)+'. revizia',
-        typ_revizie='mechanicka' ,
+        nazov_revizie=str(id) + '. revizia',
+        typ_revizie='mechanicka',
         datum_poslednej_revizie=random_date(),
         datum_nadchadzajucej_revizie=random_date(),
         exspiracia=30)
     zariadenie.save()
     return zariadenie
 
+
 def clear_data():
     DruhChyby.objects.all().delete()
     MiestoNaLinke.objects.all().delete()
     TypChyby.objects.all().delete()
     # Pravo.objects.all().delete()
-    Pouzivatel.objects.all().delete()
+    User.objects.all().delete()
     # MaPouzivatelPravo.objects.all().delete()
     TypRevizie.objects.all().delete()
     SposobenaKym.objects.all().delete()
@@ -115,12 +111,13 @@ def create_zaznam(miesto_na_linke, druh_chyby, pouzivatel, sposobena_kym, typ_ch
         sposobena_kym=sposobena_kym,
         typ_chyby=typ_chyby,
         opatrenia=f'opatrenie #{typ_chyby.id}',
-        nahradny_diel='ahaha',
+        nahradny_diel='' if not vyriesena else f"diel #{random.randrange(1, 10)}",
         popis=f'popis #{typ_chyby.id}',
         dovod='' if not vyriesena else f"dovod #{typ_chyby.id}",
     )
     zaznam.save()
     return zaznam
+
 
 def run_seed(mode):
     clear_data()
@@ -142,9 +139,18 @@ def run_seed(mode):
         # prava.append(create_pravo(i))
         zariadenia.append(create_zariadenie(i))
         sposobene_kym.append(create_sposobena_kym(i))
-        typy_chyb.append(create_typ_chyby(i, miesta_na_linke[-1], druhy[-1], sposobene_kym[-1] ))
+        typy_chyb.append(create_typ_chyby(i, miesta_na_linke[-1], druhy[-1], sposobene_kym[-1]))
 
-    for i in range(1,10):
+    admin = User.objects.create_user(username='admin',
+                                     email='admin@poruchy.com',
+                                     password='admin',
+                                     is_staff=True,
+                                     is_active=True,
+                                     is_superuser=True
+                                     )
+    pouzivatelia.append(admin)
+
+    for i in range(1, 10):
         pouzivatelia.append(create_pouzivatel(i))
 
     # for pouz in pouzivatelia:

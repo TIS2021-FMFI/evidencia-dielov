@@ -8,10 +8,10 @@ from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
-from django.db.models import Q
 from .forms import TypForm, ZaznamForm, RevizieForm
-from .managment.commands.seed import run_seed
-from .models import TypChyby, Chyba, TypRevizie, Pouzivatel, ChybaWrapper, TypChybyWrapper, DruhChyby, \
+from linka.management.commands.seed import run_seed
+from django.contrib.auth.models import User
+from .models import TypChyby, Chyba, TypRevizie, ChybaWrapper, TypChybyWrapper, DruhChyby, \
     MiestoNaLinke, SposobenaKym
 
 
@@ -375,9 +375,9 @@ class Pouzivatelia(LoginRequiredMixin, View):
     def get(self, request):
         if "delete" in request.GET and request.GET["delete"]:
             i = request.GET["id"]
-            pouzivatel = Pouzivatel.objects.all().filter(id=i)
+            pouzivatel = User.objects.all().filter(id=i)
             pouzivatel.delete()
-        data = {"pouzivatelia": Pouzivatel.objects.all()}
+        data = {"pouzivatelia": User.objects.all()}
         return render(request, self.template, data)
 
     def post(self, request):
