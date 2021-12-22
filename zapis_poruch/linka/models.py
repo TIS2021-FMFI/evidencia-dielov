@@ -179,6 +179,7 @@ class ChybaWrapper:
         self.typ_chyby = object.typ_chyby
         self.opatrenia = object.opatrenia
         self.nahradny_diel = object.nahradny_diel
+        self.dovod = object.dovod
         self.popis = object.popis
         self.trvanie = self.vyriesenie - self.vznik
 
