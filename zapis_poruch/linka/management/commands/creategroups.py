@@ -15,27 +15,46 @@ from django.db.utils import IntegrityError
 
 GROUPS = {
     'full access': {
-        'add':      ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
-        'change':   ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
-        'delete':   ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
-        'view':     ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
-        'approve':  True
+        'add':              ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
+        'change':           ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
+        'delete':           ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
+        'view':             ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
+        'schvalenie chyby': True,
+        'grafy': True,
     },
     'viewer': {
         'add':      [],
         'change':   [],
         'delete':   [],
         'view':     ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
-        'approve':  False
+        'approve':  False,
+        'grafy': False,
     },
     'deleter': {
         'add':      [],
         'change':   [],
         'delete':   ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
         'view':     ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
-        'approve':  False
+        'approve':  False,
+        'grafy': False,
     },
 }
+
+def custom_permission(group, name, codename, model):
+    print(f"Creating {name}")
+
+    try:
+        model_add_perm = Permission.objects.get(codename=codename)
+    except Permission.DoesNotExist:
+        logging.warning(f"Permission not found with name '{name}', generating...")
+
+        content_type = ContentType.objects.get(app_label='linka', model=model)
+        model_add_perm = Permission.objects.create(codename=codename,
+                                                   name=name,
+                                                   content_type=content_type)
+
+    group.permissions.add(model_add_perm)
+
 
 class Command(BaseCommand):
     help = 'Creates read only default permission groups for users'
@@ -44,26 +63,18 @@ class Command(BaseCommand):
         for group in GROUPS:
             print(f"Creating group: {group}")
             new_group, created = Group.objects.get_or_create(name=group)
+            new_group.permissions.clear()
+
             for permission in GROUPS[group]:
-                if permission == 'approve' and GROUPS[group][permission]:
-                    model = 'chyba'
-                    name = f'Can {permission} {model}'
-                    print(f"Creating {name}")
-
-                    try:
-                        model_add_perm = Permission.objects.get(codename='can_approve_chyba')
-                    except Permission.DoesNotExist:
-                        logging.warning(f"Permission not found with name '{name}', generating...")
-
-                        content_type = ContentType.objects.get(app_label='linka', model=model)
-                        model_add_perm = Permission.objects.create(codename='can_approve_chyba',
-                                                               name=name,
-                                                               content_type=content_type)
-
-                    new_group.permissions.add(model_add_perm)
+                if permission == 'schvalenie chyby' and GROUPS[group][permission]:
+                    custom_permission(new_group, 'Can approve chyba', 'can_approve_chyba', 'chyba')
                     continue
 
-                if permission != 'approve':
+                elif permission == 'grafy' and GROUPS[group][permission]:
+                    custom_permission(new_group, 'Can view grafy', 'can_view_grafy', 'typchyby')
+                    continue
+
+                if permission in ('add', 'change', 'delete', 'view'):
                     for model in GROUPS[group][permission]:
                         name = f'Can {permission} {model}'
                         print(f"Creating {name}")

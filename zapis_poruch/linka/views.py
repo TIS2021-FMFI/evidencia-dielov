@@ -26,6 +26,13 @@ class TypyChyb(LoginRequiredMixin, View):
     template = "chyby_typy.html"
 
     def get(self, request):
+        group_permissions = request.user.get_group_permissions()
+
+        if 'linka.view_typchyby' not in group_permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
+
         all_errors = ChybaWrapper.all()
         all_types = TypChybyWrapper.all()
         for object in all_types:
@@ -47,7 +54,7 @@ class TypyChyb(LoginRequiredMixin, View):
             if order_by == "trvanie":
                 data['errors'] = sorted(data['errors'], key=lambda obj: obj['trvanie'])
 
-        group_permissions = request.user.get_group_permissions()
+
         data['permissions'] = group_permissions
 
         return render(request, self.template, data)
@@ -60,6 +67,13 @@ class Zaznamy(LoginRequiredMixin, View):
     template = "zaznamy.html"
 
     def get(self, request):
+        group_permissions = request.user.get_group_permissions()
+        print(group_permissions)
+
+        if 'linka.view_chyba' not in group_permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         if "delete" in request.GET:
             i = request.GET["id"]
             chyba = Chyba.objects.all().filter(id=i)
@@ -224,15 +238,29 @@ class Grafy(LoginRequiredMixin, View):
     template = "grafy.html"
 
     def get(self, request):
+        group_permissions = request.user.get_group_permissions()
+
+        if 'linka.can_view_grafy' not in group_permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         data = {
             "druhyChyb": DruhChyby.objects.all(),
             "zariadenia": MiestoNaLinke.objects.all(),
             "sposobeneKym": SposobenaKym.objects.all(),
-            "popisyTypovChyby": TypChyby.objects.all()
+            "popisyTypovChyby": TypChyby.objects.all(),
+            "permissions": group_permissions,
         }
+
         return render(request, self.template, data)
 
     def post(self, request):
+        group_permissions = request.user.get_group_permissions()
+
+        if 'linka.can_view_grafy' not in group_permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         def getInt(val):
             try:
                 return int(val)
@@ -288,7 +316,8 @@ class Grafy(LoginRequiredMixin, View):
             "popisyTypovChyby": TypChyby.objects.all(),
             "grafLabels": grafLabels,
             "grafColors": grafColors,
-            "grafData": grafData
+            "grafData": grafData,
+            "permissions": group_permissions
         }
         return render(request, self.template, data)
 
