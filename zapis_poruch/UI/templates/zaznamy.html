@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block maincontent %}
+
+
+{% if 'linka.view_chyba' in permissions %}
+
 <table style="width: 100%">
     <tr class="nadpis">
             <td>
@@ -100,14 +104,19 @@
                     {{ item.nahradny_diel}}
             </td>
             <td>
+            {% if 'linka.change_chyba' in permissions %}
                 <button onclick="presmerovanie('/zaznamy/pridaj', 'GET', '{{ item.id }}')">UPRAVIŤ</button>
+            {% endif %}
             </td>
             <td>
+            {% if 'linka.approve_chyba' in permissions %}
                 {% if not item.schvalena and  item.vyriesena == True  %}
                     <button onclick="presmerovanie( '/zaznamy/potvrd', 'GET', '{{ item.id }}')">POTVRDIŤ</button>
                 {% endif %}
+            {% endif %}
             </td>
             <td>
+            {% if 'linka.delete_chyba' in permissions %}
                 <button  id="myBtn" onclick=" vymaz('{{ item.id }}')">
                    ODSTRÁNIŤ
                 </button>
@@ -124,6 +133,7 @@
                                   </div>
 
                   </div>
+            {% endif %}
 
 
 
@@ -132,6 +142,7 @@
     {% endfor %}
 
 </table>
+{% endif %}
 
 
 {% endblock maincontent %}
@@ -140,9 +151,11 @@
 {% block footer%}
 <br>
 <br>
-<div class="pridaj" >
-    <button onclick="presmerovanie('/zaznamy/pridaj', 'GET', 0)"> Pridaj nový zaznam</button>
-</div>
+    {% if 'linka.add_chyba' in permissions %}
+    <div class="pridaj" >
+        <button onclick="presmerovanie('/zaznamy/pridaj', 'GET', 0)"> Pridaj nový zaznam</button>
+    </div>
+    {% endif %}
 
 
 <script>

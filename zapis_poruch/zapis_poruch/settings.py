@@ -82,8 +82,8 @@ DATABASES = {
    'default': {
        'ENGINE': 'django.db.backends.postgresql_psycopg2',
        'NAME': 'linka',
-       'USER': 'nikolakulikova',
-       'PASSWORD': 'mamajana',
+       'USER': 'admin',
+       'PASSWORD': 'heslo',
        'HOST': '127.0.0.1',
        'PORT': '5432',
    }
@@ -135,7 +135,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/typy/'  # URL redirecting after a successful authentication
+LOGIN_REDIRECT_URL = '/'  # URL redirecting after a successful authentication
 LOGIN_URL = "/login/"  # URL to redirect to on unsuccessful authentication
 
 LOGGING = {
