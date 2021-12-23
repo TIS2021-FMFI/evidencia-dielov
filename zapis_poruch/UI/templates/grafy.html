@@ -2,7 +2,7 @@
 {% load static %}
 {% block maincontent %}
 
-    {% if 'linka.view_grafy' in permissions %}
+    {% if 'view_grafy' in permissions %}
 
 <form method="post">
     {% csrf_token %}
