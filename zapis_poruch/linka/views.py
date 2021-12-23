@@ -123,6 +123,7 @@ class PridajTyp(LoginRequiredMixin, View):
             return render(request, 'pristup_zakazany.html', {})
 
         data = dict()
+        data["permissions"] = permissions
 
         if "id" not in request.GET:
             data["form"] = TypForm()
@@ -162,6 +163,7 @@ class PridajZaznam(LoginRequiredMixin, View):
             return render(request, 'pristup_zakazany.html', {})
 
         data = dict()
+        data["permissions"] = permissions
 
         if "id" not in request.GET:
             data["form"] = ZaznamForm()
@@ -204,6 +206,7 @@ class PridajRevizia(LoginRequiredMixin, View):
             return render(request, 'pristup_zakazany.html', {})
 
         data = dict()
+        data["permissions"] = permissions
 
         if "id" not in request.GET:
             data["form"] = RevizieForm()
@@ -451,6 +454,7 @@ class PotvrdZaznam(LoginRequiredMixin, View):
             data["form"] = ZaznamForm(instance=Chyba.objects.all().filter(id=i)[0])
             data['typy'] = TypChyby.objects.all()
             data['id'] = i
+            data["permissions"] = permissions
             return render(request, self.template, data)
 
     def post(self, request):
