@@ -14,6 +14,10 @@ function presmerovanie( url, method,id=-1,){
         }
         if(method === "PUT"){
             if(url === '/revizia'){
+                if( id === -1){
+                    window.location.replace(url + "?put=True&id=" + this.id);
+                    return;
+                }
                  window.location.replace(url + "?put=True&id=" + id);
                  return;
             }
@@ -26,8 +30,14 @@ function presmerovanie( url, method,id=-1,){
         }
     }
 }
-function myFunction(id) {
-    var modal = document.getElementById("myModal");
+function vymaz(id) {
+    var modal = document.getElementById("vymaz");
+    modal.style.display = "block";
+    this.id = id;
+
+}
+function vykonajRevizuOkno(id) {
+    var modal = document.getElementById("vykonaj");
     modal.style.display = "block";
     this.id = id;
 

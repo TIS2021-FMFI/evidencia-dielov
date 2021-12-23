@@ -374,7 +374,7 @@ class Email(LoginRequiredMixin, View):
 
         mail_list = ['namova9094@pyrelle.com']  # , 'freyer.viktor@gmail.com']
         now = datetime.datetime.now()
-        
+
         start = now + datetime.timedelta(days=27)
         end = now + datetime.timedelta(days=28)
         revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=start,
