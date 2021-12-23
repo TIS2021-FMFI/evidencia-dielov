@@ -1,3 +1,5 @@
+import datetime
+
 from django import forms
 
 from .models import TypChyby, Chyba, TypRevizie
@@ -10,11 +12,15 @@ class TypForm(forms.ModelForm):
 
 
 class ZaznamForm(forms.ModelForm):
+    vznik = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label="Dátum vzniku")
+    vyriesenie = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label="Dátum vyriešenia", required=False)
+    vznik_cas = forms.DateField(widget=forms.TimeInput(attrs={'type': 'time'}))
+    vyriesenie_cas = forms.DateField(widget=forms.TimeInput(attrs={'type': 'time'}), required=False)
     class Meta:
         model = Chyba
-        fields = ['pouzivatel', 'vznik', 'schvalena', 'vyriesena', 'miesto_na_linke', 'popis',
-                  'vyriesenie', 'sposobena_kym', 'typ_chyby', 'opatrenia',
-                  'druh_chyby', 'nahradny_diel']
+        fields = ['vznik', 'vznik_cas', 'schvalena', 'vyriesena', 'miesto_na_linke', 'popis',
+                  'vyriesenie', 'vyriesenie_cas', 'sposobena_kym', 'typ_chyby', 'opatrenia',
+                  'druh_chyby', 'nahradny_diel', 'dovod']
 
 
 class RevizieForm(forms.ModelForm):
