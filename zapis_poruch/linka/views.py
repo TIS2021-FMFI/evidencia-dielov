@@ -47,6 +47,9 @@ class TypyChyb(LoginRequiredMixin, View):
             if order_by == "trvanie":
                 data['errors'] = sorted(data['errors'], key=lambda obj: obj['trvanie'])
 
+        group_permissions = request.user.get_group_permissions()
+        data['permissions'] = group_permissions
+
         return render(request, self.template, data)
 
     def post(self, request):
