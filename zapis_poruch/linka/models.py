@@ -139,15 +139,15 @@ class Chyba(models.Model):
     class Meta:
         verbose_name_plural = "Chyby"
 
-    typ_chyby = models.ForeignKey(TypChyby, verbose_name="Typ Chyby", on_delete=models.CASCADE, default=None)
+    typ_chyby = models.ForeignKey(TypChyby, verbose_name="Typ Chyby", on_delete=models.CASCADE, default=None, blank=True)
 
     #stav
     schvalena = models.BooleanField(verbose_name="Schválená")
-    vyriesena = models.BooleanField(verbose_name="Vyriešená")
+    vyriesena = models.BooleanField(verbose_name="Vyriešená", blank=True)
 
     # cas vzniku a vyriesenia
     vznik = models.DateTimeField(verbose_name="Čas", default=None)
-    vyriesenie = models.DateTimeField(verbose_name="Čas vyriešenia", default=None)
+    vyriesenie = models.DateTimeField(verbose_name="Čas vyriešenia", default=None, blank=True)
 
     # clovek kto nahlasil chybu
     pouzivatel = models.ForeignKey(Pouzivatel, verbose_name="Uživateľ", on_delete=models.CASCADE,  default=None)
@@ -160,9 +160,9 @@ class Chyba(models.Model):
     sposobena_kym = models.ForeignKey(SposobenaKym, verbose_name="Chybu spôsobil",  on_delete=models.CASCADE, default=None)
 
     popis = models.CharField(verbose_name="Popis", max_length=128, default=None)
-    dovod = models.CharField(verbose_name="Dôvod", max_length=128, default=None)
-    opatrenia = models.CharField(verbose_name="Opatrenia/ Oprava", max_length=256,  default=None)
-    nahradny_diel = models.CharField(verbose_name="Náhradný diel", max_length=128,  default=None)
+    dovod = models.CharField(verbose_name="Dôvod", max_length=128, default=None, blank=True)
+    opatrenia = models.CharField(verbose_name="Opatrenia/ Oprava", max_length=256,  default=None, blank=True)
+    nahradny_diel = models.CharField(verbose_name="Náhradný diel", max_length=128,  default=None, blank=True)
 
 
 class ChybaWrapper:
