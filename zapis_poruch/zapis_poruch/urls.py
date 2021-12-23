@@ -9,7 +9,7 @@ from linka.views import TypyChyb, Zaznamy, Grafy, Revizia, PridajTyp, PridajZazn
 urlpatterns = [
     path('login/', Login.as_view(), name='login'),
     path('logout/', Logout.as_view(), name='logout'),
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     path('', Zaznamy.as_view(), name='typy'),
     path('typy/', TypyChyb.as_view(), name='typy'),
     path('typy/pridaj', PridajTyp.as_view(), name='pridaj_typ'),
