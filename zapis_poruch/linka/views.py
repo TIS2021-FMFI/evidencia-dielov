@@ -1,4 +1,7 @@
+import datetime
+
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -105,14 +108,14 @@ class PridajZaznam(LoginRequiredMixin, View):
         data = dict()
 
         if "id" not in request.GET:
-            data["form"] = ZaznamForm()
-            data["cas"] = False
+            form = ZaznamForm()
+
+            data["form"] = form
+
             return render(request, self.template, data)
 
         i = request.GET["id"]
         data["form"] = ZaznamForm(instance=Chyba.objects.all().filter(id=i)[0])
-        data["datum"] = data["form"]["vznik"]
-        data["cas"] = data["form"]["vznik"]
         return render(request, self.template, data)
 
     def post(self, request):
@@ -123,7 +126,21 @@ class PridajZaznam(LoginRequiredMixin, View):
             form = ZaznamForm(request.POST)
 
         if form.is_valid():
+            uzivatel = request.user
+            vznik = form['vznik'].value() + 'T' + form['vznik_cas'].value()
+            vyriesenie = form['vyriesenie'].value() + 'T' + form['vyriesenie_cas'].value()
+            vyriesena = form['vyriesena']
+            miesto_na_linke = form['miesto_na_linke']
+            popis = form['popis']
+            sposobena_kym = form['sposobena_kym']
+            typ_chyby = form['typ_chyby']
+            opatrenia = form['opatrenia']
+            druh_chyby = form['druh_chyby']
+            nahradny_diel = form['nahradny_diel']
+            dovod = form['dovod']
+            zaznam = Chyba(uzivatel=uzivatel, vznik=vznik, vyriesena=vyriesena, vyriesenie=vyriesenie, miesto_na_linke=miesto_na_linke,popis=popis, dovod=dovod, sposobena_kym=sposobena_kym, typ_chyby=typ_chyby, opatrenia=opatrenia, druh_chyby=druh_chyby, nahradny_diel=nahradny_diel)
             form.save()
+            zaznam.save()
 
         return redirect("zaznamy")
 
@@ -311,8 +328,9 @@ class PotvrdZaznam(View):
         else:
             i = request.GET["id"]
             data = dict()
-            data["form"] = ZaznamForm(instance=Chyba.objects.all().filter(id=i)[0])
-            data['typy'] = TypChyby.objects.all()
+            zaznam = Chyba.objects.all().filter(id=i)[0]
+            data["form"] = ZaznamForm(instance=zaznam)
+            data['typy'] = TypChyby.objects.all().filter(id=zaznam.typ_chyby.id)
             data['id'] = i
             return render(request, self.template, data)
 
