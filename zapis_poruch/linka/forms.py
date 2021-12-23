@@ -18,8 +18,8 @@ class ZaznamForm(forms.ModelForm):
     vyriesenie_cas = forms.DateField(widget=forms.TimeInput(attrs={'type': 'time'}), required=False)
     class Meta:
         model = Chyba
-        fields = ['vznik', 'vznik_cas', 'schvalena', 'vyriesena', 'miesto_na_linke', 'popis',
-                  'vyriesenie', 'vyriesenie_cas', 'sposobena_kym', 'typ_chyby', 'opatrenia',
+        fields = ['vznik', 'vznik_cas',  'vyriesena', 'miesto_na_linke', 'popis',
+                  'vyriesenie', 'vyriesenie_cas', 'sposobena_kym', 'opatrenia',
                   'druh_chyby', 'nahradny_diel', 'dovod']
 
 
