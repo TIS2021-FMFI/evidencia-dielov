@@ -48,3 +48,17 @@ function zmen(id){
     }
 
 }
+
+function skontroluj_vyplnenie_pri_vyrieseni(){
+    if(document.getElementById("id_vyriesena").checked === true){
+        if(document.getElementById("id_opatrenia") !== null){
+            return false;
+        }
+        return true;
+    }
+    if(document.getElementById("id_opatrenia") !== null){
+            return true;
+    }
+
+    return false;
+}
