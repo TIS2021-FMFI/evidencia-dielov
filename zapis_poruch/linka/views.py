@@ -103,6 +103,8 @@ class Zaznamy(LoginRequiredMixin, View):
                 data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.dovod)
             if order_by == "opatrenie":
                 data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.opatrenia)
+        else:
+            data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena))
 
         return render(request, self.template, data)
 
@@ -200,9 +202,9 @@ class Revizia(LoginRequiredMixin, View):
     def get(self, request):
         group_permissions = request.user.get_group_permissions()
 
-        # if 'linka.view_typrevizie' not in group_permissions:
-        #     print('Prístup odmietnutý')
-        #     return render(request, 'pristup_zakazany.html', {})
+        if 'linka.view_typrevizie' not in group_permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
 
         if "delete" in request.GET:
             i = request.GET["id"]

@@ -28,7 +28,7 @@ GROUPS = {
         'change':   [],
         'delete':   [],
         'view':     ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
-        'approve':  False,
+        'schvalenie chyby':  False,
         'grafy': False,
         'vykonanie revizie': False,
     },
@@ -37,7 +37,7 @@ GROUPS = {
         'change':   [],
         'delete':   ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
         'view':     ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
-        'approve':  False,
+        'schvalenie chyby':  False,
         'grafy': False,
         'vykonanie revizie': False,
     },
@@ -69,18 +69,6 @@ class Command(BaseCommand):
             new_group.permissions.clear()
 
             for permission in GROUPS[group]:
-                if permission == 'schvalenie chyby' and GROUPS[group][permission]:
-                    custom_permission(new_group, 'Can approve chyba', 'approve_chyba', 'chyba')
-                    continue
-
-                elif permission == 'grafy' and GROUPS[group][permission]:
-                    custom_permission(new_group, 'Can view grafy', 'view_grafy', 'typchyby')
-                    continue
-
-                elif permission == 'vykonanie revizie' and GROUPS[group][permission]:
-                    custom_permission(new_group, 'Can audit revizie', 'audit_revizie', 'typrevizie')
-                    continue
-
                 if permission in ('add', 'change', 'delete', 'view'):
                     for model in GROUPS[group][permission]:
                         name = f'Can {permission} {model}'
@@ -93,5 +81,14 @@ class Command(BaseCommand):
                             continue
 
                         new_group.permissions.add(model_add_perm)
+
+                elif permission == 'schvalenie chyby' and GROUPS[group][permission]:
+                    custom_permission(new_group, 'Can approve chyba', 'approve_chyba', 'chyba')
+
+                elif permission == 'grafy' and GROUPS[group][permission]:
+                    custom_permission(new_group, 'Can view grafy', 'view_grafy', 'typchyby')
+
+                elif permission == 'vykonanie revizie' and GROUPS[group][permission]:
+                    custom_permission(new_group, 'Can audit revizie', 'audit_revizie', 'typrevizie')
 
         print("Created default group and permissions.")
