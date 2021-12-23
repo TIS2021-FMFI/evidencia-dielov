@@ -2,7 +2,7 @@
 {% load static %}
 {% block maincontent %}
 
-    {% if 'linka.view_typrevizie' in permissions %}
+    {% if 'view_typrevizie' in permissions %}
 <table style="width: 100%">
     <tr class="nadpis">
         <td>
@@ -48,17 +48,17 @@
             {{item.datum_nadchadzajucej_revizie}}
         </td>
         <td>
-        {% if 'linka.audit_revizie' in permissions %}
+        {% if 'audit_revizie' in permissions %}
             <button id="vykonajButton"  onclick=" vykonajRevizuOkno('{{ item.id }}')" >VYKONAŤ REVÍZIU</button>
         {% endif %}
         </td>
         <td>
-        {% if 'linka.change_typrevizie' in permissions %}
+        {% if 'change_typrevizie' in permissions %}
             <button onclick="presmerovanie('/revizia/pridaj', 'GET', '{{ item.id }}')">UPRAVIŤ</button>
         {% endif %}
         </td>
         <td>
-        {% if 'linka.delete_typrevizie' in permissions %}
+        {% if 'delete_typrevizie' in permissions %}
              <button  id="myBtn"  onclick=" vymaz('{{ item.id }}')">
                    ODSTRÁNIŤ
              </button>
@@ -66,8 +66,7 @@
         </td>
     </tr>
     {% endfor %}
-    <br>
-    <br>
+
 
 </table>
     {% endif %}
@@ -100,7 +99,7 @@
 {% block footer%}
 <br>
 <br>
-    {% if 'linka.add_typrevizie' in permissions %}
+    {% if 'add_typrevizie' in permissions %}
 <div class="pridaj">
     <button onclick="presmerovanie('/revizia/pridaj', 'GET', 0)" > Pridaj nový typ</button>
 </div>

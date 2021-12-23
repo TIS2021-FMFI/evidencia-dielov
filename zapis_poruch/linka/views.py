@@ -8,18 +8,28 @@ from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
+from django.contrib.auth.models import Permission
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .models import TypChyby, Chyba, TypRevizie, ChybaWrapper, TypChybyWrapper, DruhChyby, \
     MiestoNaLinke, SposobenaKym
+
+
+def get_user_permissions(user):
+    if user.is_superuser:
+        return {perm.codename for perm in Permission.objects.all()}
+
+    user_perms = {x.codename for x in user.user_permissions.all()}
+    group_perms = {x.codename for x in Permission.objects.filter(group__user=user)}
+    return user_perms | group_perms
 
 
 class TypyChyb(LoginRequiredMixin, View):
     template = "chyby_typy.html"
 
     def get(self, request):
-        group_permissions = request.user.get_group_permissions()
+        permissions = get_user_permissions(request.user)
 
-        if 'linka.view_typchyby' not in group_permissions:
+        if 'view_typchyby' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
@@ -30,7 +40,7 @@ class TypyChyb(LoginRequiredMixin, View):
             object.fill(all_errors)
 
         data = {'errors': [x.json() for x in all_types],
-                'permissions': group_permissions
+                'permissions': permissions
                 }
 
         if "order_by" in request.GET:
@@ -57,9 +67,9 @@ class Zaznamy(LoginRequiredMixin, View):
     template = "zaznamy.html"
 
     def get(self, request):
-        group_permissions = request.user.get_group_permissions()
+        permissions = get_user_permissions(request.user)
 
-        if 'linka.view_chyba' not in group_permissions:
+        if 'view_chyba' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
@@ -69,7 +79,7 @@ class Zaznamy(LoginRequiredMixin, View):
             chyba.delete()
 
         data = {'zaznamy': ChybaWrapper.all(),
-                'permissions': group_permissions
+                'permissions': permissions
                 }
 
         if "order_by" in request.GET:
@@ -106,13 +116,14 @@ class PridajTyp(LoginRequiredMixin, View):
     template = "pridaj_typ.html"
 
     def get(self, request):
-        group_permissions = request.user.get_group_permissions()
+        permissions = get_user_permissions(request.user)
 
-        if 'linka.add_typchyby' not in group_permissions and 'linka.change_typchyby' not in group_permissions:
+        if 'add_typchyby' not in permissions and 'change_typchyby' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
         data = dict()
+        data["permissions"] = permissions
 
         if "id" not in request.GET:
             data["form"] = TypForm()
@@ -123,9 +134,9 @@ class PridajTyp(LoginRequiredMixin, View):
         return render(request, self.template, data)
 
     def post(self, request):
-        group_permissions = request.user.get_group_permissions()
+        permissions = get_user_permissions(request.user)
 
-        if 'linka.add_typchyby' not in group_permissions and 'linka.change_typchyby' not in group_permissions:
+        if 'add_typchyby' not in permissions and 'change_typchyby' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
@@ -145,13 +156,14 @@ class PridajZaznam(LoginRequiredMixin, View):
     template = "pridaj_zaznam.html"
 
     def get(self, request):
-        group_permissions = request.user.get_group_permissions()
+        permissions = get_user_permissions(request.user)
 
-        if 'linka.add_chyba' not in group_permissions and 'linka.change_chyba' not in group_permissions:
+        if 'add_chyba' not in permissions and 'change_chyba' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
         data = dict()
+        data["permissions"] = permissions
 
         if "id" not in request.GET:
             data["form"] = ZaznamForm()
@@ -165,9 +177,9 @@ class PridajZaznam(LoginRequiredMixin, View):
         return render(request, self.template, data)
 
     def post(self, request):
-        group_permissions = request.user.get_group_permissions()
+        permissions = get_user_permissions(request.user)
 
-        if 'linka.add_chyba' not in group_permissions and 'linka.change_chyba' not in group_permissions:
+        if 'add_chyba' not in permissions and 'change_chyba' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
@@ -187,13 +199,14 @@ class PridajRevizia(LoginRequiredMixin, View):
     template = "pridaj_revizia.html"
 
     def get(self, request):
-        group_permissions = request.user.get_group_permissions()
+        permissions = get_user_permissions(request.user)
 
-        if 'linka.add_typrevizie' not in group_permissions and 'linka.change_typrevizie' not in group_permissions:
+        if 'add_typrevizie' not in permissions and 'change_typrevizie' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
         data = dict()
+        data["permissions"] = permissions
 
         if "id" not in request.GET:
             data["form"] = RevizieForm()
@@ -204,9 +217,9 @@ class PridajRevizia(LoginRequiredMixin, View):
         return render(request, self.template, data)
 
     def post(self, request):
-        group_permissions = request.user.get_group_permissions()
+        permissions = get_user_permissions(request.user)
 
-        if 'linka.add_typrevizie' not in group_permissions and 'linka.change_typrevizie' not in group_permissions:
+        if 'add_typrevizie' not in permissions and 'change_typrevizie' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
@@ -226,9 +239,9 @@ class Revizia(LoginRequiredMixin, View):
     template = "revizia.html"
 
     def get(self, request):
-        group_permissions = request.user.get_group_permissions()
+        permissions = get_user_permissions(request.user)
 
-        if 'linka.view_typrevizie' not in group_permissions:
+        if 'view_typrevizie' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
@@ -247,7 +260,7 @@ class Revizia(LoginRequiredMixin, View):
         data = {'revizie': TypRevizie.objects.all(),
                 'today': date.today(),
                 'weeks': date.today() + timedelta(days=28),
-                'permissions': group_permissions
+                'permissions': permissions
                 }
 
         if "order_by" in request.GET:
@@ -273,9 +286,9 @@ class Grafy(LoginRequiredMixin, View):
     template = "grafy.html"
 
     def get(self, request):
-        group_permissions = request.user.get_group_permissions()
+        permissions = get_user_permissions(request.user)
 
-        if 'linka.view_grafy' not in group_permissions:
+        if 'view_grafy' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
@@ -284,15 +297,15 @@ class Grafy(LoginRequiredMixin, View):
             "zariadenia": MiestoNaLinke.objects.all(),
             "sposobeneKym": SposobenaKym.objects.all(),
             "popisyTypovChyby": TypChyby.objects.all(),
-            "permissions": group_permissions,
+            "permissions": permissions,
         }
 
         return render(request, self.template, data)
 
     def post(self, request):
-        group_permissions = request.user.get_group_permissions()
+        permissions = get_user_permissions(request.user)
 
-        if 'linka.view_grafy' not in group_permissions:
+        if 'view_grafy' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
@@ -352,7 +365,7 @@ class Grafy(LoginRequiredMixin, View):
             "grafLabels": grafLabels,
             "grafColors": grafColors,
             "grafData": grafData,
-            "permissions": group_permissions
+            "permissions": permissions
         }
         return render(request, self.template, data)
 
@@ -423,9 +436,9 @@ class PotvrdZaznam(LoginRequiredMixin, View):
     template = "potvrd_zaznam.html"
 
     def get(self, request):
-        group_permissions = request.user.get_group_permissions()
+        permissions = get_user_permissions(request.user)
 
-        if 'linka.approve_chyba' not in group_permissions:
+        if 'approve_chyba' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
@@ -441,12 +454,13 @@ class PotvrdZaznam(LoginRequiredMixin, View):
             data["form"] = ZaznamForm(instance=Chyba.objects.all().filter(id=i)[0])
             data['typy'] = TypChyby.objects.all()
             data['id'] = i
+            data["permissions"] = permissions
             return render(request, self.template, data)
 
     def post(self, request):
-        group_permissions = request.user.get_group_permissions()
+        permissions = get_user_permissions(request.user)
 
-        if 'linka.approve_chyba' not in group_permissions:
+        if 'approve_chyba' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
