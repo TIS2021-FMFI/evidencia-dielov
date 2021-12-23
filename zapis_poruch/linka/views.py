@@ -9,17 +9,8 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
 from .forms import TypForm, ZaznamForm, RevizieForm
-from linka.management.commands.seed import run_seed
-from django.contrib.auth.models import User
 from .models import TypChyby, Chyba, TypRevizie, ChybaWrapper, TypChybyWrapper, DruhChyby, \
     MiestoNaLinke, SposobenaKym
-
-
-class Seed(View):
-    def get(self, request):
-        run_seed("")
-        next = request.POST.get('next', '/')
-        return redirect(next)
 
 
 class TypyChyb(LoginRequiredMixin, View):
@@ -67,7 +58,6 @@ class Zaznamy(LoginRequiredMixin, View):
 
     def get(self, request):
         group_permissions = request.user.get_group_permissions()
-        print(group_permissions)
 
         if 'linka.view_chyba' not in group_permissions:
             print('Prístup odmietnutý')
@@ -116,6 +106,12 @@ class PridajTyp(LoginRequiredMixin, View):
     template = "pridaj_typ.html"
 
     def get(self, request):
+        group_permissions = request.user.get_group_permissions()
+
+        if 'linka.add_typchyby' not in group_permissions and 'linka.change_typchyby' not in group_permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         data = dict()
 
         if "id" not in request.GET:
@@ -127,6 +123,12 @@ class PridajTyp(LoginRequiredMixin, View):
         return render(request, self.template, data)
 
     def post(self, request):
+        group_permissions = request.user.get_group_permissions()
+
+        if 'linka.add_typchyby' not in group_permissions and 'linka.change_typchyby' not in group_permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         if "id" in request.GET:
             typ = TypChyby.objects.all().filter(id=request.GET["id"])[0]
             form = TypForm(request.POST, instance=typ)
@@ -143,6 +145,12 @@ class PridajZaznam(LoginRequiredMixin, View):
     template = "pridaj_zaznam.html"
 
     def get(self, request):
+        group_permissions = request.user.get_group_permissions()
+
+        if 'linka.add_chyba' not in group_permissions and 'linka.change_chyba' not in group_permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         data = dict()
 
         if "id" not in request.GET:
@@ -157,6 +165,12 @@ class PridajZaznam(LoginRequiredMixin, View):
         return render(request, self.template, data)
 
     def post(self, request):
+        group_permissions = request.user.get_group_permissions()
+
+        if 'linka.add_chyba' not in group_permissions and 'linka.change_chyba' not in group_permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         if "id" in request.GET:
             typ = Chyba.objects.all().filter(id=request.GET["id"])[0]
             form = ZaznamForm(request.POST, instance=typ)
@@ -173,6 +187,12 @@ class PridajRevizia(LoginRequiredMixin, View):
     template = "pridaj_revizia.html"
 
     def get(self, request):
+        group_permissions = request.user.get_group_permissions()
+
+        if 'linka.add_typrevizie' not in group_permissions and 'linka.change_typrevizie' not in group_permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         data = dict()
 
         if "id" not in request.GET:
@@ -184,6 +204,12 @@ class PridajRevizia(LoginRequiredMixin, View):
         return render(request, self.template, data)
 
     def post(self, request):
+        group_permissions = request.user.get_group_permissions()
+
+        if 'linka.add_typrevizie' not in group_permissions and 'linka.change_typrevizie' not in group_permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         if "id" in request.GET:
             typ = TypRevizie.objects.all().filter(id=request.GET["id"])[0]
             form = RevizieForm(request.POST, instance=typ)
@@ -331,14 +357,21 @@ class Grafy(LoginRequiredMixin, View):
         return render(request, self.template, data)
 
 
-class Email(View):
+class Email(LoginRequiredMixin, View):
     template = "email.html"
 
     def get(self, request):
+        if not request.user.is_superuser:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
 
         return render(request, self.template, {})
 
     def post(self, request):
+        if not request.user.is_superuser:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         mail_list = ['namova9094@pyrelle.com']  # , 'freyer.viktor@gmail.com']
         now = datetime.datetime.now()
         
@@ -386,10 +419,16 @@ class Email(View):
         return redirect('email')
 
 
-class PotvrdZaznam(View):
+class PotvrdZaznam(LoginRequiredMixin, View):
     template = "potvrd_zaznam.html"
 
     def get(self, request):
+        group_permissions = request.user.get_group_permissions()
+
+        if 'linka.approve_chyba' not in group_permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         if "put" in request.GET:
             i = request.GET["id"]
             zaznam = Chyba.objects.all().filter(id=i)[0]
@@ -405,6 +444,12 @@ class PotvrdZaznam(View):
             return render(request, self.template, data)
 
     def post(self, request):
+        group_permissions = request.user.get_group_permissions()
+
+        if 'linka.approve_chyba' not in group_permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         i = request.GET["id"]
         zaznam = Chyba.objects.all().filter(id=i)[0]
         typ = request.GET["list"]
@@ -413,23 +458,13 @@ class PotvrdZaznam(View):
         return redirect("zaznamy")
 
 
-class Pouzivatelia(LoginRequiredMixin, View):
-    template = "pouzivatelia.html"
-
-    def get(self, request):
-        if "delete" in request.GET and request.GET["delete"]:
-            i = request.GET["id"]
-            pouzivatel = User.objects.all().filter(id=i)
-            pouzivatel.delete()
-        data = {"pouzivatelia": User.objects.all()}
-        return render(request, self.template, data)
-
-    def post(self, request):
-        return HttpResponse('podarilo sa')
-
-
 class Login(LoginView):
     template_name = "login.html"
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("/")
+        return super().get(request, args, kwargs)
 
 
 class Logout(View):
