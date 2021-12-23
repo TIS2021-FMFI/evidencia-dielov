@@ -125,22 +125,22 @@ class PridajZaznam(LoginRequiredMixin, View):
         else:
             form = ZaznamForm(request.POST)
 
-        if form.is_valid():
-            uzivatel = request.user
-            vznik = form['vznik'].value() + 'T' + form['vznik_cas'].value()
-            vyriesenie = form['vyriesenie'].value() + 'T' + form['vyriesenie_cas'].value()
-            vyriesena = form['vyriesena']
-            miesto_na_linke = form['miesto_na_linke']
-            popis = form['popis']
-            sposobena_kym = form['sposobena_kym']
-            typ_chyby = form['typ_chyby']
-            opatrenia = form['opatrenia']
-            druh_chyby = form['druh_chyby']
-            nahradny_diel = form['nahradny_diel']
-            dovod = form['dovod']
-            zaznam = Chyba(uzivatel=uzivatel, vznik=vznik, vyriesena=vyriesena, vyriesenie=vyriesenie, miesto_na_linke=miesto_na_linke,popis=popis, dovod=dovod, sposobena_kym=sposobena_kym, typ_chyby=typ_chyby, opatrenia=opatrenia, druh_chyby=druh_chyby, nahradny_diel=nahradny_diel)
-            form.save()
-            zaznam.save()
+        uzivatel = Pouzivatel.objects.all().filter(email=request.user.email)[0]
+        vznik = form['vznik'].value() + 'T' + form['vznik_cas'].value()
+        vyriesenie = form['vyriesenie'].value() + 'T' + form['vyriesenie_cas'].value()
+        vyriesena = form['vyriesena']
+        miesto_na_linke = MiestoNaLinke.objects.all().filter(id=form['miesto_na_linke'].value())[0]
+        popis = form['popis']
+        sposobena_kym = SposobenaKym.objects.all().filter(id=form['sposobena_kym'].value())[0]
+        opatrenia = form['opatrenia']
+        druh_chyby = DruhChyby.objects.all().filter(id=form['druh_chyby'].value())[0]
+        nahradny_diel = form['nahradny_diel']
+        dovod = form['dovod']
+        zaznam = Chyba(pouzivatel=uzivatel, vznik=vznik, vyriesena=vyriesena, vyriesenie=vyriesenie,
+                       miesto_na_linke=miesto_na_linke, popis=popis, dovod=dovod, sposobena_kym=sposobena_kym,
+                      opatrenia=opatrenia, druh_chyby=druh_chyby, nahradny_diel=nahradny_diel)
+        form.save()
+        zaznam.save()
 
         return redirect("zaznamy")
 
