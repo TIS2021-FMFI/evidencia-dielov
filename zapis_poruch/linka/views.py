@@ -38,7 +38,9 @@ class TypyChyb(LoginRequiredMixin, View):
         for object in all_types:
             object.fill(all_errors)
 
-        data = {'errors': [x.json() for x in all_types]}
+        data = {'errors': [x.json() for x in all_types],
+                'permissions': group_permissions
+                }
 
         if "order_by" in request.GET:
             order_by = request.GET.get('order_by', 'defaultOrderField')
@@ -53,9 +55,6 @@ class TypyChyb(LoginRequiredMixin, View):
                 data['errors'] = sorted(data['errors'], key=lambda obj: obj['popis'])
             if order_by == "trvanie":
                 data['errors'] = sorted(data['errors'], key=lambda obj: obj['trvanie'])
-
-
-        data['permissions'] = group_permissions
 
         return render(request, self.template, data)
 
@@ -79,7 +78,9 @@ class Zaznamy(LoginRequiredMixin, View):
             chyba = Chyba.objects.all().filter(id=i)
             chyba.delete()
 
-        data = {'zaznamy': ChybaWrapper.all()}
+        data = {'zaznamy': ChybaWrapper.all(),
+                'permissions': group_permissions
+                }
 
         if "order_by" in request.GET:
             order_by = request.GET.get('order_by', 'defaultOrderField')
@@ -102,9 +103,6 @@ class Zaznamy(LoginRequiredMixin, View):
                 data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.dovod)
             if order_by == "opatrenie":
                 data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.opatrenia)
-
-        group_permissions = request.user.get_group_permissions()
-        data['permissions'] = group_permissions
 
         return render(request, self.template, data)
 
@@ -200,6 +198,11 @@ class Revizia(LoginRequiredMixin, View):
     template = "revizia.html"
 
     def get(self, request):
+        group_permissions = request.user.get_group_permissions()
+
+        # if 'linka.view_typrevizie' not in group_permissions:
+        #     print('Prístup odmietnutý')
+        #     return render(request, 'pristup_zakazany.html', {})
 
         if "delete" in request.GET:
             i = request.GET["id"]
@@ -213,7 +216,11 @@ class Revizia(LoginRequiredMixin, View):
             revizia.datum_nadchadzajucej_revizie = date.today() + timedelta(days=int(revizia.exspiracia))
             revizia.save()
 
-        data = {'revizie': TypRevizie.objects.all(), 'today': date.today(), 'weeks': date.today() + timedelta(days=28)}
+        data = {'revizie': TypRevizie.objects.all(),
+                'today': date.today(),
+                'weeks': date.today() + timedelta(days=28),
+                'permissions': group_permissions
+                }
 
         if "order_by" in request.GET:
             order_by = request.GET.get('order_by', 'defaultOrderField')
@@ -240,7 +247,7 @@ class Grafy(LoginRequiredMixin, View):
     def get(self, request):
         group_permissions = request.user.get_group_permissions()
 
-        if 'linka.can_view_grafy' not in group_permissions:
+        if 'linka.view_grafy' not in group_permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 
@@ -257,7 +264,7 @@ class Grafy(LoginRequiredMixin, View):
     def post(self, request):
         group_permissions = request.user.get_group_permissions()
 
-        if 'linka.can_view_grafy' not in group_permissions:
+        if 'linka.view_grafy' not in group_permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {})
 

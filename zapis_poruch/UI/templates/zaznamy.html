@@ -109,7 +109,7 @@
             {% endif %}
             </td>
             <td>
-            {% if 'linka.can_approve_chyba' in permissions %}
+            {% if 'linka.approve_chyba' in permissions %}
                 {% if not item.schvalena and  item.vyriesena == True  %}
                     <button onclick="presmerovanie( '/zaznamy/potvrd', 'GET', '{{ item.id }}')">POTVRDIŤ</button>
                 {% endif %}

@@ -21,6 +21,7 @@ GROUPS = {
         'view':             ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
         'schvalenie chyby': True,
         'grafy': True,
+        'vykonanie revizie': True,
     },
     'viewer': {
         'add':      [],
@@ -29,6 +30,7 @@ GROUPS = {
         'view':     ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
         'approve':  False,
         'grafy': False,
+        'vykonanie revizie': False,
     },
     'deleter': {
         'add':      [],
@@ -37,6 +39,7 @@ GROUPS = {
         'view':     ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
         'approve':  False,
         'grafy': False,
+        'vykonanie revizie': False,
     },
 }
 
@@ -67,11 +70,15 @@ class Command(BaseCommand):
 
             for permission in GROUPS[group]:
                 if permission == 'schvalenie chyby' and GROUPS[group][permission]:
-                    custom_permission(new_group, 'Can approve chyba', 'can_approve_chyba', 'chyba')
+                    custom_permission(new_group, 'Can approve chyba', 'approve_chyba', 'chyba')
                     continue
 
                 elif permission == 'grafy' and GROUPS[group][permission]:
-                    custom_permission(new_group, 'Can view grafy', 'can_view_grafy', 'typchyby')
+                    custom_permission(new_group, 'Can view grafy', 'view_grafy', 'typchyby')
+                    continue
+
+                elif permission == 'vykonanie revizie' and GROUPS[group][permission]:
+                    custom_permission(new_group, 'Can audit revizie', 'audit_revizie', 'typrevizie')
                     continue
 
                 if permission in ('add', 'change', 'delete', 'view'):
