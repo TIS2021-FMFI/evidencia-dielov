@@ -31,7 +31,7 @@ class TypyChyb(LoginRequiredMixin, View):
 
         if 'view_typchyby' not in permissions:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
 
         all_errors = ChybaWrapper.all()
@@ -71,7 +71,7 @@ class Zaznamy(LoginRequiredMixin, View):
 
         if 'view_chyba' not in permissions:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         if "delete" in request.GET:
             i = request.GET["id"]
@@ -120,7 +120,7 @@ class PridajTyp(LoginRequiredMixin, View):
 
         if 'add_typchyby' not in permissions and 'change_typchyby' not in permissions:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         data = dict()
         data["permissions"] = permissions
@@ -138,7 +138,7 @@ class PridajTyp(LoginRequiredMixin, View):
 
         if 'add_typchyby' not in permissions and 'change_typchyby' not in permissions:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         if "id" in request.GET:
             typ = TypChyby.objects.all().filter(id=request.GET["id"])[0]
@@ -160,7 +160,7 @@ class PridajZaznam(LoginRequiredMixin, View):
 
         if 'add_chyba' not in permissions and 'change_chyba' not in permissions:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         data = dict()
         data["permissions"] = permissions
@@ -181,7 +181,7 @@ class PridajZaznam(LoginRequiredMixin, View):
 
         if 'add_chyba' not in permissions and 'change_chyba' not in permissions:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         if "id" in request.GET:
             typ = Chyba.objects.all().filter(id=request.GET["id"])[0]
@@ -203,7 +203,7 @@ class PridajRevizia(LoginRequiredMixin, View):
 
         if 'add_typrevizie' not in permissions and 'change_typrevizie' not in permissions:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         data = dict()
         data["permissions"] = permissions
@@ -221,7 +221,7 @@ class PridajRevizia(LoginRequiredMixin, View):
 
         if 'add_typrevizie' not in permissions and 'change_typrevizie' not in permissions:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         if "id" in request.GET:
             typ = TypRevizie.objects.all().filter(id=request.GET["id"])[0]
@@ -243,7 +243,7 @@ class Revizia(LoginRequiredMixin, View):
 
         if 'view_typrevizie' not in permissions:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         if "delete" in request.GET:
             i = request.GET["id"]
@@ -290,7 +290,7 @@ class Grafy(LoginRequiredMixin, View):
 
         if 'view_grafy' not in permissions:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         data = {
             "druhyChyb": DruhChyby.objects.all(),
@@ -307,7 +307,7 @@ class Grafy(LoginRequiredMixin, View):
 
         if 'view_grafy' not in permissions:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         def getInt(val):
             try:
@@ -374,16 +374,18 @@ class Email(LoginRequiredMixin, View):
     template = "email.html"
 
     def get(self, request):
+        permissions = get_user_permissions(request.user)
         if not request.user.is_superuser:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
-        return render(request, self.template, {})
+        return render(request, self.template, {'permissions': permissions})
 
     def post(self, request):
+        permissions = get_user_permissions(request.user)
         if not request.user.is_superuser:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         mail_list = ['namova9094@pyrelle.com']  # , 'freyer.viktor@gmail.com']
         now = datetime.datetime.now()
@@ -440,7 +442,7 @@ class PotvrdZaznam(LoginRequiredMixin, View):
 
         if 'approve_chyba' not in permissions:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         if "put" in request.GET:
             i = request.GET["id"]
@@ -462,7 +464,7 @@ class PotvrdZaznam(LoginRequiredMixin, View):
 
         if 'approve_chyba' not in permissions:
             print('Prístup odmietnutý')
-            return render(request, 'pristup_zakazany.html', {})
+            return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         i = request.GET["id"]
         zaznam = Chyba.objects.all().filter(id=i)[0]
