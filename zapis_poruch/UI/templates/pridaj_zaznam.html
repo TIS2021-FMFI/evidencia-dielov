@@ -40,7 +40,7 @@
             </div>
         </div>
          <div class="col-4 first" style="border:1px solid black; border-radius: 10%;">
-            <div class=" justify-content-center width_form_fields">
+            <div class=" justify-content-center width_form_fields"   onchange="skontroluj_vyplnenie_pri_vyrieseni()">
                 {{form.vyriesena.label}} <br>
                 {{form.vyriesena}}
             </div>
@@ -51,7 +51,7 @@
                 {{form.vyriesenie_cas}}
             </div>
              <br><br>
-            <div class=" justify-content-center width_form_fields">
+            <div class=" justify-content-center width_form_fields"  onchange="skontroluj_vyplnenie_pri_vyrieseni()">
                 {{form.opatrenia.label}}<span class="textHviezda">*</span><br>
                 {{form.opatrenia}}
             </div>
@@ -66,7 +66,7 @@
     </div>
 
     <div class="pridaj">
-        <button type="submit" onclick="skontroluj_vyplnenie_pri_vyrieseni()"> Uložiť</button>
+        <button type="submit"  id="ulozButton"> Uložiť</button>
     </div>
 
 </form>
