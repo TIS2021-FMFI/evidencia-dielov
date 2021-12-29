@@ -1,36 +1,65 @@
 import datetime
+from datetime import date, timedelta
 
+from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
+from django.core.mail import send_mail
 from django.contrib.auth.views import LoginView
 from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
-from django.db.models import Q
+from django.shortcuts import render, redirect
+from django.views.generic import View
+from django.contrib.auth.models import Permission
 from .forms import TypForm, ZaznamForm, RevizieForm
-from .managment.commands.seed import run_seed
-from .models import TypChyby, Chyba, TypRevizie, Pouzivatel, ChybaWrapper, TypChybyWrapper, DruhChyby, \
+from .models import TypChyby, Chyba, TypRevizie, ChybaWrapper, TypChybyWrapper, DruhChyby, \
     MiestoNaLinke, SposobenaKym
 
 
-class Seed(View):
-    def get(self, request):
-        run_seed("")
-        next = request.POST.get('next', '/')
-        return redirect(next)
+def get_user_permissions(user):
+    if user.is_superuser:
+        return {perm.codename for perm in Permission.objects.all()}
+
+    user_perms = {x.codename for x in user.user_permissions.all()}
+    group_perms = {x.codename for x in Permission.objects.filter(group__user=user)}
+    return user_perms | group_perms
 
 
 class TypyChyb(LoginRequiredMixin, View):
     template = "chyby_typy.html"
 
     def get(self, request):
+        permissions = get_user_permissions(request.user)
+
+        if 'view_typchyby' not in permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
+
         all_errors = ChybaWrapper.all()
         all_types = TypChybyWrapper.all()
         for object in all_types:
             object.fill(all_errors)
 
-        data = {'errors': [x.json() for x in all_types]}
+        data = {'errors': [x.json() for x in all_types],
+                'permissions': permissions
+                }
+
+        if "order_by" in request.GET:
+            order_by = request.GET.get('order_by', 'defaultOrderField')
+            print(order_by)
+            if order_by == "pozicia":
+                data['errors'] = sorted(data['errors'], key=lambda obj: obj['miesto_na_linke'])
+            if order_by == "povod":
+                data['errors'] = sorted(data['errors'], key=lambda obj: obj['sposobena_kym'])
+            if order_by == "druh":
+                data['errors'] = sorted(data['errors'], key=lambda obj: obj['druh_chyby'])
+            if order_by == "popis":
+                data['errors'] = sorted(data['errors'], key=lambda obj: obj['popis'])
+            if order_by == "trvanie":
+                data['errors'] = sorted(data['errors'], key=lambda obj: obj['trvanie'])
+
         return render(request, self.template, data)
 
     def post(self, request):
@@ -41,32 +70,44 @@ class Zaznamy(LoginRequiredMixin, View):
     template = "zaznamy.html"
 
     def get(self, request):
+        permissions = get_user_permissions(request.user)
+
+        if 'view_chyba' not in permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         if "delete" in request.GET:
             i = request.GET["id"]
             chyba = Chyba.objects.all().filter(id=i)
             chyba.delete()
 
-        data = {'zaznamy': ChybaWrapper.all()}
+        data = {'zaznamy': ChybaWrapper.all(),
+                'permissions': permissions
+                }
 
         if "order_by" in request.GET:
             order_by = request.GET.get('order_by', 'defaultOrderField')
             print(order_by)
             if order_by == "stav":
-                data = {'zaznamy': Chyba.objects.all().order_by("vyriesena","schvalena")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena))
             if order_by == "cas":
-                data = {'zaznamy': Chyba.objects.all().order_by("vznik")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.vznik)
+            if order_by == "trvanie":
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.trvanie)
             if order_by == "pozicia":
-                data = {'zaznamy': Chyba.objects.all().order_by("miesto_na_linke")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.miesto_na_linke.id)
             if order_by == "sposobena_kym":
-                data = {'zaznamy': Chyba.objects.all().order_by("sposobena_kym")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.sposobena_kym.id)
             if order_by == "popis":
-                data = {'zaznamy': Chyba.objects.all().order_by("popis")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.popis)
             if order_by == "uzivatel":
-                data = {'zaznamy': Chyba.objects.all().order_by("pouzivatel")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.pouzivatel.id)
             if order_by == "dovod":
-                data = {'zaznamy': Chyba.objects.all().order_by("dovod")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.dovod)
             if order_by == "opatrenie":
-                data = {'zaznamy': Chyba.objects.all().order_by("opatrenia")}
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.opatrenia)
+        else:
+            data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena))
 
         return render(request, self.template, data)
 
@@ -78,7 +119,14 @@ class PridajTyp(LoginRequiredMixin, View):
     template = "pridaj_typ.html"
 
     def get(self, request):
+        permissions = get_user_permissions(request.user)
+
+        if 'add_typchyby' not in permissions and 'change_typchyby' not in permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         data = dict()
+        data["permissions"] = permissions
 
         if "id" not in request.GET:
             data["form"] = TypForm()
@@ -89,6 +137,12 @@ class PridajTyp(LoginRequiredMixin, View):
         return render(request, self.template, data)
 
     def post(self, request):
+        permissions = get_user_permissions(request.user)
+
+        if 'add_typchyby' not in permissions and 'change_typchyby' not in permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         if "id" in request.GET:
             typ = TypChyby.objects.all().filter(id=request.GET["id"])[0]
             form = TypForm(request.POST, instance=typ)
@@ -105,7 +159,14 @@ class PridajZaznam(LoginRequiredMixin, View):
     template = "pridaj_zaznam.html"
 
     def get(self, request):
+        permissions = get_user_permissions(request.user)
+
+        if 'add_chyba' not in permissions and 'change_chyba' not in permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         data = dict()
+        data["permissions"] = permissions
 
         if "id" not in request.GET:
             form = ZaznamForm()
@@ -119,6 +180,12 @@ class PridajZaznam(LoginRequiredMixin, View):
         return render(request, self.template, data)
 
     def post(self, request):
+        permissions = get_user_permissions(request.user)
+
+        if 'add_chyba' not in permissions and 'change_chyba' not in permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         if "id" in request.GET:
             typ = Chyba.objects.all().filter(id=request.GET["id"])[0]
             form = ZaznamForm(request.POST, instance=typ)
@@ -149,7 +216,14 @@ class PridajRevizia(LoginRequiredMixin, View):
     template = "pridaj_revizia.html"
 
     def get(self, request):
+        permissions = get_user_permissions(request.user)
+
+        if 'add_typrevizie' not in permissions and 'change_typrevizie' not in permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         data = dict()
+        data["permissions"] = permissions
 
         if "id" not in request.GET:
             data["form"] = RevizieForm()
@@ -160,6 +234,12 @@ class PridajRevizia(LoginRequiredMixin, View):
         return render(request, self.template, data)
 
     def post(self, request):
+        permissions = get_user_permissions(request.user)
+
+        if 'add_typrevizie' not in permissions and 'change_typrevizie' not in permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         if "id" in request.GET:
             typ = TypRevizie.objects.all().filter(id=request.GET["id"])[0]
             form = RevizieForm(request.POST, instance=typ)
@@ -176,6 +256,12 @@ class Revizia(LoginRequiredMixin, View):
     template = "revizia.html"
 
     def get(self, request):
+        permissions = get_user_permissions(request.user)
+
+        if 'view_typrevizie' not in permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         if "delete" in request.GET:
             i = request.GET["id"]
             revizia = TypRevizie.objects.all().filter(id=i)[0]
@@ -188,7 +274,25 @@ class Revizia(LoginRequiredMixin, View):
             revizia.datum_nadchadzajucej_revizie = date.today() + timedelta(days=int(revizia.exspiracia))
             revizia.save()
 
-        data = {'revizie': TypRevizie.objects.all(), 'today': date.today(), 'weeks': date.today() + timedelta(days=28)}
+        data = {'revizie': TypRevizie.objects.all(),
+                'today': date.today(),
+                'weeks': date.today() + timedelta(days=28),
+                'permissions': permissions
+                }
+
+        if "order_by" in request.GET:
+            order_by = request.GET.get('order_by', 'defaultOrderField')
+            print(order_by)
+            if order_by == "nazov":
+                data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.nazov_revizie)
+            if order_by == "typ":
+                data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.typ_revizie)
+            if order_by == "datum_poslednej":
+                data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.datum_poslednej_revizie)
+            if order_by == "datum_dalsej":
+                data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.datum_nadchadzajucej_revizie)
+
+
         return render(request, self.template, data)
 
     def post(self, request):
@@ -199,15 +303,28 @@ class Grafy(LoginRequiredMixin, View):
     template = "grafy.html"
 
     def get(self, request):
+        permissions = get_user_permissions(request.user)
+
+        if 'view_grafy' not in permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         data = {
             "druhyChyb": DruhChyby.objects.all(),
             "zariadenia": MiestoNaLinke.objects.all(),
             "sposobeneKym": SposobenaKym.objects.all(),
-            "popisyTypovChyby": TypChyby.objects.all()
+            "popisyTypovChyby": TypChyby.objects.all(),
+            "permissions": permissions,
         }
+
         return render(request, self.template, data)
 
     def post(self, request):
+        permissions = get_user_permissions(request.user)
+
+        if 'view_grafy' not in permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
 
         def getInt(val):
             try:
@@ -264,61 +381,84 @@ class Grafy(LoginRequiredMixin, View):
             "popisyTypovChyby": TypChyby.objects.all(),
             "grafLabels": grafLabels,
             "grafColors": grafColors,
-            "grafData": grafData
+            "grafData": grafData,
+            "permissions": permissions
         }
         return render(request, self.template, data)
 
 
-class Email(View):
+class Email(LoginRequiredMixin, View):
     template = "email.html"
 
     def get(self, request):
+        if not request.user.is_superuser:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
 
         return render(request, self.template, {})
 
     def post(self, request):
+        if not request.user.is_superuser:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
+        mail_list = ['namova9094@pyrelle.com']  # , 'freyer.viktor@gmail.com']
         now = datetime.datetime.now()
-        start = now - datetime.timedelta(days=28)
-        end = now - datetime.timedelta(days=27)
+
+        start = now + datetime.timedelta(days=27)
+        end = now + datetime.timedelta(days=28)
         revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=start,
                                                   datum_nadchadzajucej_revizie__lte=end)
-        revizia = None
+
         print("pocet", revizie.count())
         if revizie.count() > 0:
-            revizia = revizie[0]
-        if revizia is None:
-            return redirect('email')
-        send_mail(
-            'Blizi sa revizia',
-            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime(
-                "%d.%m.%Y"),
-            'noReplyRevizie@gmail.com',
-            ['freyer.viktor@gmail.com'],
-            fail_silently=False,
-        )
+            message = ""
+            for revizia in revizie:
+                message += f"Názov revízie: \"{revizia.nazov_revizie}\"\n" \
+                           f"Typ revízie: \"{revizia.typ_revizie}\"\n" \
+                           f"Dátum blížiacej sa revízie: " + revizia.datum_nadchadzajucej_revizie.strftime(
+                                "%d.%m.%Y") + "\n-------------------------------\n"
+            print(message.strip())
+            send_mail(
+                'Blíži sa dátum revízie!',
+                message.strip(),
+                'noReplyRevizie@gmail.com',
+                mail_list,
+                fail_silently=False,
+            )
         revizie = TypRevizie.objects.all().filter(datum_nadchadzajucej_revizie__gte=datetime.date.today(),
-                                                  datum_nadchadzajucej_revizie__lte=now)
-        revizia = None
+                                                  datum_nadchadzajucej_revizie__lte=datetime.date.today() + datetime.timedelta(days=1))
+
         print("pocet", revizie.count())
         if revizie.count() > 0:
-            revizia = revizie[0]
-        if revizia is None:
-            return redirect('email')
-        send_mail(
-            'Je cas na reviziu',
-            revizia.nazov_revizie + ', ' + revizia.typ_revizie + ', ' + revizia.datum_nadchadzajucej_revizie.strftime(
-                "%d.%m.%Y"),
-            'noReplyRevizie@gmail.com',
-            ['freyer.viktor@gmail.com'],
-            fail_silently=False,
-        )
+            message = ""
+            for revizia in revizie:
+                message += f"Názov revízie: \"{revizia.nazov_revizie}\"\n" \
+                           f"Typ revízie: \"{revizia.typ_revizie}\"\n" \
+                           f"Dátum blížiacej sa revízie: " + revizia.datum_nadchadzajucej_revizie.strftime(
+                                "%d.%m.%Y") + "\n-------------------------------\n"
+
+            print(message.strip())
+            send_mail(
+                'Prišiel stanovený dátum revízie!',
+                message,
+                'noReplyRevizie@gmail.com',
+                mail_list,
+                fail_silently=False,
+            )
         return redirect('email')
 
 
-class PotvrdZaznam(View):
+class PotvrdZaznam(LoginRequiredMixin, View):
     template = "potvrd_zaznam.html"
 
     def get(self, request):
+        permissions = get_user_permissions(request.user)
+
+        if 'approve_chyba' not in permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         if "put" in request.GET:
             i = request.GET["id"]
             zaznam = Chyba.objects.all().filter(id=i)[0]
@@ -332,9 +472,16 @@ class PotvrdZaznam(View):
             data["form"] = ZaznamForm(instance=zaznam)
             data['typy'] = TypChyby.objects.all().filter(id=zaznam.typ_chyby.id)
             data['id'] = i
+            data["permissions"] = permissions
             return render(request, self.template, data)
 
     def post(self, request):
+        permissions = get_user_permissions(request.user)
+
+        if 'approve_chyba' not in permissions:
+            print('Prístup odmietnutý')
+            return render(request, 'pristup_zakazany.html', {})
+
         i = request.GET["id"]
         zaznam = Chyba.objects.all().filter(id=i)[0]
         typ = request.GET["list"]
@@ -343,26 +490,17 @@ class PotvrdZaznam(View):
         return redirect("zaznamy")
 
 
-class Pouzivatelia(LoginRequiredMixin, View):
-    template = "pouzivatelia.html"
-
-    def get(self, request):
-        if "delete" in request.GET and request.GET["delete"]:
-            i = request.GET["id"]
-            pouzivatel = Pouzivatel.objects.all().filter(id=i)
-            pouzivatel.delete()
-        data = {"pouzivatelia": Pouzivatel.objects.all()}
-        return render(request, self.template, data)
-
-    def post(self, request):
-        return HttpResponse('podarilo sa')
-
-
 class Login(LoginView):
     template_name = "login.html"
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect("/")
+        return super().get(request, args, kwargs)
 
 
 class Logout(View):
     def get(self, request):
         logout(request)
         return redirect("login")
+

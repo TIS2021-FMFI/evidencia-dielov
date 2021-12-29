@@ -17,22 +17,25 @@
         }
     }
 </script>
+
+    {% if 'view_typchyby' in permissions %}
+
 <table style="width: 100%">
     <tr class="nadpis">
             <td>
-                Pozícia
+                <a href="?order_by=pozicia">Pozícia</a>
             </td>
             <td>
-                Chybu spôsobil
+                <a href="?order_by=povod">Chybu spôsobil</a>
             </td>
             <td>
-                Druh chyby
+                <a href="?order_by=druh">Druh chyby</a>
             </td>
             <td>
-                Popis chyby
+                <a href="?order_by=popis">Popis chyby</a>
             </td>
             <td>
-                Priemerne trvanie
+                <a href="?order_by=trvanie">Priemerne trvanie</a>
             </td>
             <td>
                 Priemerna frekvencia za
@@ -81,22 +84,24 @@
                 {{ item.vyskyt.week }}
             </td>
             <td>
+                {% if 'change_typchyby' in permissions %}
             <button onclick="presmerovanie('/typy/pridaj', 'GET', '{{ item.id }}')">UPRAVIŤ</button>
+                {% endif %}
             </td>
         </tr>
     {% endfor %}
-
-    <tr class="nadpis">
-        <td>da</td>
-    </tr>
-
 </table>
+
+    {% endif %}
+
 {% endblock maincontent %}
 
 {% block footer%}
 <br>
 <br>
+    {% if 'add_typchyby' in permissions %}
 <div class="pridaj">
     <button onclick="presmerovanie('/typy/pridaj', 'GET', 0)"> Pridaj nový typ</button>
 </div>
+    {% endif %}
 {% endblock footer%}

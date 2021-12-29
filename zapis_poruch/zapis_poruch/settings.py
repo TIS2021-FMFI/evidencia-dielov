@@ -14,7 +14,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_ROOT = f"{BASE_DIR}/zapis_poruch"
 TEMPLATE_DIRS = (os.path.join(PROJECT_ROOT, 'UI/templates'),)
 
 # Quick-start development settings - unsuitable for production
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'linka',
     'django.contrib.staticfiles',
     'django_seed',
+    'django_apscheduler',
 
 ]
 
@@ -58,7 +59,7 @@ ROOT_URLCONF = 'zapis_poruch.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(PROJECT_ROOT, 'UI/templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'UI/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,26 +77,13 @@ WSGI_APPLICATION = 'zapis_poruch.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-<<<<<<<<< Temporary merge branch 1
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydatabase',
-        'USER': 'mydatabaseuser',
-        'PASSWORD': 'mypassword',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
-}
-
-
 
 DATABASES = {
    'default': {
        'ENGINE': 'django.db.backends.postgresql_psycopg2',
        'NAME': 'linka',
-       'USER': 'nikolakulikova',
-       'PASSWORD': 'mamajana',
+       'USER': 'admin',
+       'PASSWORD': 'heslo',
        'HOST': '127.0.0.1',
        'PORT': '5432',
    }
@@ -147,8 +135,22 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/typy/'  # URL redirecting after a successful authentication
+LOGIN_REDIRECT_URL = '/'  # URL redirecting after a successful authentication
 LOGIN_URL = "/login/"  # URL to redirect to on unsuccessful authentication
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+}
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'

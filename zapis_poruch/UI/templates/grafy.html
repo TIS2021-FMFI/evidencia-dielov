@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block maincontent %}
+
+    {% if 'view_grafy' in permissions %}
+
 <form method="post">
     {% csrf_token %}
 <div class="w-100">
@@ -135,6 +138,8 @@
         }
         createChart();
     </script>
+
+    {% endif %}
 {% endblock maincontent %}
 {% block footer%}
 {% endblock footer%}

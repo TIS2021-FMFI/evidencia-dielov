@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block maincontent %}
+
+
+{% if 'view_chyba' in permissions %}
+
 <table style="width: 100%">
     <tr class="nadpis">
             <td>
@@ -10,7 +14,7 @@
                 <a href="?order_by=cas">Čas</a>
             </td>
             <td>
-                Trvanie
+                <a href="?order_by=trvanie">Trvanie</a>
             </td>
             <td>
                 <a href="?order_by=pozicia">Pozícia</a>
@@ -100,18 +104,23 @@
                     {{ item.nahradny_diel}}
             </td>
             <td>
+            {% if 'change_chyba' in permissions %}
                 <button onclick="presmerovanie('/zaznamy/pridaj', 'GET', '{{ item.id }}')">UPRAVIŤ</button>
+            {% endif %}
             </td>
             <td>
+            {% if 'approve_chyba' in permissions %}
                 {% if not item.schvalena and  item.vyriesena == True  %}
                     <button onclick="presmerovanie( '/zaznamy/potvrd', 'GET', '{{ item.id }}')">POTVRDIŤ</button>
                 {% endif %}
+            {% endif %}
             </td>
             <td>
-                <button  id="myBtn" onclick=" myFunction('{{ item.id }}')">
+            {% if 'delete_chyba' in permissions %}
+                <button  id="myBtn" onclick=" vymaz('{{ item.id }}')">
                    ODSTRÁNIŤ
                 </button>
-                  <div id="myModal" class="modal">
+                  <div id="vymaz" class="modal">
 
                                   <!-- Modal content -->
                                   <div class="modal-content">
@@ -124,6 +133,7 @@
                                   </div>
 
                   </div>
+            {% endif %}
 
 
 
@@ -131,11 +141,8 @@
         </tr>
     {% endfor %}
 
-    <tr class="nadpis">
-        <td>da</td>
-    </tr>
-
 </table>
+{% endif %}
 
 
 {% endblock maincontent %}
@@ -144,15 +151,17 @@
 {% block footer%}
 <br>
 <br>
-<div class="pridaj" >
-    <button onclick="presmerovanie('/zaznamy/pridaj', 'GET', 0)"> Pridaj nový zaznam</button>
-</div>
+    {% if 'add_chyba' in permissions %}
+    <div class="pridaj" >
+        <button onclick="presmerovanie('/zaznamy/pridaj', 'GET', 0)"> Pridaj nový zaznam</button>
+    </div>
+    {% endif %}
 
 
 <script>
 
     var span = document.getElementsByClassName("close")[0];
-    var modal = document.getElementById("myModal");
+    var modal = document.getElementById("vymaz");
 
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {

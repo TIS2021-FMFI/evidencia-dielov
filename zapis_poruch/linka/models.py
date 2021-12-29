@@ -101,10 +101,11 @@ class TypChybyWrapper:
 
             self.trvanie += object.trvanie.days
             self._increase_dict(pocet_nasich, rozdiel)
+
         if count == 0:
             self.trvanie = 0
         else:
-            self.trvanie = round(self.trvanie / count)
+            self.trvanie = round(self.trvanie / count)  # todo solve ZeroDivisionError on empty DB
         self.vyskyt = pocet_nasich
         for key in pocet_nasich:
             self.frekvencie[key] = 0 if pocet_vsetkych[key] == 0 else pocet_nasich[key] / pocet_vsetkych[key]
@@ -130,10 +131,6 @@ class TypRevizie(models.Model):
         return self.nazov_revizie
 
 
-class Pouzivatel(User):
-    pass
-
-
 # zaznam o chybe
 class Chyba(models.Model):
     class Meta:
@@ -150,7 +147,7 @@ class Chyba(models.Model):
     vyriesenie = models.DateTimeField(verbose_name="Čas vyriešenia", default=None, blank=True)
 
     # clovek kto nahlasil chybu
-    pouzivatel = models.ForeignKey(Pouzivatel, verbose_name="Uživateľ", on_delete=models.CASCADE,  default=None)
+    pouzivatel = models.ForeignKey(User, verbose_name="Uživateľ", on_delete=models.CASCADE,  default=None)
 
     # pozicia
     miesto_na_linke = models.ForeignKey(MiestoNaLinke, verbose_name="Pozícia",  on_delete=models.CASCADE,  default=None)
@@ -179,8 +176,8 @@ class ChybaWrapper:
         self.typ_chyby = object.typ_chyby
         self.opatrenia = object.opatrenia
         self.nahradny_diel = object.nahradny_diel
-        self.dovod = object.dovod
         self.popis = object.popis
+        self.dovod = object.dovod
         self.trvanie = self.vyriesenie - self.vznik
 
     @staticmethod
