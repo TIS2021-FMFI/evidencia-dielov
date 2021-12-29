@@ -125,7 +125,7 @@ class PridajZaznam(LoginRequiredMixin, View):
         else:
             form = ZaznamForm(request.POST)
 
-        uzivatel = Pouzivatel.objects.all().filter(email=request.user.email)[0]
+        uzivatel = Pouzivatel.objects.all().filter(id=request.user.id)[0]
         vznik = form['vznik'].value() + 'T' + form['vznik_cas'].value()
         vyriesenie = form['vyriesenie'].value() + 'T' + form['vyriesenie_cas'].value()
         vyriesena = form['vyriesena']
