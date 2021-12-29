@@ -61,14 +61,18 @@ function zmen(id){
 
 function skontroluj_vyplnenie_pri_vyrieseni(){
     if(document.getElementById("id_vyriesena").checked === true){
-        if(document.getElementById("id_opatrenia") !== null){
-            return false;
+        if(document.getElementById("id_opatrenia").value !== ""){
+
+            document.getElementById("ulozButton").disabled = false;
+            return;
         }
-        return true;
+        document.getElementById("ulozButton").disabled =  true;
+        return;
     }
-    if(document.getElementById("id_opatrenia") !== null){
-            return true;
+    if(document.getElementById("id_opatrenia").value !== ""){
+            document.getElementById("ulozButton").disabled =  true;
+            return;
     }
 
-    return false;
+    document.getElementById("ulozButton").disabled =  false;
 }
