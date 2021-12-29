@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, User
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .models import TypChyby, Chyba, TypRevizie, ChybaWrapper, TypChybyWrapper, DruhChyby, \
     MiestoNaLinke, SposobenaKym
@@ -191,23 +191,24 @@ class PridajZaznam(LoginRequiredMixin, View):
             form = ZaznamForm(request.POST, instance=typ)
         else:
             form = ZaznamForm(request.POST)
+            typ = Chyba()
 
-        uzivatel = Pouzivatel.objects.all().filter(id=request.user.id)[0]
-        vznik = form['vznik'].value() + 'T' + form['vznik_cas'].value()
-        vyriesenie = form['vyriesenie'].value() + 'T' + form['vyriesenie_cas'].value()
-        vyriesena = form['vyriesena']
-        miesto_na_linke = MiestoNaLinke.objects.all().filter(id=form['miesto_na_linke'].value())[0]
-        popis = form['popis']
-        sposobena_kym = SposobenaKym.objects.all().filter(id=form['sposobena_kym'].value())[0]
-        opatrenia = form['opatrenia']
-        druh_chyby = DruhChyby.objects.all().filter(id=form['druh_chyby'].value())[0]
-        nahradny_diel = form['nahradny_diel']
-        dovod = form['dovod']
-        zaznam = Chyba(pouzivatel=uzivatel, vznik=vznik, vyriesena=vyriesena, vyriesenie=vyriesenie,
-                       miesto_na_linke=miesto_na_linke, popis=popis, dovod=dovod, sposobena_kym=sposobena_kym,
-                      opatrenia=opatrenia, druh_chyby=druh_chyby, nahradny_diel=nahradny_diel)
-        form.save()
-        zaznam.save()
+        typ.pouzivatel = User.objects.all().filter(id=request.user.id)[0]
+        typ.vznik = form['vznik'].value() + 'T' + form['vznik_cas'].value()
+        typ.vyriesenie = form['vyriesenie'].value() + 'T' + form['vyriesenie_cas'].value()
+        typ.vyriesena = True if form['vyriesena'].value() else False
+        typ.miesto_na_linke = MiestoNaLinke.objects.all().filter(id=form['miesto_na_linke'].value())[0]
+        typ.popis = form['popis'].value()
+        typ.sposobena_kym = SposobenaKym.objects.all().filter(id=form['sposobena_kym'].value())[0]
+        typ.opatrenia = form['opatrenia'].value()
+        typ.druh_chyby = DruhChyby.objects.all().filter(id=form['druh_chyby'].value())[0]
+        typ.nahradny_diel = form['nahradny_diel'].value()
+        typ.dovod = form['dovod'].value()
+        # zaznam = Chyba(pouzivatel=uzivatel, vznik=vznik, vyriesena=vyriesena, vyriesenie=vyriesenie,
+        #                miesto_na_linke=miesto_na_linke, popis=popis, dovod=dovod, sposobena_kym=sposobena_kym,
+        #               opatrenia=opatrenia, druh_chyby=druh_chyby, nahradny_diel=nahradny_diel)
+
+        typ.save()
 
         return redirect("zaznamy")
 
