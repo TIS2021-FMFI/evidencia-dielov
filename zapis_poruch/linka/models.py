@@ -143,8 +143,8 @@ class Chyba(models.Model):
     vyriesena = models.BooleanField(verbose_name="Vyriešená")
 
     # cas vzniku a vyriesenia
-    vznik = models.DateTimeField(verbose_name="Čas", default=None)
-    vyriesenie = models.DateTimeField(verbose_name="Čas vyriešenia", default=None)
+    vznik = models.DateTimeField(verbose_name="Čas vzniku", default=None)
+    vyriesenie = models.DateTimeField(verbose_name="Čas vyriešenia", default=None, blank=True)
 
     # clovek kto nahlasil chybu
     pouzivatel = models.ForeignKey(User, verbose_name="Uživateľ", on_delete=models.CASCADE,  default=None)
@@ -157,9 +157,13 @@ class Chyba(models.Model):
     sposobena_kym = models.ForeignKey(SposobenaKym, verbose_name="Chybu spôsobil",  on_delete=models.CASCADE, default=None)
 
     popis = models.CharField(verbose_name="Popis", max_length=128, default=None)
-    dovod = models.CharField(verbose_name="Dôvod", max_length=128, default=None)
-    opatrenia = models.CharField(verbose_name="Opatrenia/ Oprava", max_length=256,  default=None)
-    nahradny_diel = models.CharField(verbose_name="Náhradný diel", max_length=128,  default=None)
+    dovod = models.CharField(verbose_name="Dôvod", max_length=128, default=None, blank=True)
+    opatrenia = models.CharField(verbose_name="Opatrenia/ Oprava", max_length=256,  default=None, blank=True)
+    nahradny_diel = models.CharField(verbose_name="Náhradný diel", max_length=128,  default=None, blank=True)
+
+    def __str__(self):
+        vyriesena = 'Nevyriešená' if not self.vyriesena else 'Vyriešená' if self.schvalena else 'Vyriešená (čaká na potvrdenie)'
+        return f'{self.vznik} | {vyriesena} | {self.popis} | {self.dovod}'
 
 
 class ChybaWrapper:

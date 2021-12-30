@@ -1,4 +1,5 @@
 from django import forms
+import datetime
 
 from .models import TypChyby, Chyba, TypRevizie
 
@@ -22,3 +23,9 @@ class RevizieForm(forms.ModelForm):
         model = TypRevizie
         fields = ['nazov_revizie', 'datum_poslednej_revizie', 'exspiracia',
                   'datum_nadchadzajucej_revizie']
+        widgets = {
+            'datum_poslednej_revizie': forms.DateInput(attrs={'type': 'date'})
+        }
+
+
+

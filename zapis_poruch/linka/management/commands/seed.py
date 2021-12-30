@@ -38,10 +38,13 @@ class Command(BaseCommand):
         run_seed("")
 
 
-def create_druh_chyby(id):
-    druh = DruhChyby(nazov=str(id) + '. chyba')
-    druh.save()
-    return druh
+def create_druh_chyby():
+    ret = []
+    for druh in ('mechanická', 'elektronická'):
+        chyba = DruhChyby(nazov=druh)
+        chyba.save()
+        ret.append(chyba)
+    return ret
 
 
 def create_miesto_na_linke(id):
@@ -57,10 +60,13 @@ def create_typ_chyby(id, miesto, druh, sposobena_kym):
     return typ_chyby
 
 
-def create_sposobena_kym(id):
-    sposobena_kym = SposobenaKym(kym=str(id) + '. kym')
-    sposobena_kym.save()
-    return sposobena_kym
+def create_sposobena_kym():
+    ret = []
+    for kym in ('stroj', 'človek'):
+        sposobena = SposobenaKym(kym=kym)
+        sposobena.save()
+        ret.append(sposobena)
+    return ret
 
 
 def create_pouzivatel(i):
@@ -124,22 +130,19 @@ def run_seed(mode):
     if mode == MODE_CLEAR:
         return
 
-    druhy = []
+    druhy = create_druh_chyby()
     miesta_na_linke = []
     typy_chyb = []
-    sposobene_kym = []
+    sposobene_kym = create_sposobena_kym()
     zariadenia = []
-    prava = []
     pouzivatelia = []
-    ma_prava = []
     zaznamy = []
+
     for i in range(1, 11):
-        druhy.append(create_druh_chyby(i))
         miesta_na_linke.append(create_miesto_na_linke(i))
         # prava.append(create_pravo(i))
         zariadenia.append(create_zariadenie(i))
-        sposobene_kym.append(create_sposobena_kym(i))
-        typy_chyb.append(create_typ_chyby(i, miesta_na_linke[-1], druhy[-1], sposobene_kym[-1]))
+        typy_chyb.append(create_typ_chyby(i, miesta_na_linke[-1], random.choice(druhy), random.choice(sposobene_kym)))
 
     admin = User.objects.create_user(username='admin',
                                      email='admin@poruchy.com',

@@ -209,7 +209,8 @@ class PridajRevizia(LoginRequiredMixin, View):
         data["permissions"] = permissions
 
         if "id" not in request.GET:
-            data["form"] = RevizieForm()
+            empty = TypRevizie(datum_poslednej_revizie=datetime.date.today)
+            data["form"] = RevizieForm(instance=empty)
             return render(request, self.template, data)
 
         i = request.GET["id"]
