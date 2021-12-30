@@ -122,9 +122,10 @@ class TypRevizie(models.Model):
         verbose_name_plural = "Revízie"
 
     nazov_revizie = models.CharField('Názov revízie', max_length=256,  default=None)
-    typ_revizie = models.CharField('Typ revízie', max_length=256,  default=None)
+    #typ_revizie = models.CharField('Typ revízie', max_length=256,  default=None)
+    typ_revizie = models.ForeignKey(DruhChyby, verbose_name="Typ revízie", on_delete=models.CASCADE, default=None)
     datum_poslednej_revizie = models.DateField('Dátum poslednej revízie')
-    exspiracia = models.IntegerField()
+    exspiracia = models.IntegerField(default=365)
     datum_nadchadzajucej_revizie = models.DateField('Dátum nadchádzajúcej revízie')
 
     def __str__(self):
