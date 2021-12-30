@@ -21,10 +21,11 @@ class ZaznamForm(forms.ModelForm):
 class RevizieForm(forms.ModelForm):
     class Meta:
         model = TypRevizie
-        fields = ['nazov_revizie', 'datum_poslednej_revizie', 'exspiracia',
+        fields = ['nazov_revizie','exspiracia','typ_revizie','datum_poslednej_revizie',
                   'datum_nadchadzajucej_revizie']
         widgets = {
-            'datum_poslednej_revizie': forms.DateInput(attrs={'type': 'date'})
+            'datum_poslednej_revizie': forms.DateInput(attrs={'type': 'date'}),
+            'datum_nadchadzajucej_revizie': forms.DateInput(attrs={'type': 'date'})
         }
 
 
