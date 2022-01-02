@@ -24,8 +24,9 @@ class RevizieForm(forms.ModelForm):
         fields = ['nazov_revizie','exspiracia','typ_revizie','datum_poslednej_revizie',
                   'datum_nadchadzajucej_revizie']
         widgets = {
-            'datum_poslednej_revizie': forms.DateInput(attrs={'type': 'date'}),
-            'datum_nadchadzajucej_revizie': forms.DateInput(attrs={'type': 'date'})
+            'datum_poslednej_revizie': forms.DateInput(attrs={'type': 'date', 'id': 'datum_poslednej'}),
+            'datum_nadchadzajucej_revizie': forms.DateInput(attrs={'type': 'date', 'id': 'datum_nasledujucej'}),
+            'exspiracia': forms.NumberInput(attrs={'id': 'exspiracia', 'onchange': 'nastavDatumNasledujucej()'})
         }
 
 
