@@ -209,7 +209,9 @@ class PridajRevizia(LoginRequiredMixin, View):
         data["permissions"] = permissions
 
         if "id" not in request.GET:
-            data["form"] = RevizieForm()
+            empty = TypRevizie(datum_poslednej_revizie=datetime.date.today)
+            empty.datum_nadchadzajucej_revizie = date.today() + timedelta(days=int(empty.exspiracia))
+            data["form"] = RevizieForm(instance=empty)
             return render(request, self.template, data)
 
         i = request.GET["id"]
@@ -269,7 +271,7 @@ class Revizia(LoginRequiredMixin, View):
             if order_by == "nazov":
                 data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.nazov_revizie)
             if order_by == "typ":
-                data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.typ_revizie)
+                data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.typ_revizie.nazov)
             if order_by == "datum_poslednej":
                 data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.datum_poslednej_revizie)
             if order_by == "datum_dalsej":

@@ -58,3 +58,13 @@ function zmen(id){
     }
 
 }
+
+function nastavDatumNasledujucej(){
+    const posledna = document.getElementById('datum_poslednej')
+    const nasledujuca = document.getElementById('datum_nasledujucej')
+    const exspiracia = document.getElementById('exspiracia')
+    const datum = new Date(posledna.value)
+    datum.setDate(datum.getDate() + Number(exspiracia.value))
+
+    nasledujuca.valueAsDate = datum
+}
