@@ -271,7 +271,7 @@ class Revizia(LoginRequiredMixin, View):
             if order_by == "nazov":
                 data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.nazov_revizie)
             if order_by == "typ":
-                data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.typ_revizie)
+                data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.typ_revizie.nazov)
             if order_by == "datum_poslednej":
                 data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.datum_poslednej_revizie)
             if order_by == "datum_dalsej":
