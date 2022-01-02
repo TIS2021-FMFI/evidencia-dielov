@@ -9,10 +9,6 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db.utils import IntegrityError
 
-# GROUPS = ['developers', 'devops', 'qa', 'operators', 'product']
-# MODELS = ['video', 'article', 'license', 'list', 'page', 'client']
-# PERMISSIONS = ['view', ]  # For now only view permission by default for all, others include add, delete, change
-
 GROUPS = {
     'full access': {
         'add':              ['chyba', 'druh chyby', 'miesto na linke', 'sposobena kym', 'typ chyby', 'typ revizie'],
