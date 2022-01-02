@@ -204,9 +204,6 @@ class PridajZaznam(LoginRequiredMixin, View):
         typ.druh_chyby = DruhChyby.objects.all().filter(id=form['druh_chyby'].value())[0]
         typ.nahradny_diel = form['nahradny_diel'].value()
         typ.dovod = form['dovod'].value()
-        # zaznam = Chyba(pouzivatel=uzivatel, vznik=vznik, vyriesena=vyriesena, vyriesenie=vyriesenie,
-        #                miesto_na_linke=miesto_na_linke, popis=popis, dovod=dovod, sposobena_kym=sposobena_kym,
-        #               opatrenia=opatrenia, druh_chyby=druh_chyby, nahradny_diel=nahradny_diel)
 
         typ.save()
 
@@ -471,7 +468,7 @@ class PotvrdZaznam(LoginRequiredMixin, View):
             data = dict()
             zaznam = Chyba.objects.all().filter(id=i)[0]
             data["form"] = ZaznamForm(instance=zaznam)
-            data['typy'] = TypChyby.objects.all().filter(id=zaznam.typ_chyby.id)
+            data['typy'] = TypChyby.objects.all().filter(sposobena_kym=zaznam.sposobena_kym).filter(druh_chyby=zaznam.druh_chyby).filter(miesto_na_linke=zaznam.miesto_na_linke)
             data['id'] = i
             data["permissions"] = permissions
             return render(request, self.template, data)
