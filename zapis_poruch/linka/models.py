@@ -116,14 +116,23 @@ class TypChybyWrapper:
         return [TypChybyWrapper(x) for x in objects]
 
 
+class DruhRevizie(models.Model):
+    class Meta:
+        verbose_name_plural = "Typ revizie"
+
+    nazov = models.CharField('Názov typu revízie', max_length=256,  default=None)
+
+    def __str__(self):
+        return self.nazov
+
 
 class TypRevizie(models.Model):
+    """toto popisuje celu reviziu"""
     class Meta:
         verbose_name_plural = "Revízie"
 
     nazov_revizie = models.CharField('Názov revízie', max_length=256,  default=None)
-    typ_revizie = models.CharField('Typ revízie', max_length=256,  default=None)
-    #typ_revizie = models.ForeignKey(DruhChyby, verbose_name="Typ revízie", on_delete=models.CASCADE, default=None)
+    typ_revizie = models.ForeignKey(DruhRevizie, verbose_name="Typ revízie", on_delete=models.CASCADE, default=None)
     datum_poslednej_revizie = models.DateField('Dátum poslednej revízie')
     exspiracia = models.IntegerField(default=365)
     datum_nadchadzajucej_revizie = models.DateField('Dátum nadchádzajúcej revízie')
