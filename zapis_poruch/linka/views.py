@@ -210,6 +210,7 @@ class PridajRevizia(LoginRequiredMixin, View):
 
         if "id" not in request.GET:
             empty = TypRevizie(datum_poslednej_revizie=datetime.date.today)
+            empty.datum_nadchadzajucej_revizie = date.today() + timedelta(days=int(empty.exspiracia))
             data["form"] = RevizieForm(instance=empty)
             return render(request, self.template, data)
 
