@@ -5,10 +5,13 @@ from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.core.mail import send_mail
+from django.contrib.auth.views import LoginView
+from django.views.generic import View
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, User
 from .forms import TypForm, ZaznamForm, RevizieForm
 from .models import TypChyby, Chyba, TypRevizie, ChybaWrapper, TypChybyWrapper, DruhChyby, \
     MiestoNaLinke, SposobenaKym
@@ -166,14 +169,14 @@ class PridajZaznam(LoginRequiredMixin, View):
         data["permissions"] = permissions
 
         if "id" not in request.GET:
-            data["form"] = ZaznamForm()
-            data["cas"] = False
+            form = ZaznamForm()
+
+            data["form"] = form
+
             return render(request, self.template, data)
 
         i = request.GET["id"]
         data["form"] = ZaznamForm(instance=Chyba.objects.all().filter(id=i)[0])
-        data["datum"] = data["form"]["vznik"]
-        data["cas"] = data["form"]["vznik"]
         return render(request, self.template, data)
 
     def post(self, request):
@@ -188,9 +191,21 @@ class PridajZaznam(LoginRequiredMixin, View):
             form = ZaznamForm(request.POST, instance=typ)
         else:
             form = ZaznamForm(request.POST)
+            typ = Chyba()
 
-        if form.is_valid():
-            form.save()
+        typ.pouzivatel = User.objects.all().filter(id=request.user.id)[0]
+        typ.vznik = form['vznik'].value() + 'T' + form['vznik_cas'].value()
+        typ.vyriesenie = form['vyriesenie'].value() + 'T' + form['vyriesenie_cas'].value()
+        typ.vyriesena = True if form['vyriesena'].value() else False
+        typ.miesto_na_linke = MiestoNaLinke.objects.all().filter(id=form['miesto_na_linke'].value())[0]
+        typ.popis = form['popis'].value()
+        typ.sposobena_kym = SposobenaKym.objects.all().filter(id=form['sposobena_kym'].value())[0]
+        typ.opatrenia = form['opatrenia'].value()
+        typ.druh_chyby = DruhChyby.objects.all().filter(id=form['druh_chyby'].value())[0]
+        typ.nahradny_diel = form['nahradny_diel'].value()
+        typ.dovod = form['dovod'].value()
+
+        typ.save()
 
         return redirect("zaznamy")
 
@@ -453,8 +468,9 @@ class PotvrdZaznam(LoginRequiredMixin, View):
         else:
             i = request.GET["id"]
             data = dict()
-            data["form"] = ZaznamForm(instance=Chyba.objects.all().filter(id=i)[0])
-            data['typy'] = TypChyby.objects.all()
+            zaznam = Chyba.objects.all().filter(id=i)[0]
+            data["form"] = ZaznamForm(instance=zaznam)
+            data['typy'] = TypChyby.objects.all().filter(sposobena_kym=zaznam.sposobena_kym).filter(druh_chyby=zaznam.druh_chyby).filter(miesto_na_linke=zaznam.miesto_na_linke)
             data['id'] = i
             data["permissions"] = permissions
             return render(request, self.template, data)

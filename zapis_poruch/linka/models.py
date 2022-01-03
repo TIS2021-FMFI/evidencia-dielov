@@ -146,30 +146,35 @@ class Chyba(models.Model):
     class Meta:
         verbose_name_plural = "Chyby"
 
-    typ_chyby = models.ForeignKey(TypChyby, verbose_name="Typ Chyby", on_delete=models.CASCADE, default=None)
+    typ_chyby = models.ForeignKey(TypChyby, verbose_name="Typ Chyby", on_delete=models.CASCADE,
+                                  default=None, blank=True, null=True)
 
     #stav
-    schvalena = models.BooleanField(verbose_name="Schválená")
-    vyriesena = models.BooleanField(verbose_name="Vyriešená")
+    schvalena = models.BooleanField(verbose_name="Schválená", default=False)
+    vyriesena = models.BooleanField(verbose_name="Vyriešená", blank=True, default=False)
 
     # cas vzniku a vyriesenia
     vznik = models.DateTimeField(verbose_name="Čas vzniku", default=None)
-    vyriesenie = models.DateTimeField(verbose_name="Čas vyriešenia", default=None, blank=True)
+    vyriesenie = models.DateTimeField(verbose_name="Čas vyriešenia", default=None, blank=True, null=True)
 
     # clovek kto nahlasil chybu
-    pouzivatel = models.ForeignKey(User, verbose_name="Uživateľ", on_delete=models.CASCADE,  default=None)
+    pouzivatel = models.ForeignKey(User, verbose_name="Uživateľ", on_delete=models.CASCADE,
+                                   default=None, null=True)
 
     # pozicia
-    miesto_na_linke = models.ForeignKey(MiestoNaLinke, verbose_name="Pozícia",  on_delete=models.CASCADE,  default=None)
+    miesto_na_linke = models.ForeignKey(MiestoNaLinke, verbose_name="Pozícia",  on_delete=models.CASCADE,
+                                        default=None, null=True)
     # mechanicka elektronicka
-    druh_chyby = models.ForeignKey(DruhChyby, verbose_name="Druh chyby",  on_delete=models.CASCADE,   default=None)
+    druh_chyby = models.ForeignKey(DruhChyby, verbose_name="Druh chyby",  on_delete=models.CASCADE,
+                                   default=None, null=True)
     # stroj/clovek
-    sposobena_kym = models.ForeignKey(SposobenaKym, verbose_name="Chybu spôsobil",  on_delete=models.CASCADE, default=None)
+    sposobena_kym = models.ForeignKey(SposobenaKym, verbose_name="Chybu spôsobil",  on_delete=models.CASCADE,
+                                      default=None, null=True)
 
-    popis = models.CharField(verbose_name="Popis", max_length=128, default=None)
-    dovod = models.CharField(verbose_name="Dôvod", max_length=128, default=None, blank=True)
-    opatrenia = models.CharField(verbose_name="Opatrenia/ Oprava", max_length=256,  default=None, blank=True)
-    nahradny_diel = models.CharField(verbose_name="Náhradný diel", max_length=128,  default=None, blank=True)
+    popis = models.CharField(verbose_name="Popis", max_length=128, default=None, null=True)
+    dovod = models.CharField(verbose_name="Dôvod", max_length=128, default=None, blank=True, null=True)
+    opatrenia = models.CharField(verbose_name="Opatrenia/ Oprava", max_length=256,  default=None, blank=True, null=True)
+    nahradny_diel = models.CharField(verbose_name="Náhradný diel", max_length=128,  default=None, blank=True, null=True)
 
     def __str__(self):
         vyriesena = 'Nevyriešená' if not self.vyriesena else 'Vyriešená' if self.schvalena else 'Vyriešená (čaká na potvrdenie)'
@@ -192,7 +197,7 @@ class ChybaWrapper:
         self.nahradny_diel = object.nahradny_diel
         self.popis = object.popis
         self.dovod = object.dovod
-        self.trvanie = self.vyriesenie - self.vznik
+        self.trvanie = "" if self.vyriesenie is None else self.vyriesenie - self.vznik
 
     @staticmethod
     def all():

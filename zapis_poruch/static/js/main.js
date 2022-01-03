@@ -59,6 +59,25 @@ function zmen(id){
 
 }
 
+
+function skontroluj_vyplnenie_pri_vyrieseni(){
+    if(document.getElementById("id_vyriesena").checked === true){
+        if(document.getElementById("id_opatrenia").value !== ""){
+
+            document.getElementById("ulozButton").disabled = false;
+            return;
+        }
+        document.getElementById("ulozButton").disabled =  true;
+        return;
+    }
+    if(document.getElementById("id_opatrenia").value !== ""){
+            document.getElementById("ulozButton").disabled =  true;
+            return;
+    }
+
+    document.getElementById("ulozButton").disabled =  false;
+
+  
 function nastavDatumNasledujucej(){
     const posledna = document.getElementById('datum_poslednej')
     const nasledujuca = document.getElementById('datum_nasledujucej')
@@ -67,4 +86,5 @@ function nastavDatumNasledujucej(){
     datum.setDate(datum.getDate() + Number(exspiracia.value))
 
     nasledujuca.valueAsDate = datum
+  
 }

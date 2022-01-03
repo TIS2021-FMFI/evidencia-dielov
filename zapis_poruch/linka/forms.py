@@ -1,3 +1,5 @@
+import datetime
+
 from django import forms
 import datetime
 
@@ -11,11 +13,27 @@ class TypForm(forms.ModelForm):
 
 
 class ZaznamForm(forms.ModelForm):
+    vznik = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label="Dátum vzniku",
+                            initial=datetime.date.today)
+    vyriesenie = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label="Dátum vyriešenia",
+                                 required=False, initial=datetime.date.today)
+    vznik_cas = forms.DateField(widget=forms.TimeInput(attrs={'type': 'time'}),
+                                initial=(datetime.datetime.utcnow() + datetime.timedelta(hours=1)).strftime("%H:%M:%S"))
+    vyriesenie_cas = forms.DateField(widget=forms.TimeInput(attrs={'type': 'time'}), required=False
+                                     , initial=(datetime.datetime.utcnow() + datetime.timedelta(hours=1)).strftime("%H:%M:%S"))
+
+    def __init__(self, *args, **kwargs):
+        super(ZaznamForm, self).__init__(*args, **kwargs)
+        if 'instance' in kwargs:
+            chyba = kwargs["instance"]
+            self.initial['vznik_cas'] = chyba.vznik.time()
+            self.initial['vyriesenie_cas'] = chyba.vyriesenie.time()
+
     class Meta:
         model = Chyba
-        fields = ['pouzivatel', 'vznik', 'schvalena', 'vyriesena', 'miesto_na_linke', 'popis',
-                  'vyriesenie', 'sposobena_kym', 'typ_chyby', 'opatrenia',
-                  'druh_chyby', 'nahradny_diel']
+        fields = ['vznik', 'vznik_cas',  'vyriesena', 'miesto_na_linke', 'popis',
+                  'vyriesenie', 'vyriesenie_cas', 'sposobena_kym', 'opatrenia',
+                  'druh_chyby', 'nahradny_diel', 'dovod']
 
 
 class RevizieForm(forms.ModelForm):
