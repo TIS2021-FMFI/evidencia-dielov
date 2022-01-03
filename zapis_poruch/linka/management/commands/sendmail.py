@@ -19,14 +19,23 @@ from django_apscheduler.jobstores import register_job
 from linka.models import TypRevizie
 from django.core.mail import send_mail
 
+from django.contrib.auth.models import Permission, User
+from linka.views import get_user_permissions
+
 logger = logging.getLogger(__name__)
 
 def delete_old_job_executions(max_age=604_800):
     """Deletes all apscheduler job execution logs older than `max_age`."""
     DjangoJobExecution.objects.delete_old_job_executions(max_age)
 
-def doSomething():
-    mail_list = ['namova9094@pyrelle.com']  # , 'freyer.viktor@gmail.com']
+def sendMail():
+    users = User.objects.all()
+    required_permissions = {'change_typrevizie', 'audit_revizie'}
+
+    mail_list = [user.email for user in users if bool(get_user_permissions(user) & required_permissions)]
+    print(mail_list)
+
+
     now = datetime.datetime.now()
     start = now + datetime.timedelta(days=27)
     end = now + datetime.timedelta(days=28)
@@ -75,12 +84,12 @@ class Command(BaseCommand):
     help = "Runs apscheduler."
 
     def handle(self, *args, **options):
-        doSomething()
+        sendMail()
         scheduler = BlockingScheduler(timezone=settings.TIME_ZONE)
         scheduler.add_jobstore(DjangoJobStore(), "default")
 
         scheduler.add_job(
-            doSomething,
+            sendMail,
             trigger="interval",
             days=1,
             id="Posielanie mailu",

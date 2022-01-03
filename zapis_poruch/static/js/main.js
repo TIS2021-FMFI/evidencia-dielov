@@ -76,7 +76,7 @@ function skontroluj_vyplnenie_pri_vyrieseni(){
     }
 
     document.getElementById("ulozButton").disabled =  false;
-
+}
   
 function nastavDatumNasledujucej(){
     const posledna = document.getElementById('datum_poslednej')
