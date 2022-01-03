@@ -25,7 +25,7 @@ def delete_old_job_executions(max_age=604_800):
     """Deletes all apscheduler job execution logs older than `max_age`."""
     DjangoJobExecution.objects.delete_old_job_executions(max_age)
 
-def doSomething():
+def sendMail():
     mail_list = ['namova9094@pyrelle.com']  # , 'freyer.viktor@gmail.com']
     now = datetime.datetime.now()
     start = now + datetime.timedelta(days=27)
@@ -75,12 +75,12 @@ class Command(BaseCommand):
     help = "Runs apscheduler."
 
     def handle(self, *args, **options):
-        doSomething()
+        sendMail()
         scheduler = BlockingScheduler(timezone=settings.TIME_ZONE)
         scheduler.add_jobstore(DjangoJobStore(), "default")
 
         scheduler.add_job(
-            doSomething,
+            sendMail,
             trigger="interval",
             days=1,
             id="Posielanie mailu",
