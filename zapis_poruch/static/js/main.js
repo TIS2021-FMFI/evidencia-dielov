@@ -59,6 +59,7 @@ function zmen(id){
 
 }
 
+
 function skontroluj_vyplnenie_pri_vyrieseni(){
     if(document.getElementById("id_vyriesena").checked === true){
         if(document.getElementById("id_opatrenia").value !== ""){
@@ -75,4 +76,15 @@ function skontroluj_vyplnenie_pri_vyrieseni(){
     }
 
     document.getElementById("ulozButton").disabled =  false;
+
+  
+function nastavDatumNasledujucej(){
+    const posledna = document.getElementById('datum_poslednej')
+    const nasledujuca = document.getElementById('datum_nasledujucej')
+    const exspiracia = document.getElementById('exspiracia')
+    const datum = new Date(posledna.value)
+    datum.setDate(datum.getDate() + Number(exspiracia.value))
+
+    nasledujuca.valueAsDate = datum
+  
 }

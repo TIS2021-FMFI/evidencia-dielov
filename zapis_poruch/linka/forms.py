@@ -1,6 +1,7 @@
 import datetime
 
 from django import forms
+import datetime
 
 from .models import TypChyby, Chyba, TypRevizie
 
@@ -38,5 +39,13 @@ class ZaznamForm(forms.ModelForm):
 class RevizieForm(forms.ModelForm):
     class Meta:
         model = TypRevizie
-        fields = ['nazov_revizie', 'datum_poslednej_revizie', 'exspiracia',
+        fields = ['nazov_revizie','exspiracia','typ_revizie','datum_poslednej_revizie',
                   'datum_nadchadzajucej_revizie']
+        widgets = {
+            'datum_poslednej_revizie': forms.DateInput(attrs={'type': 'date', 'id': 'datum_poslednej', 'onchange': 'nastavDatumNasledujucej()'}),
+            'datum_nadchadzajucej_revizie': forms.DateInput(attrs={'type': 'date', 'id': 'datum_nasledujucej'}),
+            'exspiracia': forms.NumberInput(attrs={'id': 'exspiracia', 'onchange': 'nastavDatumNasledujucej()'})
+        }
+
+
+

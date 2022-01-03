@@ -116,15 +116,25 @@ class TypChybyWrapper:
         return [TypChybyWrapper(x) for x in objects]
 
 
+class DruhRevizie(models.Model):
+    class Meta:
+        verbose_name_plural = "Typ revizie"
+
+    nazov = models.CharField('Názov typu revízie', max_length=256,  default=None)
+
+    def __str__(self):
+        return self.nazov
+
 
 class TypRevizie(models.Model):
+    """toto popisuje celu reviziu"""
     class Meta:
         verbose_name_plural = "Revízie"
 
     nazov_revizie = models.CharField('Názov revízie', max_length=256,  default=None)
-    typ_revizie = models.CharField('Typ revízie', max_length=256,  default=None)
+    typ_revizie = models.ForeignKey(DruhRevizie, verbose_name="Typ revízie", on_delete=models.CASCADE, default=None)
     datum_poslednej_revizie = models.DateField('Dátum poslednej revízie')
-    exspiracia = models.IntegerField()
+    exspiracia = models.IntegerField(default=365)
     datum_nadchadzajucej_revizie = models.DateField('Dátum nadchádzajúcej revízie')
 
     def __str__(self):
@@ -144,7 +154,7 @@ class Chyba(models.Model):
     vyriesena = models.BooleanField(verbose_name="Vyriešená", blank=True, default=False)
 
     # cas vzniku a vyriesenia
-    vznik = models.DateTimeField(verbose_name="Čas", default=None)
+    vznik = models.DateTimeField(verbose_name="Čas vzniku", default=None)
     vyriesenie = models.DateTimeField(verbose_name="Čas vyriešenia", default=None, blank=True, null=True)
 
     # clovek kto nahlasil chybu
@@ -165,6 +175,10 @@ class Chyba(models.Model):
     dovod = models.CharField(verbose_name="Dôvod", max_length=128, default=None, blank=True, null=True)
     opatrenia = models.CharField(verbose_name="Opatrenia/ Oprava", max_length=256,  default=None, blank=True, null=True)
     nahradny_diel = models.CharField(verbose_name="Náhradný diel", max_length=128,  default=None, blank=True, null=True)
+
+    def __str__(self):
+        vyriesena = 'Nevyriešená' if not self.vyriesena else 'Vyriešená' if self.schvalena else 'Vyriešená (čaká na potvrdenie)'
+        return f'{self.vznik} | {vyriesena} | {self.popis} | {self.dovod}'
 
 
 class ChybaWrapper:

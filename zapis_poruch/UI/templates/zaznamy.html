@@ -23,10 +23,13 @@
                 <a href="?order_by=sposobena_kym">Chybu spôsobil</a>
             </td>
             <td>
-                <a href="?order_by=popis">Popis chyby</a>
+                <a href="?order_by=druh">Druh chyby</a>
             </td>
             <td>
                 <a href="?order_by=uzivatel">Uživateľ</a>
+            </td>
+            <td>
+                <a href="?order_by=popis">Popis chyby</a>
             </td>
             <td>
                 <a href="?order_by=dovod">Dôvod</a>
@@ -35,11 +38,11 @@
                 <a href="?order_by=opatrenie">Opatrenie/Oprava</a>
             </td>
             <td>
-                Náhradný diel
+                <a href="?order_by=diel">Náhradný diel</a>
             </td>
 
             <td>
-                Uprava
+                Úprava
             </td>
             <td>
                 Potvrdenie
@@ -89,10 +92,13 @@
                     {{ item.sposobena_kym.kym}}
             </td>
             <td>
-                   {{ item.popis}}
+                   {{ item.druh_chyby}}
             </td>
             <td>
                     {{ item.pouzivatel}}
+            </td>
+            <td>
+                   {{ item.popis}}
             </td>
             <td>
                     {{ item.dovod}}
