@@ -19,6 +19,9 @@ from django_apscheduler.jobstores import register_job
 from linka.models import TypRevizie
 from django.core.mail import send_mail
 
+from django.contrib.auth.models import Permission, User
+from linka.views import get_user_permissions
+
 logger = logging.getLogger(__name__)
 
 def delete_old_job_executions(max_age=604_800):
@@ -26,7 +29,13 @@ def delete_old_job_executions(max_age=604_800):
     DjangoJobExecution.objects.delete_old_job_executions(max_age)
 
 def sendMail():
-    mail_list = ['namova9094@pyrelle.com']  # , 'freyer.viktor@gmail.com']
+    users = User.objects.all()
+    required_permissions = {'change_typrevizie', 'audit_revizie'}
+
+    mail_list = [user.email for user in users if bool(get_user_permissions(user) & required_permissions)]
+    print(mail_list)
+
+
     now = datetime.datetime.now()
     start = now + datetime.timedelta(days=27)
     end = now + datetime.timedelta(days=28)
