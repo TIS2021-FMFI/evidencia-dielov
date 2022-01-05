@@ -2,7 +2,7 @@
 {% load static %}
 {% block maincontent %}
 <script>
-    const typy_chyb = {{ errors|safe }}
+    const typy_chyb = {{ chyby|safe }}
 
     function change_table(){
         let target_freq = document.getElementById("freq").value;
@@ -60,7 +60,7 @@
                 Uprava
             </td>
     </tr>
-    {% for item in errors %}
+    {% for item in chyby %}
         <tr id="{{ item.id }}">
             <td>
                 {{ item.miesto_na_linke }}

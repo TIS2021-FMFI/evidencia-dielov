@@ -39,10 +39,10 @@ class TypyChyb(LoginRequiredMixin, View):
 
         all_errors = ChybaWrapper.all()
         all_types = TypChybyWrapper.all()
-        for object in all_types:
-            object.fill(all_errors)
+        for typ in all_types:
+            typ.fill(all_errors)
 
-        data = {'errors': [x.json() for x in all_types],
+        data = {'chyby': [x.json() for x in all_types],
                 'permissions': permissions
                 }
 

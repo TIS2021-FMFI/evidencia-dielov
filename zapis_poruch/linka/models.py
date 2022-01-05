@@ -57,7 +57,7 @@ class TypChybyWrapper:
         self.miesto_na_linke = object.miesto_na_linke
         self.druh_chyby = object.druh_chyby
         self.sposobena_kym = object.sposobena_kym
-        self.frekvencie = dict()
+        self.frekvencie = dict()  # todo frekvencia ma znazornovat ze aka doba je medzi pripadmi, vyssie cislo je horsie
         self.vyskyt = dict()
         self.trvanie = 0  # todo teraz sa vypisuje trvanie v dnoch? treba to prerobit na zmysluplne cisla
 
