@@ -2,10 +2,9 @@
 {% load static %}
 {% block maincontent %}
 
-<script>updateRequired()</script>
-
 <form method="post" xmlns="http://www.w3.org/1999/html" >
     {% csrf_token %}
+
     <div class="row ">
         <div class="first justify-content-center">
             <div class=" justify-content-center width_form_fields">
@@ -27,7 +26,13 @@
         <div class="col-3 first">
             <div class=" justify-content-center width_form_fields">
                 {{form.vznik.label}} <span class="textHviezda">*</span><br>
+                {% for error in form.vznik.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
                 {{form.vznik}}
+                {% for error in form.vznik_cas.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
                 {{form.vznik_cas}}
             </div>
             <br><br>
@@ -49,7 +54,13 @@
              <br><br>
             <div class=" justify-content-center width_form_fields">
                 {{form.vyriesenie.label}}<span class="textHviezda">*</span><br>
+                {% for error in form.vyriesenie.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
                 {{form.vyriesenie}}
+                {% for error in form.vyriesenie_cas.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
                 {{form.vyriesenie_cas}}
             </div>
              <br><br>
@@ -74,6 +85,8 @@
 </form>
 
 {% endblock maincontent %}
+
+ <script>updateRequired()</script>
 
 {% block footer%}
 {% endblock footer%}

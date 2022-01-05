@@ -193,6 +193,12 @@ class PridajZaznam(LoginRequiredMixin, View):
             form = ZaznamForm(request.POST)
             typ = Chyba()
 
+        if form.is_valid():
+            print('valid')
+        else:
+            print('not valid')
+            return render(request, self.template, {'form': form,'permissions':permissions})
+
         typ.pouzivatel = User.objects.all().filter(id=request.user.id)[0]
         typ.vznik = form['vznik'].value() + 'T' + form['vznik_cas'].value()
 
