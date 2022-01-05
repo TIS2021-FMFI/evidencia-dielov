@@ -22,7 +22,7 @@ class ZaznamForm(forms.ModelForm):
                                  required=False)
     vyriesenie_cas = forms.DateField(widget=forms.TimeInput(attrs={'type': 'time'}), required=False)
 
-    vyriesena = forms.BooleanField(widget=forms.CheckboxInput(attrs={'onChange': 'updateDate()'}),required=False)
+    vyriesena = forms.BooleanField(widget=forms.CheckboxInput(attrs={'onChange': 'onReviziaCheckboxToggle()'}), required=False)
 
     def __init__(self, *args, **kwargs):
         super(ZaznamForm, self).__init__(*args, **kwargs)

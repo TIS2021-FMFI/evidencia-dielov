@@ -170,7 +170,7 @@ class Chyba(models.Model):
     sposobena_kym = models.ForeignKey(SposobenaKym, verbose_name="Chybu spôsobil",  on_delete=models.CASCADE,
                                       default=None, null=True)
 
-    popis = models.CharField(verbose_name="Popis", max_length=128, default=None, null=True)
+    popis = models.CharField(verbose_name="Popis", max_length=128, default=None, null=True, blank=False)
     dovod = models.CharField(verbose_name="Dôvod", max_length=128, default=None, blank=True, null=True)
     opatrenia = models.CharField(verbose_name="Opatrenia/ Oprava", max_length=256,  default=None, blank=True, null=True)
     nahradny_diel = models.CharField(verbose_name="Náhradný diel", max_length=128,  default=None, blank=True, null=True)
