@@ -419,6 +419,10 @@ class PotvrdZaznam(LoginRequiredMixin, View):
             i = request.GET["id"]
             data = dict()
             zaznam = Chyba.objects.all().filter(id=i)[0]
+
+            if zaznam.schvalena or not zaznam.vyriesena:
+                return redirect('zaznamy')
+
             data["form"] = ZaznamForm(instance=zaznam)
 
             for pole in ['vznik', 'vznik_cas', 'vyriesena', 'miesto_na_linke', 'popis',
