@@ -8,7 +8,7 @@
     {% csrf_token %}
 <div class="w-100">
     <div class="m-1">
-        <label for="casoveObdobie">Casove obdobie <span class="input_required">*</span></label>
+        <label for="casoveObdobie">Časové obdobie <span class="input_required">*</span></label>
         <select name="casoveObdobie" id="casoveObdobie">
             <option {% if 1 == casoveObdobieOld %} selected {% endif %} value="1">Den</option>
             <option {% if 7 == casoveObdobieOld %} selected {% endif %} value="7">Tyzden</option>
@@ -26,7 +26,7 @@
     </div>
 
     <div class="m-1">
-        <label for="cisloZariadenia">Cislo zariadenia</label>
+        <label for="cisloZariadenia">Miesto na linke</label>
         <select name="cisloZariadenia" id="cisloZariadenia" onchange="skontrolujPravoNaPopisTypuChyby()">
             <option value=""></option>
             {% for zariadenie in zariadenia %}
@@ -47,7 +47,7 @@
     </div>
 
     <div class="m-1">
-        <label for="chybuSposobil">Chybu sposobil</label>
+        <label for="chybuSposobil">Chybu spôsobil</label>
         <select name="chybuSposobil" id="chybuSposobil" onchange="skontrolujPravoNaPopisTypuChyby()">
             <option value=""></option>
             {% for spo in sposobeneKym %}
@@ -67,7 +67,7 @@
         </select>
     </div>
 
-    <button type="submit">Vygenerovat</button>
+    <button type="submit">Vygenerovať</button>
 
 </div>
 </form>
@@ -119,7 +119,7 @@
                 data: {
                     labels: {{ grafLabels|safe }},
                     datasets: [{
-                        label: "Graf chyb",
+                        label: "Graf chýb",
                         backgroundColor: {{ grafColors|safe }},
                         data: {{ grafData|safe }}
                     }]
