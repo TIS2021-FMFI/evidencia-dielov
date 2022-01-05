@@ -48,11 +48,6 @@ class ZaznamForm(forms.ModelForm):
         endDate = self.cleaned_data.get('vyriesenie')
         endTime = self.cleaned_data.get('vyriesenie_cas')
 
-        print(startTime)
-        print(startDate)
-        print(endTime)
-        print(endDate)
-
         if (endDate is not None) and startDate > endDate:
             self.add_error('vyriesenie', "Dátum vzniku je menší ako dátum vyriešenia")
             self.add_error('vznik', "Dátum vzniku je menší ako dátum vyriešenia")

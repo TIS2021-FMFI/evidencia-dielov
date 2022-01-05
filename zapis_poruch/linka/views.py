@@ -409,32 +409,25 @@ class PotvrdZaznam(LoginRequiredMixin, View):
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
-        if "put" in request.GET:
-            i = request.GET["id"]
-            zaznam = Chyba.objects.all().filter(id=i)[0]
-            zaznam.schvalena = True
-            zaznam.save()
+        i = request.GET["id"]
+        data = dict()
+        zaznam = Chyba.objects.all().filter(id=i)[0]
+
+        if zaznam.schvalena or not zaznam.vyriesena:
             return redirect('zaznamy')
-        else:
-            i = request.GET["id"]
-            data = dict()
-            zaznam = Chyba.objects.all().filter(id=i)[0]
 
-            if zaznam.schvalena or not zaznam.vyriesena:
-                return redirect('zaznamy')
+        data["form"] = ZaznamForm(instance=zaznam)
 
-            data["form"] = ZaznamForm(instance=zaznam)
+        for pole in ['vznik', 'vznik_cas', 'vyriesena', 'miesto_na_linke', 'popis',
+                     'vyriesenie', 'vyriesenie_cas', 'sposobena_kym', 'opatrenia',
+                     'druh_chyby', 'nahradny_diel', 'dovod']:
+            data['form'][pole].field.disabled = True
 
-            for pole in ['vznik', 'vznik_cas', 'vyriesena', 'miesto_na_linke', 'popis',
-                         'vyriesenie', 'vyriesenie_cas', 'sposobena_kym', 'opatrenia',
-                         'druh_chyby', 'nahradny_diel', 'dovod']:
-                data['form'][pole].field.disabled = True
-
-            data['typy'] = TypChyby.objects.all().filter(sposobena_kym=zaznam.sposobena_kym).filter(
-                druh_chyby=zaznam.druh_chyby).filter(miesto_na_linke=zaznam.miesto_na_linke)
-            data['id'] = i
-            data["permissions"] = permissions
-            return render(request, self.template, data)
+        data['typy'] = TypChyby.objects.all().filter(sposobena_kym=zaznam.sposobena_kym).filter(
+            druh_chyby=zaznam.druh_chyby).filter(miesto_na_linke=zaznam.miesto_na_linke)
+        data['id'] = i
+        data["permissions"] = permissions
+        return render(request, self.template, data)
 
     def post(self, request):
         permissions = get_user_permissions(request.user)
@@ -445,10 +438,10 @@ class PotvrdZaznam(LoginRequiredMixin, View):
 
         i = request.GET["id"]
         zaznam = Chyba.objects.all().filter(id=i)[0]
-        typ = request.GET["list"]
-        zaznam.typ_chyby = TypChyby.objects.all().filter(id=typ)[0]
 
-        # todo pridat ukadanie zvysku
+        typID = int(request.POST["typ"])
+        zaznam.typ_chyby = TypChyby.objects.all().filter(id=typID)[0]
+        zaznam.schvalena = True
 
         zaznam.save()
         return redirect("zaznamy")

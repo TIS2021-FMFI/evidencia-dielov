@@ -47,23 +47,7 @@ function vykonajRevizuOkno(id) {
 
 }
 
-//pri potvrd zaznam iba jeden checkbox
-function zmen(id){
-    var button = document.getElementById("potvrd");
-    if(document.getElementById(id.toString()).checked === false){
-        zaznam = -1;
-        button.disabled = true;
-    }
-    else if(zaznam !== -1){
-        document.getElementById(id.toString()).checked = false;
-    }
-    else{
-        button.disabled = false;
-        zaznam = id;
-    }
-
-}
-  
+//pri reviziach
 function nastavDatumNasledujucej(){
     const posledna = document.getElementById('datum_poslednej')
     const nasledujuca = document.getElementById('datum_nasledujucej')
