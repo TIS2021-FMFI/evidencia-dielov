@@ -59,7 +59,7 @@ class TypChybyWrapper:
         self.sposobena_kym = object.sposobena_kym
         self.frekvencie = dict()
         self.vyskyt = dict()
-        self.trvanie = 0
+        self.trvanie = 0  # todo teraz sa vypisuje trvanie v dnoch? treba to prerobit na zmysluplne cisla
 
     def json(self):
         return {
@@ -98,7 +98,6 @@ class TypChybyWrapper:
             if object.typ_chyby != self._object:
                 continue
             count += 1
-
             self.trvanie += object.trvanie.days
             self._increase_dict(pocet_nasich, rozdiel)
 
@@ -197,7 +196,7 @@ class ChybaWrapper:
         self.nahradny_diel = object.nahradny_diel
         self.popis = object.popis
         self.dovod = object.dovod
-        self.trvanie = "" if self.vyriesenie is None else self.vyriesenie - self.vznik
+        self.trvanie = datetime.timedelta(days=0) if self.vyriesenie is None else self.vyriesenie - self.vznik
 
     @staticmethod
     def all():
