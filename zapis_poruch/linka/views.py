@@ -195,7 +195,12 @@ class PridajZaznam(LoginRequiredMixin, View):
 
         typ.pouzivatel = User.objects.all().filter(id=request.user.id)[0]
         typ.vznik = form['vznik'].value() + 'T' + form['vznik_cas'].value()
-        typ.vyriesenie = form['vyriesenie'].value() + 'T' + form['vyriesenie_cas'].value()
+
+        if bool(form['vyriesenie'].value()) and bool(form['vyriesenie_cas'].value()):
+            typ.vyriesenie = form['vyriesenie'].value() + 'T' + form['vyriesenie_cas'].value()
+        else:
+            typ.vyriesenie = None
+
         typ.vyriesena = True if form['vyriesena'].value() else False
         typ.miesto_na_linke = MiestoNaLinke.objects.all().filter(id=form['miesto_na_linke'].value())[0]
         typ.popis = form['popis'].value()

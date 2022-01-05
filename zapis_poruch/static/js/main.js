@@ -88,3 +88,39 @@ function nastavDatumNasledujucej(){
     nasledujuca.valueAsDate = datum
   
 }
+
+function updateDate() {
+    const datum_vyriesenia = document.getElementById('id_vyriesenie');
+    const cas_vyriesenia = document.getElementById('id_vyriesenie_cas');
+    if(document.getElementById("id_vyriesena").checked === true){
+        //nastav cas na teraz
+
+        var date = new Date();
+
+        var day = date.getDate();
+        var month = date.getMonth() + 1;
+        var year = date.getFullYear();
+
+        if (month < 10) month = "0" + month;
+        if (day < 10) day = "0" + day;
+
+        var today = year + "-" + month + "-" + day;
+
+        datum_vyriesenia.value = today
+
+        let hour = date.getHours()
+        let minute = date.getMinutes()
+        if (hour < 10) hour = "0" + hour;
+        if (minute < 10) minute = "0" + minute;
+
+        const now = hour + ":" + minute
+
+        console.log(now)
+        cas_vyriesenia.value = now
+
+    } else {
+        //vymaz nastaveny cas
+        datum_vyriesenia.value = undefined
+        cas_vyriesenia.value = undefined
+    }
+}
