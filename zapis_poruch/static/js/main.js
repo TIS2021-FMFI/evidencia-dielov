@@ -110,10 +110,12 @@ function updateDate() {
 
         let hour = date.getHours()
         let minute = date.getMinutes()
+        let second = date.getSeconds()
         if (hour < 10) hour = "0" + hour;
         if (minute < 10) minute = "0" + minute;
+        if (second < 10) second = "0" + second;
 
-        const now = hour + ":" + minute
+        const now = hour + ":" + minute + ':' + second
 
         console.log(now)
         cas_vyriesenia.value = now

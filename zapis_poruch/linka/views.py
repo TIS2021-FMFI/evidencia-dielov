@@ -1,4 +1,5 @@
 import datetime
+import time
 from datetime import date, timedelta
 
 from django.contrib.auth import logout
@@ -35,7 +36,6 @@ class TypyChyb(LoginRequiredMixin, View):
         if 'view_typchyby' not in permissions:
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {'permissions': permissions})
-
 
         all_errors = ChybaWrapper.all()
         all_types = TypChybyWrapper.all()
@@ -196,9 +196,11 @@ class PridajZaznam(LoginRequiredMixin, View):
         typ.pouzivatel = User.objects.all().filter(id=request.user.id)[0]
         typ.vznik = form['vznik'].value() + 'T' + form['vznik_cas'].value()
 
-        if bool(form['vyriesenie'].value()) and bool(form['vyriesenie_cas'].value()):
+        try:
+            print('vyriesenie', time.strptime(form['vyriesenie'].value(), '%Y-%m-%d'))
+            print('vyriesenie_cas', time.strptime(form['vyriesenie_cas'].value(), '%H:%M:%S'))
             typ.vyriesenie = form['vyriesenie'].value() + 'T' + form['vyriesenie_cas'].value()
-        else:
+        except ValueError:
             typ.vyriesenie = None
 
         typ.vyriesena = True if form['vyriesena'].value() else False
@@ -296,7 +298,6 @@ class Revizia(LoginRequiredMixin, View):
                 data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.datum_poslednej_revizie)
             if order_by == "datum_dalsej":
                 data['revizie'] = sorted(data['revizie'], key=lambda obj: obj.datum_nadchadzajucej_revizie)
-
 
         return render(request, self.template, data)
 
@@ -413,7 +414,14 @@ class PotvrdZaznam(LoginRequiredMixin, View):
             data = dict()
             zaznam = Chyba.objects.all().filter(id=i)[0]
             data["form"] = ZaznamForm(instance=zaznam)
-            data['typy'] = TypChyby.objects.all().filter(sposobena_kym=zaznam.sposobena_kym).filter(druh_chyby=zaznam.druh_chyby).filter(miesto_na_linke=zaznam.miesto_na_linke)
+
+            for pole in ['vznik', 'vznik_cas', 'vyriesena', 'miesto_na_linke', 'popis',
+                         'vyriesenie', 'vyriesenie_cas', 'sposobena_kym', 'opatrenia',
+                         'druh_chyby', 'nahradny_diel', 'dovod']:
+                data['form'][pole].field.disabled = True
+
+            data['typy'] = TypChyby.objects.all().filter(sposobena_kym=zaznam.sposobena_kym).filter(
+                druh_chyby=zaznam.druh_chyby).filter(miesto_na_linke=zaznam.miesto_na_linke)
             data['id'] = i
             data["permissions"] = permissions
             return render(request, self.template, data)
@@ -429,6 +437,9 @@ class PotvrdZaznam(LoginRequiredMixin, View):
         zaznam = Chyba.objects.all().filter(id=i)[0]
         typ = request.GET["list"]
         zaznam.typ_chyby = TypChyby.objects.all().filter(id=typ)[0]
+
+        # todo pridat ukadanie zvysku
+
         zaznam.save()
         return redirect("zaznamy")
 
@@ -446,4 +457,3 @@ class Logout(View):
     def get(self, request):
         logout(request)
         return redirect("login")
-
