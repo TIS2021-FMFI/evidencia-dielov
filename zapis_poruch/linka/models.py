@@ -118,7 +118,7 @@ class TypChybyWrapper:
 
 class DruhRevizie(models.Model):
     class Meta:
-        verbose_name_plural = "Typ revizie"
+        verbose_name_plural = "Typy revízie"
 
     nazov = models.CharField('Názov typu revízie', max_length=256,  default=None)
 
