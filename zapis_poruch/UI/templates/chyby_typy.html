@@ -84,10 +84,14 @@
                 {{ item.popis }}
             </td>
             <td id="time_in_{{ item.id }}">
-                {{ item.trvanie.week }}
+                {% if item.trvanie.week is not null %}
+                      {{ item.trvanie.week }}
+                {% endif %}
             </td>
             <td id="frekvencie_{{ item.id }}">
-                {{ item.frekvencie.week }}
+                {% if item.frekvencie.week is not null %}
+                      {{ item.frekvencie.week }}
+                {% endif %}
             </td>
             <td id="vyskyt_{{ item.id }}">
                 {{ item.vyskyt.week }}
