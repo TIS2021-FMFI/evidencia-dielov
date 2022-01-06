@@ -297,7 +297,7 @@ class PridajZaznam(LoginRequiredMixin, View):
             same_pos = chyba.miesto_na_linke == chyba.typ_chyby.miesto_na_linke
             same_type = chyba.druh_chyby == chyba.typ_chyby.druh_chyby
             same_origin = chyba.sposobena_kym == chyba.typ_chyby.sposobena_kym
-            if not chyba.schvalena or not (same_pos and same_type and same_origin):
+            if not chyba.vyriesena or not chyba.schvalena or not (same_pos and same_type and same_origin):
                 chyba.typ_chyby = None
                 chyba.schvalena = False
 
