@@ -49,13 +49,15 @@ class ZaznamForm(forms.ModelForm):
         endTime = self.cleaned_data.get('vyriesenie_cas')
 
         if (endDate is not None) and startDate > endDate:
-            self.add_error('vyriesenie', "Dátum vzniku je menší ako dátum vyriešenia")
-            self.add_error('vznik', "Dátum vzniku je menší ako dátum vyriešenia")
-            raise forms.ValidationError('Dátum vzniku je menší ako dátum vyriešenia')
+            self.add_error('vyriesenie', "Dátum vzniku je väčší ako dátum vyriešenia")
+            self.add_error('vznik', "Dátum vzniku je väčší ako dátum vyriešenia")
+            raise forms.ValidationError('Dátum vzniku je väčší ako dátum vyriešenia')
         if ((endDate is not None) and startDate == endDate) and (endTime is not None) and startTime > endTime:
-            self.add_error('vyriesenie_cas', "Čas vzniku je menší ako čas vyriešenia")
-            self.add_error('vznik_cas', "Čas vzniku je menší ako čas vyriešenia")
-            raise forms.ValidationError('Čas vzniku je menší ako čas vyriešenia')
+            self.add_error('vyriesenie_cas', "Čas vzniku je väčší ako čas vyriešenia")
+            self.add_error('vznik_cas', "Čas vzniku je väčší ako čas vyriešenia")
+            raise forms.ValidationError('Čas vzniku je väčší ako čas vyriešenia')
+
+        print(self.cleaned_data)
 
         return self.cleaned_data
 

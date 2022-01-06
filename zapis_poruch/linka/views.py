@@ -9,6 +9,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.views import LoginView
 from django.views.generic import View
 from django.shortcuts import render, redirect
+from django.utils.datastructures import MultiValueDictKeyError
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
@@ -516,7 +517,11 @@ class PotvrdZaznam(LoginRequiredMixin, View):
         i = request.GET["id"]
         zaznam = Chyba.objects.all().filter(id=i)[0]
 
-        typID = int(request.POST["typ"])
+        try:
+            typID = int(request.POST["typ"])
+        except MultiValueDictKeyError:
+            return self.get(request)
+
         zaznam.typ_chyby = TypChyby.objects.all().filter(id=typID)[0]
         zaznam.schvalena = True
 
