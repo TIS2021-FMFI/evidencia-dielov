@@ -265,37 +265,43 @@ class PridajZaznam(LoginRequiredMixin, View):
             return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
         if "id" in request.GET:
-            typ = Chyba.objects.all().filter(id=request.GET["id"])[0]
-            form = ZaznamForm(request.POST, instance=typ)
+            chyba = Chyba.objects.all().filter(id=request.GET["id"])[0]
+            form = ZaznamForm(request.POST, instance=chyba)
         else:
             form = ZaznamForm(request.POST)
-            typ = Chyba()
+            chyba = Chyba()
 
-        if form.is_valid():
-            print('valid')
-        else:
-            print('not valid')
+        if not form.is_valid():
             return render(request, self.template, {'form': form,'permissions':permissions})
 
-        typ.pouzivatel = User.objects.all().filter(id=request.user.id)[0]
-        typ.vznik = datetime.datetime.combine(form.cleaned_data['vznik'], form.cleaned_data['vznik_cas'])
+        chyba.pouzivatel = User.objects.all().filter(id=request.user.id)[0]
+        chyba.vznik = datetime.datetime.combine(form.cleaned_data['vznik'], form.cleaned_data['vznik_cas'])
 
         try:
-            typ.vyriesenie = datetime.datetime.combine(form.cleaned_data['vyriesenie'],
+            chyba.vyriesenie = datetime.datetime.combine(form.cleaned_data['vyriesenie'],
                                                        form.cleaned_data['vyriesenie_cas'])
         except TypeError:
-            typ.vyriesenie = None
+            chyba.vyriesenie = None
 
-        typ.vyriesena = form.cleaned_data['vyriesena']
-        typ.miesto_na_linke = form.cleaned_data['miesto_na_linke']
-        typ.popis = form.cleaned_data['popis']
-        typ.sposobena_kym = form.cleaned_data['sposobena_kym']
-        typ.opatrenia = form.cleaned_data['opatrenia']
-        typ.druh_chyby = form.cleaned_data['druh_chyby']
-        typ.nahradny_diel = form.cleaned_data['nahradny_diel']
-        typ.dovod = form.cleaned_data['dovod']
+        chyba.vyriesena = form.cleaned_data['vyriesena']
+        chyba.miesto_na_linke = form.cleaned_data['miesto_na_linke']
+        chyba.popis = form.cleaned_data['popis']
+        chyba.sposobena_kym = form.cleaned_data['sposobena_kym']
+        chyba.opatrenia = form.cleaned_data['opatrenia']
+        chyba.druh_chyby = form.cleaned_data['druh_chyby']
+        chyba.nahradny_diel = form.cleaned_data['nahradny_diel']
+        chyba.dovod = form.cleaned_data['dovod']
 
-        typ.save()
+        # ak ma priradeny typ ale rozne atributy tak zrusi schvalenie a odoberie typ
+        if chyba.typ_chyby:
+            same_pos = chyba.miesto_na_linke == chyba.typ_chyby.miesto_na_linke
+            same_type = chyba.druh_chyby == chyba.typ_chyby.druh_chyby
+            same_origin = chyba.sposobena_kym == chyba.typ_chyby.sposobena_kym
+            if not chyba.schvalena or not (same_pos and same_type and same_origin):
+                chyba.typ_chyby = None
+                chyba.schvalena = False
+
+        chyba.save()
 
         return redirect("zaznamy")
 

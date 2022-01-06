@@ -54,8 +54,6 @@ class ZaznamForm(forms.ModelForm):
         vyriesenie_cas = self.cleaned_data.get('vyriesenie_cas')
         opatrenia = self.cleaned_data.get('opatrenia')
 
-        print(self.cleaned_data)
-
         if (endDate is not None) and startDate > endDate:
             self.add_error('vyriesenie', "Dátum vzniku je väčší ako dátum vyriešenia")
             self.add_error('vznik', "Dátum vzniku je väčší ako dátum vyriešenia")
@@ -68,7 +66,6 @@ class ZaznamForm(forms.ModelForm):
             self.add_error('popis', "Popis nie je zadaný")
             raise forms.ValidationError('Popis nie je zadaný')
         if vyriesena:
-            print('je vyriesena')
             if not bool(dovod):
                 self.add_error('dovod', "Dôvod nie je zadaný")
                 raise forms.ValidationError('Dôvod nie je zadaný')

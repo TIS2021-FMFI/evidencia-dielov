@@ -98,16 +98,22 @@
                     {{ item.pouzivatel}}
             </td>
             <td>
-                   {{ item.popis}}
+                   {{ item.popis }}
             </td>
             <td>
-                    {{ item.dovod}}
+                    {% if item.dovod is not null %}
+                      {{ item.dovod }}
+                    {% endif %}
             </td>
             <td>
-                   {{ item.opatrenia}}
+                    {% if item.opatrenia is not null %}
+                      {{ item.opatrenia }}
+                    {% endif %}
             </td>
             <td>
-                    {{ item.nahradny_diel}}
+                    {% if item.nahradny_diel is not null %}
+                      {{ item.nahradny_diel }}
+                    {% endif %}
             </td>
             <td>
             {% if 'change_chyba' in permissions %}
