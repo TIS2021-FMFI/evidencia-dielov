@@ -27,6 +27,65 @@ def get_user_permissions(user):
     return user_perms | group_perms
 
 
+def calculate_average_time_of_type_since(type, since):
+    intervals = {
+        "week": datetime.timedelta(weeks=1),
+        "month": datetime.timedelta(weeks=4),
+        "6months": datetime.timedelta(weeks=26),
+        "year": datetime.timedelta(weeks=52)
+    }
+
+    time_from = datetime.date.today()-intervals.get(since)
+    to = datetime.date.today()+datetime.timedelta(days=1)
+    chyby = Chyba.objects.all().filter(typ_chyby=type, vyriesenie__gte=time_from, vyriesenie__lte=to, schvalena=True)
+
+    timedeltas = [(chyba.vyriesenie - chyba.vznik) for chyba in chyby]
+    if not timedeltas:
+        return None
+
+    return sum(timedeltas, datetime.timedelta(0)) / len(timedeltas)
+
+
+def calculate_average_frequency_of_type_since(type, since):
+    intervals = {
+        "week": datetime.timedelta(weeks=1),
+        "month": datetime.timedelta(weeks=4),
+        "6months": datetime.timedelta(weeks=26),
+        "year": datetime.timedelta(weeks=52)
+    }
+
+    time_from = datetime.date.today()-intervals.get(since)
+    to = datetime.date.today()+datetime.timedelta(days=1)
+    chyby = Chyba.objects.all().filter(typ_chyby=type, vyriesenie__gte=time_from, vyriesenie__lte=to, schvalena=True)
+    chyby = sorted([chyba for chyba in chyby], key=lambda chyba: chyba.vznik)
+
+    if len(chyby) < 2:
+        return None
+
+    timedeltas = []
+    for i in range(0, len(chyby)-1, 2):
+        c1 = chyby[i]
+        c2 = chyby[i+1]
+        timedeltas.append(c2.vznik - c1.vznik)
+
+    return sum(timedeltas, datetime.timedelta(0)) / len(timedeltas)
+
+
+def calculate_occurences_of_type_since(type, since):
+    intervals = {
+        "week": datetime.timedelta(weeks=1),
+        "month": datetime.timedelta(weeks=4),
+        "6months": datetime.timedelta(weeks=26),
+        "year": datetime.timedelta(weeks=52)
+    }
+
+    time_from = datetime.date.today()-intervals.get(since)
+    to = datetime.date.today()+datetime.timedelta(days=1)
+    chyby = Chyba.objects.all().filter(typ_chyby=type, vyriesenie__gte=time_from, vyriesenie__lte=to, schvalena=True)
+    return len(chyby)
+
+
+
 class TypyChyb(LoginRequiredMixin, View):
     template = "chyby_typy.html"
 
@@ -39,10 +98,28 @@ class TypyChyb(LoginRequiredMixin, View):
 
         all_errors = ChybaWrapper.all()
         all_types = TypChybyWrapper.all()
-        for object in all_types:
-            object.fill(all_errors)
+        for typ in all_types:
+            typ.fill(all_errors)
 
-        data = {'errors': [x.json() for x in all_types],
+        for typ_wrapper in all_types:
+            typ_wrapper.trvanie={}
+            typ_wrapper.vyskyt={}
+            typ_wrapper.frekvencie={}
+
+            for interval in ("week","month","6months","year"):
+                typ = typ_wrapper._object
+                average_time = calculate_average_time_of_type_since(typ,interval)
+                average_frequency = calculate_average_frequency_of_type_since(typ,interval)
+                occurences = calculate_occurences_of_type_since(typ,interval)
+                print(typ,interval)
+                print(average_time,average_frequency,occurences)
+                typ_wrapper.trvanie[interval] = average_time
+                typ_wrapper.vyskyt[interval] = occurences
+                typ_wrapper.frekvencie[interval] = average_frequency
+
+
+
+        data = {'chyby': [x.json() for x in all_types],
                 'permissions': permissions
                 }
 
@@ -57,8 +134,8 @@ class TypyChyb(LoginRequiredMixin, View):
                 data['errors'] = sorted(data['errors'], key=lambda obj: obj['druh_chyby'])
             if order_by == "popis":
                 data['errors'] = sorted(data['errors'], key=lambda obj: obj['popis'])
-            if order_by == "trvanie":
-                data['errors'] = sorted(data['errors'], key=lambda obj: obj['trvanie'])
+            # if order_by == "trvanie":
+            #     data['errors'] = sorted(data['errors'], key=lambda obj: obj['trvanie'])
 
         return render(request, self.template, data)
 
@@ -192,6 +269,12 @@ class PridajZaznam(LoginRequiredMixin, View):
         else:
             form = ZaznamForm(request.POST)
             typ = Chyba()
+
+        if form.is_valid():
+            print('valid')
+        else:
+            print('not valid')
+            return render(request, self.template, {'form': form,'permissions':permissions})
 
         typ.pouzivatel = User.objects.all().filter(id=request.user.id)[0]
         typ.vznik = form['vznik'].value() + 'T' + form['vznik_cas'].value()
@@ -403,28 +486,25 @@ class PotvrdZaznam(LoginRequiredMixin, View):
             print('Prístup odmietnutý')
             return render(request, 'pristup_zakazany.html', {'permissions': permissions})
 
-        if "put" in request.GET:
-            i = request.GET["id"]
-            zaznam = Chyba.objects.all().filter(id=i)[0]
-            zaznam.schvalena = True
-            zaznam.save()
+        i = request.GET["id"]
+        data = dict()
+        zaznam = Chyba.objects.all().filter(id=i)[0]
+
+        if zaznam.schvalena or not zaznam.vyriesena:
             return redirect('zaznamy')
-        else:
-            i = request.GET["id"]
-            data = dict()
-            zaznam = Chyba.objects.all().filter(id=i)[0]
-            data["form"] = ZaznamForm(instance=zaznam)
 
-            for pole in ['vznik', 'vznik_cas', 'vyriesena', 'miesto_na_linke', 'popis',
-                         'vyriesenie', 'vyriesenie_cas', 'sposobena_kym', 'opatrenia',
-                         'druh_chyby', 'nahradny_diel', 'dovod']:
-                data['form'][pole].field.disabled = True
+        data["form"] = ZaznamForm(instance=zaznam)
 
-            data['typy'] = TypChyby.objects.all().filter(sposobena_kym=zaznam.sposobena_kym).filter(
-                druh_chyby=zaznam.druh_chyby).filter(miesto_na_linke=zaznam.miesto_na_linke)
-            data['id'] = i
-            data["permissions"] = permissions
-            return render(request, self.template, data)
+        for pole in ['vznik', 'vznik_cas', 'vyriesena', 'miesto_na_linke', 'popis',
+                     'vyriesenie', 'vyriesenie_cas', 'sposobena_kym', 'opatrenia',
+                     'druh_chyby', 'nahradny_diel', 'dovod']:
+            data['form'][pole].field.disabled = True
+
+        data['typy'] = TypChyby.objects.all().filter(sposobena_kym=zaznam.sposobena_kym).filter(
+            druh_chyby=zaznam.druh_chyby).filter(miesto_na_linke=zaznam.miesto_na_linke)
+        data['id'] = i
+        data["permissions"] = permissions
+        return render(request, self.template, data)
 
     def post(self, request):
         permissions = get_user_permissions(request.user)
@@ -435,10 +515,10 @@ class PotvrdZaznam(LoginRequiredMixin, View):
 
         i = request.GET["id"]
         zaznam = Chyba.objects.all().filter(id=i)[0]
-        typ = request.GET["list"]
-        zaznam.typ_chyby = TypChyby.objects.all().filter(id=typ)[0]
 
-        # todo pridat ukadanie zvysku
+        typID = int(request.POST["typ"])
+        zaznam.typ_chyby = TypChyby.objects.all().filter(id=typID)[0]
+        zaznam.schvalena = True
 
         zaznam.save()
         return redirect("zaznamy")

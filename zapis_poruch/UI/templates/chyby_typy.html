@@ -2,9 +2,10 @@
 {% load static %}
 {% block maincontent %}
 <script>
-    const typy_chyb = {{ errors|safe }}
+    const typy_chyb = {{ chyby|safe }}
 
     function change_table(){
+        let target_time_in = document.getElementById("time_in").value;
         let target_freq = document.getElementById("freq").value;
         let target_freq2 = document.getElementById("freq2").value;
         for(let index in typy_chyb){
@@ -13,6 +14,8 @@
             e.innerHTML = item.frekvencie[target_freq];
             let k = document.getElementById("vyskyt_" + item.id);
             k.innerHTML = item.vyskyt[target_freq2];
+            let l = document.getElementById("time_in_" + item.id);
+            l.innerHTML = item.trvanie[target_time_in];
 
         }
     }
@@ -35,7 +38,13 @@
                 <a href="?order_by=popis">Popis chyby</a>
             </td>
             <td>
-                <a href="?order_by=trvanie">Priemerne trvanie</a>
+                Priemerne trvanie
+                <select name="time_in" id="time_in" onchange="change_table()">
+                  <option value="week">týždeň</option>
+                  <option value="month">mesiac</option>
+                  <option value="6months">pol rok</option>
+                  <option value="year">rok</option>
+                </select>
             </td>
             <td>
                 Priemerna frekvencia za
@@ -60,7 +69,7 @@
                 Uprava
             </td>
     </tr>
-    {% for item in errors %}
+    {% for item in chyby %}
         <tr id="{{ item.id }}">
             <td>
                 {{ item.miesto_na_linke }}
@@ -74,8 +83,8 @@
             <td>
                 {{ item.popis }}
             </td>
-            <td>
-                {{ item.trvanie }}
+            <td id="time_in_{{ item.id }}">
+                {{ item.trvanie.week }}
             </td>
             <td id="frekvencie_{{ item.id }}">
                 {{ item.frekvencie.week }}

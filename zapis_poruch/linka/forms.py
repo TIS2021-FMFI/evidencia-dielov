@@ -15,14 +15,14 @@ class TypForm(forms.ModelForm):
 class ZaznamForm(forms.ModelForm):
     vznik = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label="Dátum vzniku",
                             initial=datetime.date.today)
-    vznik_cas = forms.DateField(widget=forms.TimeInput(attrs={'type': 'time'}),
+    vznik_cas = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time'}),
                                 initial=(datetime.datetime.utcnow() + datetime.timedelta(hours=1)).strftime("%H:%M:%S"))
 
     vyriesenie = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label="Dátum vyriešenia",
                                  required=False)
-    vyriesenie_cas = forms.DateField(widget=forms.TimeInput(attrs={'type': 'time'}), required=False)
+    vyriesenie_cas = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time'}), required=False)
 
-    vyriesena = forms.BooleanField(widget=forms.CheckboxInput(attrs={'onChange': 'updateDate()'}),required=False)
+    vyriesena = forms.BooleanField(widget=forms.CheckboxInput(attrs={'onChange': 'onReviziaCheckboxToggle()'}), required=False)
 
     def __init__(self, *args, **kwargs):
         super(ZaznamForm, self).__init__(*args, **kwargs)
@@ -39,6 +39,25 @@ class ZaznamForm(forms.ModelForm):
         fields = ['vznik', 'vznik_cas',  'vyriesena', 'miesto_na_linke', 'popis',
                   'vyriesenie', 'vyriesenie_cas', 'sposobena_kym', 'opatrenia',
                   'druh_chyby', 'nahradny_diel', 'dovod']
+
+    def clean(self):
+        super(ZaznamForm, self).clean()
+
+        startDate = self.cleaned_data.get('vznik')
+        startTime = self.cleaned_data.get('vznik_cas')
+        endDate = self.cleaned_data.get('vyriesenie')
+        endTime = self.cleaned_data.get('vyriesenie_cas')
+
+        if (endDate is not None) and startDate > endDate:
+            self.add_error('vyriesenie', "Dátum vzniku je menší ako dátum vyriešenia")
+            self.add_error('vznik', "Dátum vzniku je menší ako dátum vyriešenia")
+            raise forms.ValidationError('Dátum vzniku je menší ako dátum vyriešenia')
+        if ((endDate is not None) and startDate == endDate) and (endTime is not None) and startTime > endTime:
+            self.add_error('vyriesenie_cas', "Čas vzniku je menší ako čas vyriešenia")
+            self.add_error('vznik_cas', "Čas vzniku je menší ako čas vyriešenia")
+            raise forms.ValidationError('Čas vzniku je menší ako čas vyriešenia')
+
+        return self.cleaned_data
 
 
 class RevizieForm(forms.ModelForm):

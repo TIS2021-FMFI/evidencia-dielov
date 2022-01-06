@@ -57,7 +57,7 @@ class TypChybyWrapper:
         self.miesto_na_linke = object.miesto_na_linke
         self.druh_chyby = object.druh_chyby
         self.sposobena_kym = object.sposobena_kym
-        self.frekvencie = dict()
+        self.frekvencie = dict()  # todo frekvencia ma znazornovat ze aka doba je medzi pripadmi, vyssie cislo je horsie
         self.vyskyt = dict()
         self.trvanie = 0  # todo teraz sa vypisuje trvanie v dnoch? treba to prerobit na zmysluplne cisla
 
@@ -70,7 +70,7 @@ class TypChybyWrapper:
             "sposobena_kym": str(self.sposobena_kym),
             "frekvencie": self.frekvencie,
             "vyskyt": self.vyskyt,
-            "trvanie": str(self.trvanie)
+            "trvanie": self.trvanie
         }
 
     def _increase_dict(self, dictionary, rozdiel):
@@ -170,7 +170,7 @@ class Chyba(models.Model):
     sposobena_kym = models.ForeignKey(SposobenaKym, verbose_name="Chybu spôsobil",  on_delete=models.CASCADE,
                                       default=None, null=True)
 
-    popis = models.CharField(verbose_name="Popis", max_length=128, default=None, null=True)
+    popis = models.CharField(verbose_name="Popis", max_length=128, default=None, null=True, blank=False)
     dovod = models.CharField(verbose_name="Dôvod", max_length=128, default=None, blank=True, null=True)
     opatrenia = models.CharField(verbose_name="Opatrenia/ Oprava", max_length=256,  default=None, blank=True, null=True)
     nahradny_diel = models.CharField(verbose_name="Náhradný diel", max_length=128,  default=None, blank=True, null=True)
