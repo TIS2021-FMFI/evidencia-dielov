@@ -38,11 +38,17 @@
             <br><br>
             <div class=" justify-content-center width_form_fields">
                 {{form.popis.label}}<span class="textHviezda">*</span><br>
+                {% for error in form.popis.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
                 {{form.popis}}
             </div>
             <br><br>
             <div class=" justify-content-center width_form_fields">
                 {{form.dovod.label}}<br>
+                {% for error in form.dovod.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
                 {{form.dovod}}
             </div>
         </div>
@@ -66,6 +72,9 @@
              <br><br>
             <div class=" justify-content-center width_form_fields"  >
                 {{form.opatrenia.label}}<span class="textHviezda">*</span><br>
+                {% for error in form.opatrenia.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
                 {{form.opatrenia}}
             </div>
              <br><br>

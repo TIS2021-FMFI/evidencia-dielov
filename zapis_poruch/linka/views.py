@@ -9,6 +9,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.views import LoginView
 from django.views.generic import View
 from django.shortcuts import render, redirect
+from django.utils.datastructures import MultiValueDictKeyError
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import View
@@ -277,23 +278,22 @@ class PridajZaznam(LoginRequiredMixin, View):
             return render(request, self.template, {'form': form,'permissions':permissions})
 
         typ.pouzivatel = User.objects.all().filter(id=request.user.id)[0]
-        typ.vznik = form['vznik'].value() + 'T' + form['vznik_cas'].value()
+        typ.vznik = datetime.datetime.combine(form.cleaned_data['vznik'], form.cleaned_data['vznik_cas'])
 
         try:
-            print('vyriesenie', time.strptime(form['vyriesenie'].value(), '%Y-%m-%d'))
-            print('vyriesenie_cas', time.strptime(form['vyriesenie_cas'].value(), '%H:%M:%S'))
-            typ.vyriesenie = form['vyriesenie'].value() + 'T' + form['vyriesenie_cas'].value()
-        except ValueError:
+            typ.vyriesenie = datetime.datetime.combine(form.cleaned_data['vyriesenie'],
+                                                       form.cleaned_data['vyriesenie_cas'])
+        except TypeError:
             typ.vyriesenie = None
 
-        typ.vyriesena = True if form['vyriesena'].value() else False
-        typ.miesto_na_linke = MiestoNaLinke.objects.all().filter(id=form['miesto_na_linke'].value())[0]
-        typ.popis = form['popis'].value()
-        typ.sposobena_kym = SposobenaKym.objects.all().filter(id=form['sposobena_kym'].value())[0]
-        typ.opatrenia = form['opatrenia'].value()
-        typ.druh_chyby = DruhChyby.objects.all().filter(id=form['druh_chyby'].value())[0]
-        typ.nahradny_diel = form['nahradny_diel'].value()
-        typ.dovod = form['dovod'].value()
+        typ.vyriesena = form.cleaned_data['vyriesena']
+        typ.miesto_na_linke = form.cleaned_data['miesto_na_linke']
+        typ.popis = form.cleaned_data['popis']
+        typ.sposobena_kym = form.cleaned_data['sposobena_kym']
+        typ.opatrenia = form.cleaned_data['opatrenia']
+        typ.druh_chyby = form.cleaned_data['druh_chyby']
+        typ.nahradny_diel = form.cleaned_data['nahradny_diel']
+        typ.dovod = form.cleaned_data['dovod']
 
         typ.save()
 
@@ -516,7 +516,11 @@ class PotvrdZaznam(LoginRequiredMixin, View):
         i = request.GET["id"]
         zaznam = Chyba.objects.all().filter(id=i)[0]
 
-        typID = int(request.POST["typ"])
+        try:
+            typID = int(request.POST["typ"])
+        except MultiValueDictKeyError:
+            return self.get(request)
+
         zaznam.typ_chyby = TypChyby.objects.all().filter(id=typID)[0]
         zaznam.schvalena = True
 
