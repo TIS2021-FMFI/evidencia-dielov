@@ -70,7 +70,7 @@ class TypChybyWrapper:
             "sposobena_kym": str(self.sposobena_kym),
             "frekvencie": self.frekvencie,
             "vyskyt": self.vyskyt,
-            "trvanie": str(self.trvanie)
+            "trvanie": self.trvanie
         }
 
     def _increase_dict(self, dictionary, rozdiel):
