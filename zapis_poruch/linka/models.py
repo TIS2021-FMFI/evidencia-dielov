@@ -148,7 +148,7 @@ class Chyba(models.Model):
     vyriesenie = models.DateTimeField(verbose_name="Čas vyriešenia", default=None, blank=True, null=True)
 
     # clovek kto nahlasil chybu
-    pouzivatel = models.ForeignKey(User, verbose_name="Uživateľ", on_delete=models.CASCADE,
+    pouzivatel = models.ForeignKey(User, verbose_name="Používateľ", on_delete=models.CASCADE,
                                    default=None, null=True)
 
     # pozicia
