@@ -18,7 +18,7 @@ class MiestoNaLinke(models.Model):
     class Meta:
         verbose_name_plural = "Miesta Na Linke"
 
-    miesto = models.CharField(max_length=256)
+    miesto = models.CharField(max_length=256, unique=True)
 
     def __str__(self):
         return self.miesto
@@ -133,7 +133,7 @@ class TypRevizie(models.Model):
     nazov_revizie = models.CharField('Názov revízie', max_length=256,  default=None)
     typ_revizie = models.ForeignKey(DruhRevizie, verbose_name="Typ revízie", on_delete=models.CASCADE, default=None)
     datum_poslednej_revizie = models.DateField('Dátum poslednej revízie')
-    exspiracia = models.IntegerField(default=365)
+    exspiracia = models.IntegerField('Expirácia', default=365)
     datum_nadchadzajucej_revizie = models.DateField('Dátum nadchádzajúcej revízie')
 
     def __str__(self):
