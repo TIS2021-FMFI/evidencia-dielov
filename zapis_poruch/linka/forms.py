@@ -11,6 +11,10 @@ class TypForm(forms.ModelForm):
         model = TypChyby
         fields = ['popis', 'miesto_na_linke', 'druh_chyby', 'sposobena_kym']
 
+        widgets = {
+            'popis': forms.Textarea(attrs={"rows": 2, "cols": 20}),
+        }
+
 
 class ZaznamForm(forms.ModelForm):
     vznik = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label="Dátum vzniku",
@@ -23,6 +27,7 @@ class ZaznamForm(forms.ModelForm):
     vyriesenie_cas = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time','step':'any'}), required=False)
 
     vyriesena = forms.BooleanField(widget=forms.CheckboxInput(attrs={'onChange': 'onReviziaCheckboxToggle()'}), required=False)
+
 
     def __init__(self, *args, **kwargs):
         super(ZaznamForm, self).__init__(*args, **kwargs)
@@ -39,7 +44,12 @@ class ZaznamForm(forms.ModelForm):
         fields = ['vznik', 'vznik_cas',  'vyriesena', 'miesto_na_linke', 'popis',
                   'vyriesenie', 'vyriesenie_cas', 'sposobena_kym', 'opatrenia',
                   'druh_chyby', 'nahradny_diel', 'dovod']
-
+        widgets = {
+            'opatrenia': forms.Textarea(attrs={"rows":2, "cols":20}),
+            'nahradny_diel': forms.Textarea(attrs={"rows":2, "cols":20}),
+            'dovod': forms.Textarea(attrs={"rows":2, "cols":20}),
+            'popis': forms.Textarea(attrs={"rows":2, "cols":20})
+        }
     def clean(self):
         super(ZaznamForm, self).clean()
 
