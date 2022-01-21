@@ -23,10 +23,13 @@
                 <a href="?order_by=sposobena_kym">Chybu spôsobil</a>
             </td>
             <td>
-                <a href="?order_by=popis">Popis chyby</a>
+                <a href="?order_by=druh">Druh chyby</a>
             </td>
             <td>
                 <a href="?order_by=uzivatel">Používateľ</a>
+            </td>
+            <td>
+                <a href="?order_by=popis">Popis chyby</a>
             </td>
             <td>
                 <a href="?order_by=dovod">Dôvod</a>
@@ -35,7 +38,7 @@
                 <a href="?order_by=opatrenie">Opatrenie/Oprava</a>
             </td>
             <td>
-                Náhradný diel
+                <a href="?order_by=diel">Náhradný diel</a>
             </td>
 
             <td>
@@ -89,19 +92,28 @@
                     {{ item.sposobena_kym.kym}}
             </td>
             <td>
-                   {{ item.popis}}
+                   {{ item.druh_chyby}}
             </td>
             <td>
                     {{ item.pouzivatel}}
             </td>
             <td>
-                    {{ item.dovod}}
+                   {{ item.popis }}
             </td>
             <td>
-                   {{ item.opatrenia}}
+                    {% if item.dovod is not null %}
+                      {{ item.dovod }}
+                    {% endif %}
             </td>
             <td>
-                    {{ item.nahradny_diel}}
+                    {% if item.opatrenia is not null %}
+                      {{ item.opatrenia }}
+                    {% endif %}
+            </td>
+            <td>
+                    {% if item.nahradny_diel is not null %}
+                      {{ item.nahradny_diel }}
+                    {% endif %}
             </td>
             <td>
             {% if 'change_chyba' in permissions %}

@@ -30,7 +30,7 @@
     </div>
     <br>
     <div class="m-1">
-        &nbsp;<label for="cisloZariadenia">Číslo zariadenia</label>
+        &nbsp;<label for="cisloZariadenia">Miesto na linke</label>
         <select name="cisloZariadenia" id="cisloZariadenia" onchange="skontrolujPravoNaPopisTypuChyby()">
             <option value=""></option>
             {% for zariadenie in zariadenia %}
@@ -124,7 +124,7 @@
                 data: {
                     labels: {{ grafLabels|safe }},
                     datasets: [{
-                        label: "Graf chyb",
+                        label: "Graf chýb",
                         backgroundColor: {{ grafColors|safe }},
                         data: {{ grafData|safe }}
                     }]

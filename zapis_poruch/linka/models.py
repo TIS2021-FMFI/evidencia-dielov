@@ -57,9 +57,9 @@ class TypChybyWrapper:
         self.miesto_na_linke = object.miesto_na_linke
         self.druh_chyby = object.druh_chyby
         self.sposobena_kym = object.sposobena_kym
-        self.frekvencie = dict()
+        self.frekvencie = dict()  # todo frekvencia ma znazornovat ze aka doba je medzi pripadmi, vyssie cislo je horsie
         self.vyskyt = dict()
-        self.trvanie = 0
+        self.trvanie = 0  # todo teraz sa vypisuje trvanie v dnoch? treba to prerobit na zmysluplne cisla
 
     def json(self):
         return {
@@ -70,7 +70,7 @@ class TypChybyWrapper:
             "sposobena_kym": str(self.sposobena_kym),
             "frekvencie": self.frekvencie,
             "vyskyt": self.vyskyt,
-            "trvanie": str(self.trvanie)
+            "trvanie": self.trvanie
         }
 
     def _increase_dict(self, dictionary, rozdiel):
@@ -98,7 +98,6 @@ class TypChybyWrapper:
             if object.typ_chyby != self._object:
                 continue
             count += 1
-
             self.trvanie += object.trvanie.days
             self._increase_dict(pocet_nasich, rozdiel)
 
@@ -116,15 +115,25 @@ class TypChybyWrapper:
         return [TypChybyWrapper(x) for x in objects]
 
 
+class DruhRevizie(models.Model):
+    class Meta:
+        verbose_name_plural = "Typy revízie"
+
+    nazov = models.CharField('Názov typu revízie', max_length=256,  default=None)
+
+    def __str__(self):
+        return self.nazov
+
 
 class TypRevizie(models.Model):
+    """toto popisuje celu reviziu"""
     class Meta:
         verbose_name_plural = "Revízie"
 
     nazov_revizie = models.CharField('Názov revízie', max_length=256,  default=None)
-    typ_revizie = models.CharField('Typ revízie', max_length=256,  default=None)
+    typ_revizie = models.ForeignKey(DruhRevizie, verbose_name="Typ revízie", on_delete=models.CASCADE, default=None)
     datum_poslednej_revizie = models.DateField('Dátum poslednej revízie')
-    exspiracia = models.IntegerField()
+    exspiracia = models.IntegerField(default=365)
     datum_nadchadzajucej_revizie = models.DateField('Dátum nadchádzajúcej revízie')
 
     def __str__(self):
@@ -144,7 +153,7 @@ class Chyba(models.Model):
     vyriesena = models.BooleanField(verbose_name="Vyriešená", blank=True, default=False)
 
     # cas vzniku a vyriesenia
-    vznik = models.DateTimeField(verbose_name="Čas", default=None)
+    vznik = models.DateTimeField(verbose_name="Čas vzniku", default=None)
     vyriesenie = models.DateTimeField(verbose_name="Čas vyriešenia", default=None, blank=True, null=True)
 
     # clovek kto nahlasil chybu
@@ -161,10 +170,14 @@ class Chyba(models.Model):
     sposobena_kym = models.ForeignKey(SposobenaKym, verbose_name="Chybu spôsobil",  on_delete=models.CASCADE,
                                       default=None, null=True)
 
-    popis = models.CharField(verbose_name="Popis", max_length=128, default=None, null=True)
+    popis = models.CharField(verbose_name="Popis", max_length=128, default=None, null=True, blank=False)
     dovod = models.CharField(verbose_name="Dôvod", max_length=128, default=None, blank=True, null=True)
     opatrenia = models.CharField(verbose_name="Opatrenia/ Oprava", max_length=256,  default=None, blank=True, null=True)
     nahradny_diel = models.CharField(verbose_name="Náhradný diel", max_length=128,  default=None, blank=True, null=True)
+
+    def __str__(self):
+        vyriesena = 'Nevyriešená' if not self.vyriesena else 'Vyriešená' if self.schvalena else 'Vyriešená (čaká na potvrdenie)'
+        return f'{self.vznik} | {vyriesena} | {self.popis} | {self.dovod}'
 
 
 class ChybaWrapper:
@@ -183,7 +196,7 @@ class ChybaWrapper:
         self.nahradny_diel = object.nahradny_diel
         self.popis = object.popis
         self.dovod = object.dovod
-        self.trvanie = "" if self.vyriesenie is None else self.vyriesenie - self.vznik
+        self.trvanie = datetime.timedelta(days=0) if self.vyriesenie is None else self.vyriesenie - self.vznik
 
     @staticmethod
     def all():

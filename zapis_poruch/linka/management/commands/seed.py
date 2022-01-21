@@ -4,7 +4,7 @@ import random
 
 from django.contrib.auth.models import User
 from linka.models import Chyba, DruhChyby, MiestoNaLinke, TypChyby, \
-    TypRevizie, SposobenaKym
+    TypRevizie, SposobenaKym, DruhRevizie
 
 MODE_REFRESH = 'refresh'
 
@@ -38,10 +38,13 @@ class Command(BaseCommand):
         run_seed("")
 
 
-def create_druh_chyby(id):
-    druh = DruhChyby(nazov=str(id) + '. chyba')
-    druh.save()
-    return druh
+def create_druh_chyby():
+    ret = []
+    for druh in ('mechanická', 'elektronická'):
+        chyba = DruhChyby(nazov=druh)
+        chyba.save()
+        ret.append(chyba)
+    return ret
 
 
 def create_miesto_na_linke(id):
@@ -57,10 +60,13 @@ def create_typ_chyby(id, miesto, druh, sposobena_kym):
     return typ_chyby
 
 
-def create_sposobena_kym(id):
-    sposobena_kym = SposobenaKym(kym=str(id) + '. kym')
-    sposobena_kym.save()
-    return sposobena_kym
+def create_sposobena_kym():
+    ret = []
+    for kym in ('stroj', 'človek'):
+        sposobena = SposobenaKym(kym=kym)
+        sposobena.save()
+        ret.append(sposobena)
+    return ret
 
 
 def create_pouzivatel(i):
@@ -76,10 +82,10 @@ def create_pouzivatel(i):
     return pouzivatel
 
 
-def create_zariadenie(id):
+def create_zariadenie(id,typ):
     zariadenie = TypRevizie(
         nazov_revizie=str(id) + '. revizia',
-        typ_revizie='mechanicka',
+        typ_revizie=typ,
         datum_poslednej_revizie=random_date(),
         datum_nadchadzajucej_revizie=random_date(),
         exspiracia=30)
@@ -89,6 +95,7 @@ def create_zariadenie(id):
 
 def clear_data():
     DruhChyby.objects.all().delete()
+    DruhRevizie.objects.all().delete()
     MiestoNaLinke.objects.all().delete()
     TypChyby.objects.all().delete()
     # Pravo.objects.all().delete()
@@ -118,28 +125,33 @@ def create_zaznam(miesto_na_linke, druh_chyby, pouzivatel, sposobena_kym, typ_ch
     zaznam.save()
     return zaznam
 
+def create_typy_revizii():
+    ret = []
+    for druh in ('elektrické','plynové','tlakové'):
+        typ = DruhRevizie(nazov=druh)
+        typ.save()
+        ret.append(typ)
+    return ret
 
 def run_seed(mode):
     clear_data()
     if mode == MODE_CLEAR:
         return
 
-    druhy = []
+    druhy = create_druh_chyby()
+    typy_revizii = create_typy_revizii()
     miesta_na_linke = []
     typy_chyb = []
-    sposobene_kym = []
+    sposobene_kym = create_sposobena_kym()
     zariadenia = []
-    prava = []
     pouzivatelia = []
-    ma_prava = []
     zaznamy = []
+
     for i in range(1, 11):
-        druhy.append(create_druh_chyby(i))
         miesta_na_linke.append(create_miesto_na_linke(i))
         # prava.append(create_pravo(i))
-        zariadenia.append(create_zariadenie(i))
-        sposobene_kym.append(create_sposobena_kym(i))
-        typy_chyb.append(create_typ_chyby(i, miesta_na_linke[-1], druhy[-1], sposobene_kym[-1]))
+        zariadenia.append(create_zariadenie(i,random.choice(typy_revizii)))
+        typy_chyb.append(create_typ_chyby(i, miesta_na_linke[-1], random.choice(druhy), random.choice(sposobene_kym)))
 
     admin = User.objects.create_user(username='admin',
                                      email='admin@poruchy.com',
