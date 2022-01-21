@@ -468,7 +468,7 @@ class PotvrdZaznam(LoginRequiredMixin, View):
             data = dict()
             zaznam = Chyba.objects.all().filter(id=i)[0]
             data["form"] = ZaznamForm(instance=zaznam)
-            data['typy'] = TypChyby.objects.all().filter(sposobena_kym=zaznam.sposobena_kym).filter(druh_chyby=zaznam.druh_chyby).filter(miesto_na_linke=zaznam.miesto_na_linke)
+            data['typy'] = TypChyby.objects.all().filter(sposobena_kym=zaznam.sposobena_kym).filter(druh_chyby=zaznam.druh_chyby)
             data['id'] = i
             data["permissions"] = permissions
             return render(request, self.template, data)
