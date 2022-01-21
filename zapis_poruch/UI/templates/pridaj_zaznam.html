@@ -55,12 +55,11 @@
          <div class="col-4 first" style="border:1px solid black; border-radius: 10%;">
             <div class=" justify-content-center width_form_fields"   >
              <br>
-            <div class=" justify-content-center width_form_fields"   onchange="skontroluj_vyplnenie_pri_vyrieseni()">
-                {{form.vyriesena.label}} <br>
+                Vyriešená<br>
                 {{form.vyriesena}}
             </div>
              <br><br>
-            <div class=" justify-content-center width_form_fields">
+            <div class=" justify-content-center width_form_fields" id="vyriesenie">
                 {{form.vyriesenie.label}}<span class="textHviezda">*</span><br>
                 {% for error in form.vyriesenie.errors %}
                     <p style="color: red">{{ error }}</p>
