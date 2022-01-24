@@ -112,8 +112,8 @@ class TypyChyb(LoginRequiredMixin, View):
                 average_time = calculate_average_time_of_type_since(typ,interval)
                 average_frequency = calculate_average_frequency_of_type_since(typ,interval)
                 occurences = calculate_occurences_of_type_since(typ,interval)
-                print(typ,interval)
-                print(average_time,average_frequency,occurences)
+                # print(typ,interval)
+                # print(average_time,average_frequency,occurences)
                 typ_wrapper.trvanie[interval] = average_time
                 typ_wrapper.vyskyt[interval] = occurences
                 typ_wrapper.frekvencie[interval] = average_frequency
@@ -128,13 +128,13 @@ class TypyChyb(LoginRequiredMixin, View):
             order_by = request.GET.get('order_by', 'defaultOrderField')
             print(order_by)
             if order_by == "pozicia":
-                data['errors'] = sorted(data['errors'], key=lambda obj: obj['miesto_na_linke'])
+                data['chyby'] = sorted(data['chyby'], key=lambda obj: obj['miesto_na_linke'])
             if order_by == "povod":
-                data['errors'] = sorted(data['errors'], key=lambda obj: obj['sposobena_kym'])
+                data['chyby'] = sorted(data['chyby'], key=lambda obj: obj['sposobena_kym'])
             if order_by == "druh":
-                data['errors'] = sorted(data['errors'], key=lambda obj: obj['druh_chyby'])
+                data['chyby'] = sorted(data['chyby'], key=lambda obj: obj['druh_chyby'])
             if order_by == "popis":
-                data['errors'] = sorted(data['errors'], key=lambda obj: obj['popis'])
+                data['chyby'] = sorted(data['chyby'], key=lambda obj: obj['popis'])
             # if order_by == "trvanie":
             #     data['errors'] = sorted(data['errors'], key=lambda obj: obj['trvanie'])
 
@@ -163,27 +163,32 @@ class Zaznamy(LoginRequiredMixin, View):
                 'permissions': permissions
                 }
 
+        def emptyIfNone(param):
+            if param is None:
+                return ''
+            return param
+
         if "order_by" in request.GET:
             order_by = request.GET.get('order_by', 'defaultOrderField')
             print(order_by)
             if order_by == "stav":
                 data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena))
             if order_by == "cas":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.vznik)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.vznik))
             if order_by == "trvanie":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.trvanie)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.trvanie))
             if order_by == "pozicia":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.miesto_na_linke.id)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.miesto_na_linke.id))
             if order_by == "sposobena_kym":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.sposobena_kym.id)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.sposobena_kym.id))
             if order_by == "popis":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.popis)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.popis))
             if order_by == "uzivatel":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.pouzivatel.id)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.pouzivatel.id))
             if order_by == "dovod":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.dovod)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.dovod))
             if order_by == "opatrenie":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.opatrenia)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.opatrenia))
         else:
             data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena))
 
