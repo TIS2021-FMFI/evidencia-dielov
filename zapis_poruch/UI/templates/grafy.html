@@ -7,26 +7,30 @@
 <form method="post">
     {% csrf_token %}
 <div class="w-100">
+    <br>
     <div class="m-1">
-        <label for="casoveObdobie">Časové obdobie <span class="input_required">*</span></label>
+
+&nbsp;
+
+<label for="casoveObdobie">Časové obdobie <span class="input_required">*</span></label>
         <select name="casoveObdobie" id="casoveObdobie">
-            <option {% if 1 == casoveObdobieOld %} selected {% endif %} value="1">Den</option>
-            <option {% if 7 == casoveObdobieOld %} selected {% endif %} value="7">Tyzden</option>
-            <option {% if 30 == casoveObdobieOld %} selected {% endif %} value="30">Mesiac</option>
-            <option {% if 365 == casoveObdobieOld %} selected {% endif %} value="365">Rok</option>
+            <option {% if 1 == casoveObdobieOld %} selected {% endif %} value="1">DEŇ</option>
+            <option {% if 7 == casoveObdobieOld %} selected {% endif %} value="7">TÝŽDEŇ</option>
+            <option {% if 30 == casoveObdobieOld %} selected {% endif %} value="30">MESIAC</option>
+            <option {% if 365 == casoveObdobieOld %} selected {% endif %} value="365">ROK</option>
         </select>
     </div>
-
+    <br>
     <div class="m-1">
-        <label for="beginDate">Od <span class="input_required">*</span></label>
+        &nbsp;<label for="beginDate">Od <span class="input_required">*</span></label>
         <input id="beginDate" name="beginDate" type="date" height="1000" required value="{{ beginDateOld }}">
         <br>
-        <label for="endDate">Do <span class="input_required">*</span></label>
+        &nbsp;<label for="endDate">Do <span class="input_required">*</span></label>
         <input id="endDate" name="endDate" type="date" height="1000" required value="{{ endDateOld }}">
     </div>
-
+    <br>
     <div class="m-1">
-        <label for="cisloZariadenia">Miesto na linke</label>
+        &nbsp;<label for="cisloZariadenia">Miesto na linke</label>
         <select name="cisloZariadenia" id="cisloZariadenia" onchange="skontrolujPravoNaPopisTypuChyby()">
             <option value=""></option>
             {% for zariadenie in zariadenia %}
@@ -36,8 +40,9 @@
     </div>
 </div>
 <div class="w-100">
+    <br>
     <div>
-        <label for="druhChyby">Druh chyby</label>
+        &nbsp;&nbsp;<label for="druhChyby">Druh chyby</label>
         <select name="druhChyby" id="druhChyby" onchange="skontrolujPravoNaPopisTypuChyby()">
             <option value=""></option>
             {% for chyba in druhyChyb %}
@@ -45,9 +50,9 @@
             {% endfor %}
         </select>
     </div>
-
+    <br>
     <div class="m-1">
-        <label for="chybuSposobil">Chybu spôsobil</label>
+        &nbsp;<label for="chybuSposobil">Chybu spôsobil</label>
         <select name="chybuSposobil" id="chybuSposobil" onchange="skontrolujPravoNaPopisTypuChyby()">
             <option value=""></option>
             {% for spo in sposobeneKym %}
@@ -56,9 +61,9 @@
 
         </select>
     </div>
-
+    <br>
     <div class="m-1" id="popisTypuChybyDiv" hidden>
-        <label for="popisTypuChyby">Popis typu chyby</label>
+        &nbsp;<label for="popisTypuChyby">Popis typu chyby</label>
         <select name="popisTypuChyby" id="popisTypuChyby" {% if popisTypuChybyOld <= 0 %} disabled{% endif %}>
             <option value=""></option>
             {% for popis in popisyTypovChyby %}
@@ -67,7 +72,7 @@
         </select>
     </div>
 
-    <button type="submit">Vygenerovať</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;<button type="submit">Vygenerovať</button>
 
 </div>
 </form>

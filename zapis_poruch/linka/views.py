@@ -506,8 +506,7 @@ class PotvrdZaznam(LoginRequiredMixin, View):
                      'druh_chyby', 'nahradny_diel', 'dovod']:
             data['form'][pole].field.disabled = True
 
-        data['typy'] = TypChyby.objects.all().filter(sposobena_kym=zaznam.sposobena_kym).filter(
-            druh_chyby=zaznam.druh_chyby).filter(miesto_na_linke=zaznam.miesto_na_linke)
+        data['typy'] = TypChyby.objects.all().filter(sposobena_kym=zaznam.sposobena_kym)
         data['id'] = i
         data["permissions"] = permissions
         return render(request, self.template, data)
