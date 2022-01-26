@@ -17,8 +17,7 @@ class TypForm(forms.ModelForm):
 
 
 class ZaznamForm(forms.ModelForm):
-    vznik = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label="Dátum vzniku",
-                            initial=datetime.date.today)
+    vznik = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), label="Dátum vzniku")
     vznik_cas = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time','step':'any'}),
                                 initial=(datetime.datetime.utcnow() + datetime.timedelta(hours=1)).strftime("%H:%M:%S"))
 

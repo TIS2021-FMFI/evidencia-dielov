@@ -172,25 +172,25 @@ class Zaznamy(LoginRequiredMixin, View):
             order_by = request.GET.get('order_by', 'defaultOrderField')
             print(order_by)
             if order_by == "stav":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena))
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena, obj.vznik))
             if order_by == "cas":
                 data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.vznik))
             if order_by == "trvanie":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.trvanie))
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.trvanie), obj.vznik))
             if order_by == "pozicia":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.miesto_na_linke.id))
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.miesto_na_linke.id), obj.vznik))
             if order_by == "sposobena_kym":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.sposobena_kym.id))
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.sposobena_kym.id), obj.vznik))
             if order_by == "popis":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.popis))
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.popis), obj.vznik))
             if order_by == "uzivatel":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.pouzivatel.id))
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.pouzivatel.id), obj.vznik))
             if order_by == "dovod":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.dovod))
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.dovod), obj.vznik))
             if order_by == "opatrenie":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.opatrenia))
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.opatrenia), obj.vznik))
         else:
-            data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena))
+            data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena, obj.vznik))
 
         return render(request, self.template, data)
 
@@ -252,7 +252,10 @@ class PridajZaznam(LoginRequiredMixin, View):
         data["permissions"] = permissions
 
         if "id" not in request.GET:
-            form = ZaznamForm()
+            instance = Chyba()
+            instance.vznik = datetime.datetime.now()
+
+            form = ZaznamForm(instance=instance)
 
             data["form"] = form
 
