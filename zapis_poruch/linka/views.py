@@ -112,8 +112,8 @@ class TypyChyb(LoginRequiredMixin, View):
                 average_time = calculate_average_time_of_type_since(typ,interval)
                 average_frequency = calculate_average_frequency_of_type_since(typ,interval)
                 occurences = calculate_occurences_of_type_since(typ,interval)
-                print(typ,interval)
-                print(average_time,average_frequency,occurences)
+                # print(typ,interval)
+                # print(average_time,average_frequency,occurences)
                 typ_wrapper.trvanie[interval] = average_time
                 typ_wrapper.vyskyt[interval] = occurences
                 typ_wrapper.frekvencie[interval] = average_frequency
@@ -128,13 +128,13 @@ class TypyChyb(LoginRequiredMixin, View):
             order_by = request.GET.get('order_by', 'defaultOrderField')
             print(order_by)
             if order_by == "pozicia":
-                data['errors'] = sorted(data['errors'], key=lambda obj: obj['miesto_na_linke'])
+                data['chyby'] = sorted(data['chyby'], key=lambda obj: obj['miesto_na_linke'])
             if order_by == "povod":
-                data['errors'] = sorted(data['errors'], key=lambda obj: obj['sposobena_kym'])
+                data['chyby'] = sorted(data['chyby'], key=lambda obj: obj['sposobena_kym'])
             if order_by == "druh":
-                data['errors'] = sorted(data['errors'], key=lambda obj: obj['druh_chyby'])
+                data['chyby'] = sorted(data['chyby'], key=lambda obj: obj['druh_chyby'])
             if order_by == "popis":
-                data['errors'] = sorted(data['errors'], key=lambda obj: obj['popis'])
+                data['chyby'] = sorted(data['chyby'], key=lambda obj: obj['popis'])
             # if order_by == "trvanie":
             #     data['errors'] = sorted(data['errors'], key=lambda obj: obj['trvanie'])
 
@@ -163,29 +163,34 @@ class Zaznamy(LoginRequiredMixin, View):
                 'permissions': permissions
                 }
 
+        def emptyIfNone(param):
+            if param is None:
+                return ''
+            return param
+
         if "order_by" in request.GET:
             order_by = request.GET.get('order_by', 'defaultOrderField')
             print(order_by)
             if order_by == "stav":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena))
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena, obj.vznik))
             if order_by == "cas":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.vznik)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.vznik))
             if order_by == "trvanie":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.trvanie)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.trvanie), obj.vznik))
             if order_by == "pozicia":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.miesto_na_linke.id)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.miesto_na_linke.id), obj.vznik))
             if order_by == "sposobena_kym":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.sposobena_kym.id)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.sposobena_kym.id), obj.vznik))
             if order_by == "popis":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.popis)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.popis), obj.vznik))
             if order_by == "uzivatel":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.pouzivatel.id)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.pouzivatel.id), obj.vznik))
             if order_by == "dovod":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.dovod)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.dovod), obj.vznik))
             if order_by == "opatrenie":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: obj.opatrenia)
+                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.opatrenia), obj.vznik))
         else:
-            data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena))
+            data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena, obj.vznik))
 
         return render(request, self.template, data)
 
@@ -247,7 +252,10 @@ class PridajZaznam(LoginRequiredMixin, View):
         data["permissions"] = permissions
 
         if "id" not in request.GET:
-            form = ZaznamForm()
+            instance = Chyba()
+            instance.vznik = datetime.datetime.now()
+
+            form = ZaznamForm(instance=instance)
 
             data["form"] = form
 
@@ -427,21 +435,29 @@ class Grafy(LoginRequiredMixin, View):
             except:
                 return 0
 
+        # jednotlive dni
         grafLabels = []
         start_date = datetime.datetime.strptime(request.POST['beginDate'], "%Y-%m-%d")
         end_date = datetime.datetime.strptime(request.POST['endDate'], "%Y-%m-%d") + datetime.timedelta(days=1)
         diff = abs((end_date - start_date).days)
         count = 0
+
         for i in range(0, diff, int(request.POST['casoveObdobie'])):
             grafLabels.append((start_date + datetime.timedelta(days=i)).strftime("%d.%m.%Y"))
             count += 1
+
         grafColors = ['#E28C05', '#4A501A', '#8F5BCA', '#B7E30B', '#BAB1EB', '#979EF9', '#6B2F11', '#622590', '#D03C3F',
                       '#96A321', '#A6994E', '#93B8B9', '#8EFD82', '#EE239D', '#3834A7', '#BE561D', '#29FEB9', '#0AC84D',
                       '#0BDC93', '#BACFBA', '#46227D', '#504FD5', '#00DC0E', '#CF1A54', '#955DC2', '#705678', '#DAED28',
                       '#B694C3', '#413707', '#A59E7E', '#523087', '#B365DF', '#F2DE74', '#F00C9A', '#22459D', '#E61080',
                       '#AAA3D1', '#CCE9E1', '#2FE622', '#3281D6'][:count]
 
-        grafData = [0] * count
+        barColor = '#DC143C'
+
+        grafData = []
+        for i in range(count):
+            grafData.append({"dokopy":0,"miesto":{},"druh":{},"povod":{}})
+
         chyby = Chyba.objects.filter(
             vznik__gte=start_date,
             vznik__lte=end_date
@@ -461,7 +477,31 @@ class Grafy(LoginRequiredMixin, View):
                 if str(chyba.typ_chyby_id) != request.POST.get('popisTypuChyby'):
                     continue
             index = (chyba.vznik.replace(tzinfo=None) - start_date).days // int(request.POST['casoveObdobie'])
-            grafData[index] += 1
+
+            grafData[index]["dokopy"] += 1
+            # pre grafData[index] pridaj pocet na mieste, druhu a povode
+            try:
+                grafData[index]["miesto"][chyba.miesto_na_linke.miesto] += 1
+            except:
+                grafData[index]["miesto"][chyba.miesto_na_linke.miesto] = 1
+            try:
+                grafData[index]["druh"][chyba.druh_chyby.nazov] += 1
+            except:
+                grafData[index]["druh"][chyba.druh_chyby.nazov] = 1
+            try:
+                grafData[index]["povod"][chyba.sposobena_kym.kym] += 1
+            except:
+                grafData[index]["povod"][chyba.sposobena_kym.kym] = 1
+
+        # prerob data na string
+        for i in range(len(grafData)):
+            grafData[i] = grafData[i]["dokopy"]
+
+            # displayString = str(grafData[i]["dokopy"]) + "\n ahoj"
+            #
+            # grafData[i] = displayString
+
+
         data = {
             "casoveObdobieOld": getInt(request.POST.get("casoveObdobie", 0)),
             "druhChybyOld": getInt(request.POST.get("druhChyby", 0)),
@@ -476,6 +516,7 @@ class Grafy(LoginRequiredMixin, View):
             "popisyTypovChyby": TypChyby.objects.all(),
             "grafLabels": grafLabels,
             "grafColors": grafColors,
+            "barColor": barColor,
             "grafData": grafData,
             "permissions": permissions
         }

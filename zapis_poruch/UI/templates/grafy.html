@@ -125,7 +125,8 @@
                     labels: {{ grafLabels|safe }},
                     datasets: [{
                         label: "Graf chýb",
-                        backgroundColor: {{ grafColors|safe }},
+                        backgroundColor: "{{ barColor|safe }}",
+                        color: "{{ barColor|safe }}",
                         data: {{ grafData|safe }}
                     }]
                 },

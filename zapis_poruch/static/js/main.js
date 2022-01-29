@@ -59,11 +59,22 @@ function nastavDatumNasledujucej(){
   
 }
 
+// ak datum alebo cas vyriesenia nie je zadefinovany tak nastavi momentalny datum + cas
 function updateDate() {
     const datum_vyriesenia = document.getElementById('id_vyriesenie');
     const cas_vyriesenia = document.getElementById('id_vyriesenie_cas');
     if(document.getElementById("id_vyriesena").checked === true){
-        //nastav cas na teraz
+        //ak datum nie je zadany tak nastav na momentalny
+
+        // console.log('datum vyriesenia',datum_vyriesenia.value)
+        // console.log('cas vyriesenia',cas_vyriesenia.value)
+        // console.log('kontrola','')
+
+        //skontroluj ci je datum/cas vyriesenia uz zadany ak je tak nemen
+        if (datum_vyriesenia.value && cas_vyriesenia.value) {
+            return
+        }
+
 
         var date = new Date();
 
@@ -92,8 +103,8 @@ function updateDate() {
 
     } else {
         //vymaz nastaveny cas
-        datum_vyriesenia.value = undefined
-        cas_vyriesenia.value = undefined
+        // datum_vyriesenia.value = undefined
+        // cas_vyriesenia.value = undefined
     }
 }
 
