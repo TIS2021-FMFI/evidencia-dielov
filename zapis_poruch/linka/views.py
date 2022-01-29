@@ -42,9 +42,9 @@ def calculate_average_time_of_type_since(type, since):
 
     timedeltas = [(chyba.vyriesenie - chyba.vznik) for chyba in chyby]
     if not timedeltas:
-        return None
+        return 0
 
-    return sum(timedeltas, datetime.timedelta(0)) / len(timedeltas)
+    return (sum(timedeltas, datetime.timedelta(0)) / len(timedeltas)).seconds / 60
 
 
 def calculate_average_frequency_of_type_since(type, since):
@@ -61,7 +61,7 @@ def calculate_average_frequency_of_type_since(type, since):
     chyby = sorted([chyba for chyba in chyby], key=lambda chyba: chyba.vznik)
 
     if len(chyby) < 2:
-        return None
+        return 0
 
     timedeltas = []
     for i in range(0, len(chyby)-1, 2):
@@ -69,7 +69,7 @@ def calculate_average_frequency_of_type_since(type, since):
         c2 = chyby[i+1]
         timedeltas.append(c2.vznik - c1.vznik)
 
-    return sum(timedeltas, datetime.timedelta(0)) / len(timedeltas)
+    return (sum(timedeltas, datetime.timedelta(0)) / len(timedeltas)).seconds / 60
 
 
 def calculate_occurences_of_type_since(type, since):
@@ -118,11 +118,11 @@ class TypyChyb(LoginRequiredMixin, View):
                 typ_wrapper.vyskyt[interval] = occurences
                 typ_wrapper.frekvencie[interval] = average_frequency
 
-
-
         data = {'chyby': [x.json() for x in all_types],
                 'permissions': permissions
                 }
+
+        print(data["chyby"])
 
         if "order_by" in request.GET:
             order_by = request.GET.get('order_by', 'defaultOrderField')

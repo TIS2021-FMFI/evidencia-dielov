@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block maincontent %}
+
 <script>
     const typy_chyb = {{ chyby|safe }}
 
@@ -11,12 +12,11 @@
         for(let index in typy_chyb){
             let item = typy_chyb[index];
             let e = document.getElementById("frekvencie_" + item.id);
-            e.innerHTML = item.frekvencie[target_freq];
+            e.innerHTML = item.frekvencie[target_freq].toFixed(2) + " minút";
             let k = document.getElementById("vyskyt_" + item.id);
             k.innerHTML = item.vyskyt[target_freq2];
             let l = document.getElementById("time_in_" + item.id);
-            l.innerHTML = item.trvanie[target_time_in];
-
+            l.innerHTML = item.trvanie[target_time_in].toFixed(2) + " minút";
         }
     }
 </script>
@@ -106,6 +106,10 @@
 </table>
 
     {% endif %}
+
+    <script>
+        change_table();
+    </script>
 
 {% endblock maincontent %}
 
