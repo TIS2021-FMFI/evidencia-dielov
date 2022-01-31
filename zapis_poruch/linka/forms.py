@@ -7,12 +7,14 @@ from .models import TypChyby, Chyba, TypRevizie
 
 
 class TypForm(forms.ModelForm):
+    # popis = forms.ChoiceField(widget=forms.ChoiceField(), choices=('hello','there'), label="Popis typu chyby")
+
     class Meta:
         model = TypChyby
         fields = ['popis', 'miesto_na_linke', 'druh_chyby', 'sposobena_kym']
 
         widgets = {
-            'popis': forms.Textarea(attrs={"rows": 2, "cols": 20}),
+            # 'popis': forms.Textarea(attrs={"rows": 2, "cols": 20}),
         }
 
 
@@ -44,10 +46,11 @@ class ZaznamForm(forms.ModelForm):
                   'vyriesenie', 'vyriesenie_cas', 'sposobena_kym', 'opatrenia',
                   'druh_chyby', 'nahradny_diel', 'dovod']
         widgets = {
-            'opatrenia': forms.Textarea(attrs={"rows":2, "cols":20}),
-            'nahradny_diel': forms.Textarea(attrs={"rows":2, "cols":20}),
-            'dovod': forms.Textarea(attrs={"rows":2, "cols":20}),
-            'popis': forms.Textarea(attrs={"rows":2, "cols":20})
+            # 'opatrenia': forms.Textarea(attrs={"rows":2, "cols":20}),
+            # 'nahradny_diel': forms.Textarea(attrs={"rows":2, "cols":20}),
+            # 'dovod': forms.Textarea(attrs={"rows":2, "cols":20}),
+            # 'popis': forms.Textarea(attrs={"rows":2, "cols":20})
+            # 'popis': forms.CharField(attrs={"rows":2, "cols":20})
         }
     def clean(self):
         super(ZaznamForm, self).clean()
