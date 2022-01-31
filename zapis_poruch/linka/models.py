@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 class DruhChyby(models.Model):
     class Meta:
         verbose_name_plural = "Druhy Chýb"
+        ordering = ('nazov',)
 
     nazov = models.CharField(max_length=256)
 
@@ -17,6 +18,7 @@ class DruhChyby(models.Model):
 class MiestoNaLinke(models.Model):
     class Meta:
         verbose_name_plural = "Miesta Na Linke"
+        ordering = ('miesto',)
 
     miesto = models.CharField(max_length=256, unique=True)
 
@@ -28,6 +30,7 @@ class MiestoNaLinke(models.Model):
 class SposobenaKym(models.Model):
     class Meta:
         verbose_name_plural = "Spôsobené Kým"
+        ordering = ('kym',)
 
     kym = models.CharField(max_length=256)
 
@@ -118,6 +121,7 @@ class TypChybyWrapper:
 class DruhRevizie(models.Model):
     class Meta:
         verbose_name_plural = "Typy revízie"
+        ordering = ('nazov',)
 
     nazov = models.CharField('Názov typu revízie', max_length=256,  default=None)
 
@@ -129,6 +133,7 @@ class TypRevizie(models.Model):
     """toto popisuje celu reviziu"""
     class Meta:
         verbose_name_plural = "Revízie"
+        ordering = ('nazov_revizie',)
 
     nazov_revizie = models.CharField('Názov revízie', max_length=256,  default=None)
     typ_revizie = models.ForeignKey(DruhRevizie, verbose_name="Typ revízie", on_delete=models.CASCADE, default=None)

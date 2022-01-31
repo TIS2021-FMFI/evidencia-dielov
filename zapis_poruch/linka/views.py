@@ -122,8 +122,6 @@ class TypyChyb(LoginRequiredMixin, View):
                 'permissions': permissions
                 }
 
-        print(data["chyby"])
-
         if "order_by" in request.GET:
             order_by = request.GET.get('order_by', 'defaultOrderField')
             print(order_by)
@@ -168,29 +166,31 @@ class Zaznamy(LoginRequiredMixin, View):
                 return ''
             return param
 
+        sortedByVznik = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.vznik), reverse=True)
+
         if "order_by" in request.GET:
             order_by = request.GET.get('order_by', 'defaultOrderField')
             print(order_by)
             if order_by == "stav":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena, obj.vznik))
+                data['zaznamy'] = sorted(sortedByVznik, key=lambda obj: (obj.schvalena, obj.vyriesena))
             if order_by == "cas":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: emptyIfNone(obj.vznik))
+                data['zaznamy'] = sortedByVznik
             if order_by == "trvanie":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.trvanie), obj.vznik))
+                data['zaznamy'] = sorted(sortedByVznik, key=lambda obj: emptyIfNone(obj.trvanie))
             if order_by == "pozicia":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.miesto_na_linke.id), obj.vznik))
+                data['zaznamy'] = sorted(sortedByVznik, key=lambda obj: emptyIfNone(obj.miesto_na_linke.id))
             if order_by == "sposobena_kym":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.sposobena_kym.id), obj.vznik))
+                data['zaznamy'] = sorted(sortedByVznik, key=lambda obj: emptyIfNone(obj.sposobena_kym.id))
             if order_by == "popis":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.popis), obj.vznik))
+                data['zaznamy'] = sorted(sortedByVznik, key=lambda obj: emptyIfNone(obj.popis))
             if order_by == "uzivatel":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.pouzivatel.id), obj.vznik))
+                data['zaznamy'] = sorted(sortedByVznik, key=lambda obj: emptyIfNone(obj.pouzivatel.id))
             if order_by == "dovod":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.dovod), obj.vznik))
+                data['zaznamy'] = sorted(sortedByVznik, key=lambda obj: emptyIfNone(obj.dovod))
             if order_by == "opatrenie":
-                data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (emptyIfNone(obj.opatrenia), obj.vznik))
+                data['zaznamy'] = sorted(sortedByVznik, key=lambda obj: emptyIfNone(obj.opatrenia))
         else:
-            data['zaznamy'] = sorted(data['zaznamy'], key=lambda obj: (obj.schvalena, obj.vyriesena, obj.vznik))
+            data['zaznamy'] = sorted(sortedByVznik, key=lambda obj: (obj.schvalena, obj.vyriesena))
 
         return render(request, self.template, data)
 
