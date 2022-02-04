@@ -11,7 +11,7 @@ presun do nazov_prostredia
 
 source bin/activate => Linux
 
-po otvoreni projektu treba dodrzat tuto postupnost krokov:
+po otvoreni projektu treba dodrzat tuto postupnost krokov, a nastavit db v settings.py:
 
 pip install -r requirements.txt
 
